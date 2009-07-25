@@ -36,12 +36,7 @@ int CFunctions::ircConnect ( lua_State* luaVM )
 {
     if(luaVM)
     {
-		int adresarg = lua_type(luaVM, 1);
-        int portarg = lua_type(luaVM, 2);
-		int nicknamearg = lua_type(luaVM, 3);
-		int channelarg = lua_type(luaVM, 4);
-
-		if(adresarg == LUA_TSTRING && portarg == LUA_TNUMBER && nicknamearg == LUA_TSTRING && channelarg == LUA_TSTRING)
+		if(lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TNUMBER && lua_type(luaVM, 3) == LUA_TSTRING && lua_type(luaVM, 4) == LUA_TSTRING)
         {
 			string luairc = lua_tostring(luaVM, 1);
 			unsigned short luaport = static_cast < unsigned short > ( atoi ( lua_tostring ( luaVM, 2 ) ) );
@@ -79,7 +74,7 @@ int CFunctions::ircDisconnect ( lua_State* luaVM )
 		lua_pushboolean(luaVM, true);
 		return 1;
 	}
-    lua_pushboolean ( luaVM, false );
+    lua_pushboolean(luaVM, false);
     return 0;
 }
 
@@ -87,8 +82,7 @@ int CFunctions::ircJoin ( lua_State* luaVM )
 {
     if(luaVM)
     {
-		int channel = lua_type(luaVM, 1);
-		if(channel == LUA_TSTRING)
+		if(lua_type(luaVM, 1) == LUA_TSTRING)
 		{
 			string tchannel = lua_tostring(luaVM, 1);
 			sendRaw("JOIN " + tchannel);
@@ -96,7 +90,7 @@ int CFunctions::ircJoin ( lua_State* luaVM )
 			return 1;
 		}
 	}
-    lua_pushboolean ( luaVM, false );
+    lua_pushboolean(luaVM, false);
     return 0;
 }
 
@@ -104,8 +98,7 @@ int CFunctions::ircRaw ( lua_State* luaVM )
 {
     if(luaVM)
     {
-		int inttext = lua_type(luaVM, 1);
-		if(inttext == LUA_TSTRING)
+		if(lua_type(luaVM, 1) == LUA_TSTRING)
 		{
 			string rawtext = lua_tostring ( luaVM, 1 );
 			sendRaw(rawtext);
@@ -113,7 +106,7 @@ int CFunctions::ircRaw ( lua_State* luaVM )
 			return 1;
 		}
 	}
-    lua_pushboolean ( luaVM, false );
+    lua_pushboolean(luaVM, false);
     return 0;
 }
 
@@ -121,10 +114,7 @@ int CFunctions::ircSay ( lua_State* luaVM )
 {
     if(luaVM)
     {
-		int channelarg = lua_type(luaVM, 1);
-		int textarg = lua_type(luaVM, 2);
-
-		if(channelarg == LUA_TSTRING && textarg == LUA_TSTRING)
+		if(lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TSTRING)
 		{
 			string luachannel = lua_tostring ( luaVM, 1 );
 			string luatext = lua_tostring ( luaVM, 2 );
@@ -134,7 +124,7 @@ int CFunctions::ircSay ( lua_State* luaVM )
 			return 1;
 		}
 	}
-    lua_pushboolean ( luaVM, false );
+    lua_pushboolean(luaVM, false);
     return 0;
 }
 
@@ -142,8 +132,7 @@ int CFunctions::ircPart ( lua_State* luaVM )
 {
     if(luaVM)
     {
-		int partchannel = lua_type(luaVM, 1);
-		if(partchannel == LUA_TSTRING)
+		if(lua_type(luaVM, 1) == LUA_TSTRING)
 		{
 			string part = lua_tostring(luaVM, 1);
 			sendRaw("PART " + part);
@@ -152,7 +141,7 @@ int CFunctions::ircPart ( lua_State* luaVM )
 			return 1;
 		}
 	}
-    lua_pushboolean ( luaVM, false );
+    lua_pushboolean (luaVM, false);
     return 0;
 }
 
@@ -160,8 +149,7 @@ int CFunctions::ircChangeNick ( lua_State* luaVM )
 {
     if(luaVM)
     {
-		int newnicktext = lua_type(luaVM, 1);
-		if(newnicktext == LUA_TSTRING)
+		if(lua_type(luaVM, 1) == LUA_TSTRING)
 		{
 			string newnick = lua_tostring(luaVM, 1);
 			sendRaw("NICK " + newnick);
@@ -170,7 +158,7 @@ int CFunctions::ircChangeNick ( lua_State* luaVM )
 			return 1;
 		}
 	}
-    lua_pushboolean ( luaVM, false );
+    lua_pushboolean (luaVM, false);
     return 0;
 }
 
