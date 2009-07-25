@@ -14,11 +14,9 @@ class CFunctions;
 #ifndef __CFUNCTIONS_H
 	#define __CFUNCTIONS_H
 
-	#include <stdio.h>
 	#include "include/ILuaModuleManager.h"
 	#include <string>
-
-using namespace std;
+	using namespace std;
 
 	extern ILuaModuleManager *pModuleManager;
 	class CFunctions

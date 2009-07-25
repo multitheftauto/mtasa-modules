@@ -13,9 +13,7 @@
 #include "CFunctions.h"
 #include "extra/CLuaArguments.h"
 #include <time.h>
-#include <iostream>
 #include <process.h>
-#include <stdio.h>
 #include <winsock.h>
 #include <string>
 
@@ -37,7 +35,7 @@ int CFunctions::ircConnect ( lua_State* luaVM )
 {
     if(luaVM)
     {
-		if(lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TNUMBER && lua_type(luaVM, 3) == LUA_TSTRING && lua_type(luaVM, 4) == LUA_TSTRING)
+        if(lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TNUMBER && lua_type(luaVM, 3) == LUA_TSTRING && lua_type(luaVM, 4) == LUA_TSTRING)
         {
 			string luairc = lua_tostring(luaVM, 1);
 			unsigned short luaport = static_cast < unsigned short > ( atoi ( lua_tostring ( luaVM, 2 ) ) );
@@ -159,7 +157,7 @@ int CFunctions::ircPart ( lua_State* luaVM )
 			return 1;
 		}
 	}
-    lua_pushboolean (luaVM, false);
+    lua_pushboolean(luaVM, false);
     return 0;
 }
 
@@ -176,7 +174,7 @@ int CFunctions::ircChangeNick ( lua_State* luaVM )
 			return 1;
 		}
 	}
-    lua_pushboolean (luaVM, false);
+    lua_pushboolean(luaVM, false);
     return 0;
 }
 
@@ -252,7 +250,10 @@ void CFunctions::CloseSocket()
 {
     closesocket(Socket);
     WSACleanup();
-	CFunctions::sendConsole("Socket closed.");
+    if(showDebugText)
+    {
+        CFunctions::sendConsole("Socket closed.");
+	}
     return;
 }
 
