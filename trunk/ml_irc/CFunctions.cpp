@@ -77,8 +77,8 @@ int CFunctions::ircDisconnect ( lua_State* luaVM )
 			string newQuitReason = lua_tostring(luaVM, 1);
 			quitMessage = newQuitReason;
 		}
-
 		sendRaw("QUIT :" + quitMessage);
+
 		CloseSocket();
 		lua_pushboolean(luaVM, true);
 		return 1;
@@ -301,8 +301,10 @@ bool CFunctions::connectToIRC(string server, int port)
 
 void CFunctions::CloseSocket()
 {
-    closesocket(Socket);
+	shutdown(Socket, true);
+	closesocket(Socket); // This makes a crash.
     WSACleanup();
+
     if(showDebugText)
     {
         CFunctions::sendConsole("Socket closed.");
@@ -339,11 +341,6 @@ void CFunctions::onDataReceived(char* msg)
 	if(strncmp(msg, "PING", 4) == 0)
 	{
 		sendRaw("PONG :REPLY");
-
-		if(showDebugText)
-		{
-			CFunctions::sendConsole("PONG!");
-		}
 	}
 
 	if(showDebugText)
