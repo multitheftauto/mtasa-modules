@@ -1,0 +1,1 @@
+Use "Release" to compile the ircmodule!
