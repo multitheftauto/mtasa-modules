@@ -33,6 +33,7 @@ MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
 		pModuleManager->RegisterFunction ( luaVM, "ircPart", CFunctions::ircPart );
 		pModuleManager->RegisterFunction ( luaVM, "ircSay", CFunctions::ircSay );
 		pModuleManager->RegisterFunction ( luaVM, "ircChangeNick", CFunctions::ircChangeNick );
+		pModuleManager->RegisterFunction ( luaVM, "ircShowDebug", CFunctions::ircShowDebug );
 		//pModuleManager->RegisterFunction ( luaVM, "ircIsConnected", CFunctions::ircIsConnected );
 	}
 }

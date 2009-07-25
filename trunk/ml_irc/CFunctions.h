@@ -31,6 +31,7 @@ using namespace std;
 			static int		ircSay				(lua_State* luaVM);
 			static int		ircPart				(lua_State* luaVM);
 			static int		ircChangeNick		(lua_State* luaVM);
+			static int		ircShowDebug		(lua_State* luaVM);
 
 			// Sockets
 			static int		startWinSocket      ();
