@@ -1,1 +1,1 @@
-Readme text here.
+More help: http://development.mtasa.com/index.php?title=Modules/SebasIRC
