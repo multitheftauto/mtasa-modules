@@ -30,6 +30,8 @@ class CFunctions;
 			static int		ircPart				(lua_State* luaVM);
 			static int		ircChangeNick		(lua_State* luaVM);
 			static int		ircShowDebug		(lua_State* luaVM);
+			static int		ircSetMode			(lua_State* luaVM);
+			static int		ircSetChannelMode	(lua_State* luaVM);
 
 			// Sockets
 			static int		startWinSocket      ();
