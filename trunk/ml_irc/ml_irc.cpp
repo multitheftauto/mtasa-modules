@@ -46,7 +46,7 @@ MTAEXPORT bool DoPulse ( void )
 
 MTAEXPORT bool ShutdownModule ( void )
 {
-	//CFunctions::sendIRCRaw("QUIT :Module unload.");
+	CFunctions::sendRaw("QUIT :Module unload.");
 	CFunctions::sendConsole("Shutting down..");
 	return true;
 }
