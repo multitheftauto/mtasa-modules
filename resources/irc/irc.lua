@@ -18,6 +18,7 @@ addEventHandler("onResourceStart", root,
 			ircDisconnect()
 			if ircConnect(irc["server"], tonumber(irc["port"]), irc["nickname"], irc["channel"]) then
 				outputServerLog("Connected to irc!")
+				ircSetMode("+B")
 				ircSay("NickServ", "identify "..tostring(irc["password"]))
 				ircSay(irc["channel"], "Hello, i started server ["..getServerName().."], max players: "..getMaxPlayers())
 			else
