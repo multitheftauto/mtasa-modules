@@ -68,7 +68,15 @@ int CFunctions::ircDisconnect ( lua_State* luaVM )
 {
     if(luaVM)
     {
-		sendRaw("QUIT :MTABot");
+		string quitMessage = "MTABot";
+
+		if(lua_type(luaVM, 1) == LUA_TSTRING)
+		{
+			string newQuitReason = lua_tostring(luaVM, 1);
+			quitMessage = newQuitReason;
+		}
+
+		sendRaw("QUIT :" + quitMessage);
 		CloseSocket();
 		lua_pushboolean(luaVM, true);
 		return 1;
@@ -84,7 +92,14 @@ int CFunctions::ircJoin ( lua_State* luaVM )
 		if(lua_type(luaVM, 1) == LUA_TSTRING)
 		{
 			string tchannel = lua_tostring(luaVM, 1);
-			sendRaw("JOIN " + tchannel);
+
+			if(lua_type(luaVM, 2) == LUA_TSTRING)
+			{
+				string channelPassword = lua_tostring(luaVM, 2);
+				sendRaw("JOIN " + tchannel + " " + channelPassword);
+			}else{
+				sendRaw("JOIN " + tchannel);
+			}
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
