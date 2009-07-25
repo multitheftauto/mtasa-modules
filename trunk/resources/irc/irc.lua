@@ -59,7 +59,7 @@ addEventHandler("onPlayerChangeNick", root,
 
 addEventHandler("onPlayerSpawn", root,
 	function(x, y, z)
-		ircSay(irc["channel"], "* "..getPlayerName(source).." spawned at "..getZoneName(x, y, z))
+		ircSay(irc["channel"], "* "..getPlayerName(source).." has spawned at "..getZoneName(x, y, z))
 	end
 )
 
