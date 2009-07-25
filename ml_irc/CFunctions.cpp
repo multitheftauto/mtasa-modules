@@ -26,6 +26,7 @@ using namespace std;
 long SocketState;
 SOCKET Socket;
 SOCKADDR_IN Addr;
+bool showDebugText = true;
 
 /*
 	------
@@ -120,6 +121,23 @@ int CFunctions::ircSay ( lua_State* luaVM )
 			string luatext = lua_tostring ( luaVM, 2 );
 
 			sendRaw("PRIVMSG " + luachannel + " :" + luatext);
+			lua_pushboolean(luaVM, true);
+			return 1;
+		}
+	}
+    lua_pushboolean(luaVM, false);
+    return 0;
+}
+
+int CFunctions::ircShowDebug ( lua_State* luaVM )
+{
+    if(luaVM)
+    {
+		if(lua_type(luaVM, 1) == LUA_TBOOLEAN)
+		{
+			bool newdebug = lua_toboolean ( luaVM, 1 );
+			showDebugText = newdebug;
+
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
@@ -267,10 +285,17 @@ void CFunctions::onDataReceived(char* msg)
 	if(strncmp(msg, "PING", 4) == 0)
 	{
 		sendRaw("PONG :REPLY");
-		CFunctions::sendConsole("PONG!");
-	}
-	CFunctions::sendConsole(msg);
 
+		if(showDebugText)
+		{
+			CFunctions::sendConsole("PONG!");
+		}
+	}
+
+	if(showDebugText)
+	{
+		CFunctions::sendConsole(msg);
+	}
 	return;
 }
 
