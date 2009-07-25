@@ -25,6 +25,7 @@ long SocketState;
 SOCKET Socket;
 SOCKADDR_IN Addr;
 bool showDebugText = true;
+string botname;
 
 /*
 	------
@@ -48,7 +49,8 @@ int CFunctions::ircConnect ( lua_State* luaVM )
 				lua_pushboolean(luaVM, false);
 				return 1;
 			}
-
+			
+			botname = luanickname;
 			sendRaw("NICK " + luanickname + "\r\n");
 			sendRaw("USER MTABot Bot 127.0.0.1 :IRCBot by Sebas\r\n");
 			sendRaw("JOIN " + luachannel);
@@ -183,7 +185,43 @@ int CFunctions::ircChangeNick ( lua_State* luaVM )
 		if(lua_type(luaVM, 1) == LUA_TSTRING)
 		{
 			string newnick = lua_tostring(luaVM, 1);
+			botname = newnick;
 			sendRaw("NICK " + newnick);
+
+			lua_pushboolean(luaVM, true);
+			return 1;
+		}
+	}
+    lua_pushboolean(luaVM, false);
+    return 0;
+}
+
+int CFunctions::ircSetMode ( lua_State* luaVM )
+{
+    if(luaVM)
+    {
+		if(lua_type(luaVM, 1) == LUA_TSTRING)
+		{
+			string newmode = lua_tostring(luaVM, 1);
+			sendRaw("MODE " + botname + " " + newmode);
+
+			lua_pushboolean(luaVM, true);
+			return 1;
+		}
+	}
+    lua_pushboolean(luaVM, false);
+    return 0;
+}
+
+int CFunctions::ircSetChannelMode ( lua_State* luaVM )
+{
+    if(luaVM)
+    {
+		if(lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TSTRING)
+		{
+			string channel = lua_tostring(luaVM, 1);
+			string newmode = lua_tostring(luaVM, 2);
+			sendRaw("MODE " + channel + " " + newmode);
 
 			lua_pushboolean(luaVM, true);
 			return 1;
