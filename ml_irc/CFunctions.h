@@ -34,7 +34,9 @@ class CFunctions;
 			static int		ircSetChannelMode	(lua_State* luaVM);
 
 			// Sockets
+#ifdef WIN32
 			static int		startWinSocket      ();
+#endif
 			static long		GetAddr             (string hostname);
 			static bool		connectToIRC        (string server, int Port);
 			static void		CloseSocket         ();
@@ -42,5 +44,7 @@ class CFunctions;
 			static void		onDataReceived      (char* msg);
 			static void		sendRaw             (string rawtext);
 			static int		sendConsole         (char* text);
+
+			static void		AddEvent			( lua_State* luaVM, const char* szEventName );
 	};
 #endif
