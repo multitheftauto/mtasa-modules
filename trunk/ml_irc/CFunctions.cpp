@@ -13,8 +13,21 @@
 #include "CFunctions.h"
 #include "extra/CLuaArguments.h"
 #include <time.h>
+
+#ifdef WIN32
 #include <process.h>
 #include <winsock.h>
+#else
+#include <pthread.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/select.h>
+typedef socket SOCKET;
+typedef sockaddr_in SOCKADDR_IN;
+#define SOCKET_ERROR -1
+#define INVALID_SOCKET -1
+#endif
+
 #include <string>
 
 // Namespace
@@ -24,69 +37,82 @@ using namespace std;
 long SocketState;
 SOCKET Socket;
 SOCKADDR_IN Addr;
-bool showDebugText = true;
+bool showDebugText = false;
 string botname;
+lua_State* gLuaVM;
 
 /*
 	------
 	Lua functions
 */
 
+// bool ircConnect(string host, int port, string nickname)
 int CFunctions::ircConnect ( lua_State* luaVM )
 {
-    if(luaVM)
+    if (luaVM)
     {
-        if(lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TNUMBER && lua_type(luaVM, 3) == LUA_TSTRING && lua_type(luaVM, 4) == LUA_TSTRING)
+        if (lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TNUMBER && lua_type(luaVM, 3) == LUA_TSTRING)
         {
 			string luairc = lua_tostring(luaVM, 1);
 			unsigned short luaport = static_cast < unsigned short > ( atoi ( lua_tostring ( luaVM, 2 ) ) );
 			string luanickname = lua_tostring(luaVM, 3);
-			string luachannel = lua_tostring(luaVM, 4);
+			//string luachannel = lua_tostring(luaVM, 4);
 
-			if(!connectToIRC(luairc, luaport))
+			if (!connectToIRC(luairc, luaport))
 			{
 				sendConsole("Cannot connect!");
 				lua_pushboolean(luaVM, false);
 				return 1;
 			}
 			
-			botname = luanickname;
-			sendRaw("NICK " + luanickname + "\r\n");
-			sendRaw("USER MTABot Bot 127.0.0.1 :IRCBot by Sebas\r\n");
-			sendRaw("JOIN " + luachannel);
+			gLuaVM = luaVM;
+#ifdef WIN32
+			_beginthread(messageThread, 0, 0);
+#else
+			pthread_t t;
+			pthread_create(&t, NULL, &messageThread, NULL);
+			pthread_join(t, NULL);
+#endif
 
-			_beginthread(messageThread, 0, 0); // This needs a rewrite, this uses 50% from your CPU :\
-			//CreateThread ( NULL, 0, messageThread, this, 0, NULL );
+			botname = luanickname;
+			sendRaw("USER MTABot Bot '' :IRCBot by Sebas\r\n");
+			sendRaw("NICK " + luanickname + "\r\n");
+			//sendRaw("JOIN " + luachannel);
 
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
 	}
     lua_pushboolean(luaVM, false);
-    return 0;
+    return 1; // pass 1 argument to lua
 }
 
+// bool ircDisconnect([string quitMessage])
 int CFunctions::ircDisconnect ( lua_State* luaVM )
 {
     if(luaVM)
     {
-		string quitMessage = "MTABot";
+		string quitMessage;
 
 		if(lua_type(luaVM, 1) == LUA_TSTRING)
 		{
-			string newQuitReason = lua_tostring(luaVM, 1);
-			quitMessage = newQuitReason;
+			string newQuitReason = 
+			quitMessage = lua_tostring(luaVM, 1);
 		}
+		else
+			quitMessage = "MTABot";
+
 		sendRaw("QUIT :" + quitMessage);
 
-		CloseSocket();
+		//CloseSocket();
 		lua_pushboolean(luaVM, true);
 		return 1;
 	}
     lua_pushboolean(luaVM, false);
-    return 0;
+    return 1;
 }
 
+// bool ircJoin(string channel)
 int CFunctions::ircJoin ( lua_State* luaVM )
 {
     if(luaVM)
@@ -99,68 +125,71 @@ int CFunctions::ircJoin ( lua_State* luaVM )
 			{
 				string channelPassword = lua_tostring(luaVM, 2);
 				sendRaw("JOIN " + tchannel + " " + channelPassword);
-			}else{
-				sendRaw("JOIN " + tchannel);
 			}
+			else
+				sendRaw("JOIN " + tchannel);
+			
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
 	}
     lua_pushboolean(luaVM, false);
-    return 0;
+    return 1;
 }
 
+// bool ircRaw(string data)
 int CFunctions::ircRaw ( lua_State* luaVM )
 {
     if(luaVM)
     {
 		if(lua_type(luaVM, 1) == LUA_TSTRING)
 		{
-			string rawtext = lua_tostring ( luaVM, 1 );
-			sendRaw(rawtext);
+			sendRaw(lua_tostring ( luaVM, 1 ));
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
 	}
     lua_pushboolean(luaVM, false);
-    return 0;
+    return 1;
 }
 
+// bool ircSay(string target, string message)
 int CFunctions::ircSay ( lua_State* luaVM )
 {
     if(luaVM)
     {
 		if(lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TSTRING)
 		{
-			string luachannel = lua_tostring ( luaVM, 1 );
+			string luatarget = lua_tostring ( luaVM, 1 );
 			string luatext = lua_tostring ( luaVM, 2 );
 
-			sendRaw("PRIVMSG " + luachannel + " :" + luatext);
+			sendRaw("PRIVMSG " + luatarget + " :" + luatext);
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
 	}
     lua_pushboolean(luaVM, false);
-    return 0;
+    return 1;
 }
 
+// bool ircShowDebug(bool show)
 int CFunctions::ircShowDebug ( lua_State* luaVM )
 {
     if(luaVM)
     {
 		if(lua_type(luaVM, 1) == LUA_TBOOLEAN)
 		{
-			bool newdebug = lua_toboolean ( luaVM, 1 );
-			showDebugText = newdebug;
-
+			showDebugText = ((lua_toboolean(luaVM, 1)) ? true : false);
+			//showDebugText = lua_toboolean(luaVM, 1);
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
 	}
     lua_pushboolean(luaVM, false);
-    return 0;
+    return 1;
 }
 
+// bool ircPart(string channel, [string partReason])
 int CFunctions::ircPart ( lua_State* luaVM )
 {
     if(luaVM)
@@ -168,16 +197,21 @@ int CFunctions::ircPart ( lua_State* luaVM )
 		if(lua_type(luaVM, 1) == LUA_TSTRING)
 		{
 			string part = lua_tostring(luaVM, 1);
-			sendRaw("PART " + part);
+			string partReason = "";
+			if (lua_type(luaVM, 2) == LUA_TSTRING)
+				partReason = lua_tostring(luaVM, 2);
+
+			sendRaw("PART " + part + " :" + partReason);
 
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
 	}
     lua_pushboolean(luaVM, false);
-    return 0;
+    return 1;
 }
 
+// bool ircChangeNick(string newnick)
 int CFunctions::ircChangeNick ( lua_State* luaVM )
 {
     if(luaVM)
@@ -193,9 +227,10 @@ int CFunctions::ircChangeNick ( lua_State* luaVM )
 		}
 	}
     lua_pushboolean(luaVM, false);
-    return 0;
+    return 1;
 }
 
+// bool ircSetMode(string mode)
 int CFunctions::ircSetMode ( lua_State* luaVM )
 {
     if(luaVM)
@@ -210,9 +245,11 @@ int CFunctions::ircSetMode ( lua_State* luaVM )
 		}
 	}
     lua_pushboolean(luaVM, false);
-    return 0;
+    return 1;
 }
 
+// bool ircSetChannelMode(string channel, string mode)
+// (also ircSetChannelMode("#bla", "+o Sebas")
 int CFunctions::ircSetChannelMode ( lua_State* luaVM )
 {
     if(luaVM)
@@ -228,7 +265,7 @@ int CFunctions::ircSetChannelMode ( lua_State* luaVM )
 		}
 	}
     lua_pushboolean(luaVM, false);
-    return 0;
+    return 1;
 }
 
 /*
@@ -243,11 +280,13 @@ void CFunctions::sendRaw(string text)
 	return;
 }
 
+#ifdef WIN32
 int CFunctions::startWinSocket()
 {
     WSADATA WSA;
     return WSAStartup(MAKEWORD(2, 0), &WSA);
 }
+#endif
 
 long CFunctions::GetAddr(string hostname)
 {
@@ -273,11 +312,13 @@ long CFunctions::GetAddr(string hostname)
 
 bool CFunctions::connectToIRC(string server, int port)
 {
+#ifdef WIN32
     SocketState = startWinSocket();
     if(SocketState != 0)
     {
         return false;
     }
+#endif
     Socket = socket(PF_INET, SOCK_STREAM, 0);
     if(Socket == INVALID_SOCKET)
     {
@@ -301,18 +342,16 @@ bool CFunctions::connectToIRC(string server, int port)
 
 void CFunctions::CloseSocket()
 {
-	shutdown(Socket, true);
-	closesocket(Socket); // This makes a crash.
-    WSACleanup();
+	//shutdown(Socket, true);
+	closesocket(Socket); // This makes a crash. (MaVe: Why using it then? :p)
+    //WSACleanup();
 
-    if(showDebugText)
-    {
+    if (showDebugText)
         CFunctions::sendConsole("Socket closed.");
-	}
     return;
 }
 
-void CFunctions::messageThread(void *ok)
+void CFunctions::messageThread(void* ok)
 {
 	fd_set fdSetRead;
 	TIMEVAL timeout;
@@ -330,23 +369,57 @@ void CFunctions::messageThread(void *ok)
             if(i > 0)
             {
 				buf[i] = '\0';
-				onDataReceived(buf);
+				char part[512];
+				for (i = 0; i < (int)strlen(buf); i++)
+				{
+					if (buf[i] == '\n')
+					{
+						onDataReceived(part);
+						memset(&part, 0, sizeof(part));
+					}
+					else if (buf[i] != '\r')
+					{
+						part[strlen(part)] = buf[i];
+					}
+				}
             }
+			Sleep(50); // prevent the bot from eating your CPU
         }
     }
 }
 
+void CFunctions::AddEvent ( lua_State* luaVM, const char* szEventName )
+{
+	CLuaArguments args;
+	args.PushString(szEventName);
+	args.PushBoolean(true);
+	args.Call(luaVM, "addEvent");
+}
+
 void CFunctions::onDataReceived(char* msg)
 {
+	// Check for "PING"
 	if(strncmp(msg, "PING", 4) == 0)
 	{
-		sendRaw("PONG :REPLY");
+		// Send "PONG" back
+		msg[1] = 'O';
+		sendRaw(msg);
+		if (showDebugText)
+			sendConsole("Ping received, ponged back.");
+		return;
 	}
 
-	if(showDebugText)
-	{
+	CLuaArguments args;
+	args.PushString("onIRCRaw");
+	lua_getglobal(gLuaVM, "root");
+	CLuaArgument RootElement(gLuaVM, -1);
+	args.PushUserData(RootElement.GetLightUserData());
+	args.PushString(msg);
+	args.Call(gLuaVM, "triggerEvent");
+
+	if (showDebugText)
 		CFunctions::sendConsole(msg);
-	}
+
 	return;
 }
 
