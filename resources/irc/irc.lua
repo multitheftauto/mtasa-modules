@@ -16,11 +16,11 @@ addEventHandler("onResourceStart", root,
 	function(res)
 		if res == getThisResource() then
 			ircDisconnect()
-			if ircConnect(irc["server"], tonumber(irc["port"]), irc["nickname"], irc["channel"]) then
+			if ircConnect(irc["server"], tonumber(irc["port"]), irc["nickname"]) and ircJoin(irc["channel"]) then
 				outputServerLog("Connected to irc!")
 				ircSetMode("+B")
 				ircSay("NickServ", "identify "..tostring(irc["password"]))
-				ircSay(irc["channel"], "Hello, i started server ["..getServerName().."], max players: "..getMaxPlayers())
+				ircSay(irc["channel"], "Hello, I started server ["..getServerName().."], max players: "..getMaxPlayers())
 			else
 				outputServerLog("Connected to irc!")
 			end
