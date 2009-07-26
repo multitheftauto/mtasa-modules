@@ -11,7 +11,8 @@ CPP = gcc
 # Compiler flags
 # NOTE: add -g for debug, remove for release!
 CPPFLAGS = -g -MD -Wall -I./
-LDFLAGS = -fPIC -shared -Wl,-soname,$(PROG).1,-R./
+# LDFLAGS = -fPIC -shared -Wl,-soname,$(PROG).1,-R -L/root/mtasvn/trunk/libs/lua/./
+LDFLAGS = -fPIC -shared -Wl,-export-dynamic,-soname,$(PROG).1,-R -L/root/mtasvn/trunk/libs/lua
 LIBS = -lpthread -lstdc++ -llua
 
 #### End of system configuration section ####

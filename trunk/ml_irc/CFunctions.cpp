@@ -6,6 +6,7 @@
 *  Url:          http://development.mtasa.com/index.php?title=Modules/SebasIRC
 *  Project page: http://multitheftauto-modules.googlecode.com/
 *  Developers:   Sebas Lamers <baslamers@home.nl>
+*                "MaVe" <mave1337@gmail.com>
 *
 *********************************************************/
 
@@ -18,17 +19,31 @@
 #include <process.h>
 #include <winsock.h>
 #else
+#include <netdb.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
+#include <cstdlib>
+#include <stdio.h>
+
 #include <pthread.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/select.h>
-typedef socket SOCKET;
+typedef int SOCKET;
 typedef sockaddr_in SOCKADDR_IN;
+typedef hostent HOSTENT;
+typedef sockaddr SOCKADDR;
+typedef timeval TIMEVAL;
 #define SOCKET_ERROR -1
 #define INVALID_SOCKET -1
+#define Sleep sleep
+#define closesocket close
+#define sprintf_s sprintf
 #endif
 
-#include <string>
+#include <string.h>
 
 // Namespace
 using namespace std;
@@ -351,7 +366,11 @@ void CFunctions::CloseSocket()
     return;
 }
 
+#ifdef WIN32
 void CFunctions::messageThread(void* ok)
+#else
+void *CFunctions::messageThread(void* ok)
+#endif
 {
 	fd_set fdSetRead;
 	TIMEVAL timeout;
