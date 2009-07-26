@@ -11,6 +11,11 @@
 
 #include "ml_irc.h"
 
+#ifndef WIN32
+#include <string.h>
+//#define strncpy strcpy
+#endif
+
 MTAEXPORT bool InitModule ( ILuaModuleManager *pManager, char *szModuleName, char *szAuthor, float *fVersion )
 {
 	pModuleManager = pManager;

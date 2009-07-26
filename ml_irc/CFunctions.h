@@ -40,7 +40,11 @@ class CFunctions;
 			static long		GetAddr             (string hostname);
 			static bool		connectToIRC        (string server, int Port);
 			static void		CloseSocket         ();
+#ifdef WIN32
 			static void		messageThread       (void *ok);
+#else
+			static void*		messageThread	     (void *ok);
+#endif
 			static void		onDataReceived      (char* msg);
 			static void		sendRaw             (string rawtext);
 			static int		sendConsole         (char* text);
