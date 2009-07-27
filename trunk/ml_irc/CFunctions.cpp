@@ -404,6 +404,7 @@ void *CFunctions::messageThread(void* ok)
 			Sleep(50); // prevent the bot from eating your CPU
         }
     }
+	return;
 }
 
 void CFunctions::AddEvent ( lua_State* luaVM, const char* szEventName )
