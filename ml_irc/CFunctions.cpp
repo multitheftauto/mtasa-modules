@@ -333,14 +333,11 @@ bool CFunctions::connectToIRC(string server, int port)
         return false;
     }
 #endif
-	if(Socket == NULL)
-	{
-		Socket = socket(PF_INET, SOCK_STREAM, 0);
-		if(Socket == INVALID_SOCKET)
-		{
-			return false;
-		}
-	}
+    Socket = socket(PF_INET, SOCK_STREAM, 0);
+    if(Socket == INVALID_SOCKET)
+    {
+        return false;
+    }
     memset(&Addr, 0, sizeof(SOCKADDR_IN));
     Addr.sin_family = AF_INET;
     Addr.sin_port = htons(port);
