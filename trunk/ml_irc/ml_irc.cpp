@@ -59,5 +59,6 @@ MTAEXPORT bool ShutdownModule ( void )
 {
 	CFunctions::sendRaw("QUIT :Module unload.");
 	CFunctions::sendConsole("Shutting down..");
+	CFunctions::CloseSocket();
 	return true;
 }

@@ -111,7 +111,6 @@ int CFunctions::ircDisconnect ( lua_State* luaVM )
 
 		if(lua_type(luaVM, 1) == LUA_TSTRING)
 		{
-			string newQuitReason = 
 			quitMessage = lua_tostring(luaVM, 1);
 		}
 		else
@@ -334,11 +333,14 @@ bool CFunctions::connectToIRC(string server, int port)
         return false;
     }
 #endif
-    Socket = socket(PF_INET, SOCK_STREAM, 0);
-    if(Socket == INVALID_SOCKET)
-    {
-        return false;
-    }
+	if(Socket == NULL)
+	{
+		Socket = socket(PF_INET, SOCK_STREAM, 0);
+		if(Socket == INVALID_SOCKET)
+		{
+			return false;
+		}
+	}
     memset(&Addr, 0, sizeof(SOCKADDR_IN));
     Addr.sin_family = AF_INET;
     Addr.sin_port = htons(port);
