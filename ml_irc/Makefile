@@ -11,8 +11,7 @@ CPP = gcc
 # Compiler flags
 # NOTE: add -g for debug, remove for release!
 CPPFLAGS = -g -MD -Wall -I./
-# LDFLAGS = -fPIC -shared -Wl,-soname,$(PROG).1,-R -L libs/
-LDFLAGS = -fPIC -shared -Wl,-export-dynamic,-soname,$(PROG).1,-R -L libs/
+LDFLAGS = -fPIC -shared -Wl,-export-dynamic,-soname,$(PROG).1,-R -L libs/lua/
 LIBS = -lpthread -lstdc++ -llua
 
 #### End of system configuration section ####
