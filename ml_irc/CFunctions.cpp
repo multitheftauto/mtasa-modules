@@ -282,7 +282,7 @@ int CFunctions::ircSetChannelMode ( lua_State* luaVM )
     return 1;
 }
 
-// bool ircRaw(string data)
+// bool ircIsConnected()
 int CFunctions::ircIsConnected ( lua_State* luaVM )
 {
     if(luaVM)
