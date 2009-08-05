@@ -56,6 +56,7 @@ bool showDebugText = false;
 string botname;
 string server;
 lua_State* gLuaVM;
+HANDLE thread;
 
 /*
 	------
@@ -74,17 +75,16 @@ int CFunctions::ircConnect ( lua_State* luaVM )
 			string luanickname = lua_tostring(luaVM, 3);
 
 			server = luairc;
-
-			if (!connectToIRC(luairc, luaport))
+			if (!connectToIRC(server, luaport))
 			{
-				sendConsole("Cannot connect!");
 				lua_pushboolean(luaVM, false);
 				return 1;
 			}
 			
 			gLuaVM = luaVM;
 #ifdef WIN32
-			_beginthread(messageThread, 0, 0);
+			int x = 200;
+			_beginthread(messageThread, NULL, &x);
 #else
 			pthread_t t;
 			pthread_create(&t, NULL, &messageThread, NULL);
@@ -127,7 +127,7 @@ int CFunctions::ircDisconnect ( lua_State* luaVM )
     return 1;
 }
 
-// bool ircJoin(string channel)
+// bool ircJoin(string channel [, string password])
 int CFunctions::ircJoin ( lua_State* luaVM )
 {
     if(luaVM)
@@ -388,11 +388,12 @@ void CFunctions::CloseSocket()
 }
 
 #ifdef WIN32
-void CFunctions::messageThread(void* ok)
+void CFunctions::messageThread(void* x)
 #else
-void *CFunctions::messageThread(void* ok)
+void *CFunctions::messageThread(void* x)
 #endif
 {
+	int y = *(int*)(x); // y has 100 now
 	fd_set fdSetRead;
 	TIMEVAL timeout;
 

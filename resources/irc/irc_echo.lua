@@ -4,9 +4,9 @@
 	Author:    Sebas Lamers <baslamers@home.nl>
 ]]--
 
-local root = getRootElement()
+local root =  root
 local irc = {}
-irc["server"] = "irc.gtanet.com"
+irc["server"] = "irc.mtasa.com"
 irc["port"] = 6667
 irc["nickname"] = "MTABot"
 irc["channel"] = "#mta.modules"
@@ -16,13 +16,14 @@ addEventHandler("onResourceStart", root,
 	function(res)
 		if res == getThisResource() then
 			ircDisconnect()
-			if ircConnect(irc["server"], tonumber(irc["port"]), irc["nickname"]) and ircJoin(irc["channel"]) then
+			if ircConnect(irc["server"], tonumber(irc["port"]), irc["nickname"]) then
 				outputServerLog("Connected to irc!")
 				ircSetMode("+B")
 				ircSay("NickServ", "identify "..tostring(irc["password"]))
+				ircJoin(irc["channel"])
 --				ircSay(irc["channel"], "Hello, I started server ["..getServerName().."], max players: "..getMaxPlayers())
 			else
-				outputServerLog("Connected to irc!")
+				outputServerLog("Cannot connect!")
 			end
 --		else
 --			ircSay(irc["channel"], "* "..getResourceName(res).." loaded!")
@@ -40,7 +41,7 @@ addEventHandler("onResourceStart", root,
 	end
 )]]
 
-addEventHandler("onGamemodeStart",getRootElement(),
+addEventHandler("onGamemodeStart", root,
 	function(res)
 		local resName = getResourceInfo(res, "name") or getResourceName(res)
 
@@ -48,7 +49,7 @@ addEventHandler("onGamemodeStart",getRootElement(),
 	end
 )
 
-addEventHandler("onGamemodeStop",getRootElement(),
+addEventHandler("onGamemodeStop", root,
 	function(res)
 		local resName = getResourceInfo(res, "name") or getResourceName(res)
 		
@@ -56,7 +57,7 @@ addEventHandler("onGamemodeStop",getRootElement(),
 	end
 )
 
-addEventHandler("onGamemodeMapStart",getRootElement(),
+addEventHandler("onGamemodeMapStart", root,
 	function(res)
 		local resName = getResourceInfo(res, "name") or getResourceName(res)
 		
@@ -64,7 +65,7 @@ addEventHandler("onGamemodeMapStart",getRootElement(),
 	end
 )
 
-addEventHandler("onGamemodeMapStop",getRootElement(),
+addEventHandler("onGamemodeMapStop", root,
 	function(res)
 		local resName = getResourceInfo(res, "name") or getResourceName(res)
 		
