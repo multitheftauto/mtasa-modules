@@ -42,7 +42,7 @@ class CFunctions;
 			static bool		connectToIRC        (string server, int Port);
 			static void		CloseSocket         ();
 #ifdef WIN32
-			static void		messageThread       (void *ok);
+			static void		messageThread       (void* x);
 #else
 			static void*		messageThread	     (void *ok);
 #endif
