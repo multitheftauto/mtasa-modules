@@ -32,6 +32,7 @@ class CFunctions;
 			static int		ircShowDebug		(lua_State* luaVM);
 			static int		ircSetMode			(lua_State* luaVM);
 			static int		ircSetChannelMode	(lua_State* luaVM);
+			static int      ircIsConnected		(lua_State* luaVM);
 
 			// Sockets
 #ifdef WIN32
@@ -48,6 +49,7 @@ class CFunctions;
 			static void		onDataReceived      (char* msg);
 			static void		sendRaw             (string rawtext);
 			static int		sendConsole         (char* text);
+			static int		search				(char* string, char* substring);
 
 			static void		AddEvent			( lua_State* luaVM, const char* szEventName );
 	};
