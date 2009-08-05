@@ -56,7 +56,6 @@ bool showDebugText = false;
 string botname;
 string server;
 lua_State* gLuaVM;
-HANDLE thread;
 
 /*
 	------
