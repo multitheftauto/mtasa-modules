@@ -54,6 +54,7 @@ SOCKET Socket;
 SOCKADDR_IN Addr;
 bool showDebugText = false;
 string botname;
+string server;
 lua_State* gLuaVM;
 
 /*
@@ -71,7 +72,8 @@ int CFunctions::ircConnect ( lua_State* luaVM )
 			string luairc = lua_tostring(luaVM, 1);
 			unsigned short luaport = static_cast < unsigned short > ( atoi ( lua_tostring ( luaVM, 2 ) ) );
 			string luanickname = lua_tostring(luaVM, 3);
-			//string luachannel = lua_tostring(luaVM, 4);
+
+			server = luairc;
 
 			if (!connectToIRC(luairc, luaport))
 			{
@@ -90,9 +92,8 @@ int CFunctions::ircConnect ( lua_State* luaVM )
 #endif
 
 			botname = luanickname;
-			sendRaw("USER MTABot Bot '' :IRCBot by Sebas\r\n");
+			sendRaw("USER MTABot Bot localhost :IRCBot by Sebas\r\n");
 			sendRaw("NICK " + luanickname + "\r\n");
-			//sendRaw("JOIN " + luachannel);
 
 			lua_pushboolean(luaVM, true);
 			return 1;
@@ -194,7 +195,6 @@ int CFunctions::ircShowDebug ( lua_State* luaVM )
 		if(lua_type(luaVM, 1) == LUA_TBOOLEAN)
 		{
 			showDebugText = ((lua_toboolean(luaVM, 1)) ? true : false);
-			//showDebugText = lua_toboolean(luaVM, 1);
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
@@ -276,6 +276,28 @@ int CFunctions::ircSetChannelMode ( lua_State* luaVM )
 
 			lua_pushboolean(luaVM, true);
 			return 1;
+		}
+	}
+    lua_pushboolean(luaVM, false);
+    return 1;
+}
+
+// bool ircRaw(string data)
+int CFunctions::ircIsConnected ( lua_State* luaVM )
+{
+    if(luaVM)
+    {
+		sendRaw("PING " + server);
+
+		char buf[1024];
+        int i = recv(Socket, buf, 1024, 0);
+        if(i > 0)
+        {
+			if(search(buf, "PONG") != -1)
+			{
+				lua_pushboolean(luaVM, true);
+				return 1;
+			}
 		}
 	}
     lua_pushboolean(luaVM, false);
@@ -416,6 +438,9 @@ void CFunctions::AddEvent ( lua_State* luaVM, const char* szEventName )
 
 void CFunctions::onDataReceived(char* msg)
 {
+	if (showDebugText)
+		CFunctions::sendConsole(msg);
+
 	// Check for "PING"
 	if(strncmp(msg, "PING", 4) == 0)
 	{
@@ -435,10 +460,37 @@ void CFunctions::onDataReceived(char* msg)
 	args.PushString(msg);
 	args.Call(gLuaVM, "triggerEvent");
 
-	if (showDebugText)
-		CFunctions::sendConsole(msg);
-
 	return;
+}
+
+int CFunctions::search(char *string, char *substring)
+{
+   int i=0, j=0, yes=0, index;
+
+   while(string[i]!='\0')
+   {
+       if(string[i]==substring[j])
+       {
+            index=i;
+
+            for (j=1;substring[j];j++)
+            //match characters until
+            //the end of substring
+            {
+                i++;
+
+                if(string[i]==substring[j])
+					 yes=1;
+				else
+					yes=0;
+					break;
+			}
+			if(yes==1) return index;
+		}
+		i++;
+		j=0;
+     }
+   return -1;
 }
 
 int CFunctions::sendConsole(char* text)
