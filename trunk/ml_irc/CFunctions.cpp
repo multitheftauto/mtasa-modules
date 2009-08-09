@@ -235,6 +235,18 @@ int CFunctions::ircChangeNick ( lua_State* luaVM )
 			botname = newnick;
 			sendRaw("NICK " + newnick);
 
+			char buf[1024];
+			int i = recv(Socket, buf, 1024, 0);
+			if(i > 0)
+			{
+				sendConsole(buf); // Debug
+				/*if(search(buf, "WHAT") != -1)
+				{
+					lua_pushboolean(luaVM, true);
+					return 1;
+				}*/
+			}
+
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
