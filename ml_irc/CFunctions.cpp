@@ -439,7 +439,9 @@ void CFunctions::AddEvent ( lua_State* luaVM, const char* szEventName )
 void CFunctions::onDataReceived(char* msg)
 {
 	if (showDebugText)
+	{
 		CFunctions::sendConsole(msg);
+	}
 
 	// Check for "PING"
 	if(strncmp(msg, "PING", 4) == 0)
