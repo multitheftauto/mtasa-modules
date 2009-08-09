@@ -202,7 +202,7 @@ int CFunctions::ircShowDebug ( lua_State* luaVM )
     return 1;
 }
 
-// bool ircPart(string channel, [string partReason])
+// bool ircPart(string channel [, string partReason])
 int CFunctions::ircPart ( lua_State* luaVM )
 {
     if(luaVM)
@@ -232,19 +232,28 @@ int CFunctions::ircChangeNick ( lua_State* luaVM )
 		if(lua_type(luaVM, 1) == LUA_TSTRING)
 		{
 			string newnick = lua_tostring(luaVM, 1);
-			botname = newnick;
 			sendRaw("NICK " + newnick);
 
 			char buf[1024];
 			int i = recv(Socket, buf, 1024, 0);
 			if(i > 0)
 			{
-				sendConsole(buf); // Debug
-				/*if(search(buf, "WHAT") != -1)
+				if(search(buf, " :Nickname already in use.") != -1)
 				{
+					lua_pushboolean(luaVM, false);
+					return 1;
+				}else
+				if(search(buf, " :Erronous Nickname: Illegal") != -1)
+				{
+					lua_pushboolean(luaVM, false);
+					return 1;
+				}else
+				if(search(buf, " NICK :") != -1)
+				{
+					botname = newnick;
 					lua_pushboolean(luaVM, true);
 					return 1;
-				}*/
+				}
 			}
 
 			lua_pushboolean(luaVM, true);
@@ -285,8 +294,19 @@ int CFunctions::ircSetChannelMode ( lua_State* luaVM )
 			string newmode = lua_tostring(luaVM, 2);
 			sendRaw("MODE " + channel + " " + newmode);
 
-			lua_pushboolean(luaVM, true);
-			return 1;
+			char buf[1024];
+			int i = recv(Socket, buf, 1024, 0);
+			if(i > 0)
+			{
+				printf(buf);
+				if(search(buf, " :You're not channel owner") != -1)
+				{
+					lua_pushboolean(luaVM, false);
+					return 1;
+				}
+				lua_pushboolean(luaVM, true);
+				return 1;
+			}
 		}
 	}
     lua_pushboolean(luaVM, false);
