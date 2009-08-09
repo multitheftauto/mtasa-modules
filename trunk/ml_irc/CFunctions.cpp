@@ -41,6 +41,8 @@ typedef timeval TIMEVAL;
 #define Sleep sleep
 #define closesocket close
 #define sprintf_s sprintf
+
+pthread_t t;
 #endif
 
 #include <string.h>
@@ -85,9 +87,9 @@ int CFunctions::ircConnect ( lua_State* luaVM )
 			int x = 200;
 			_beginthread(messageThread, NULL, &x);
 #else
-			pthread_t t;
-			pthread_create(&t, NULL, &messageThread, NULL);
-			pthread_join(t, NULL);
+			//pthread_create(&t, NULL, &messageThread, NULL);
+			pthread_create(&t, 0, messageThread, this);
+			//pthread_join(t, NULL);
 #endif
 
 			botname = luanickname;
