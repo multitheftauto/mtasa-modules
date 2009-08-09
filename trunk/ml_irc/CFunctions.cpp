@@ -298,7 +298,6 @@ int CFunctions::ircSetChannelMode ( lua_State* luaVM )
 			int i = recv(Socket, buf, 1024, 0);
 			if(i > 0)
 			{
-				printf(buf);
 				if(search(buf, " :You're not channel owner") != -1)
 				{
 					lua_pushboolean(luaVM, false);
