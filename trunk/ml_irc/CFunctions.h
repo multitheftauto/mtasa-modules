@@ -44,7 +44,7 @@ class CFunctions;
 #ifdef WIN32
 			static void		messageThread       (void* x);
 #else
-			static void*		messageThread	     (void *ok);
+			static void*	messageThread	    (void* x);
 #endif
 			static void		onDataReceived      (char* msg);
 			static void		sendRaw             (string rawtext);
