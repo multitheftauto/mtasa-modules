@@ -90,7 +90,6 @@ int CFunctions::ircConnect ( lua_State* luaVM )
 			pthread_create(&t, 0, messageThread, NULL);
 			//pthread_join(t, NULL);
 #endif
-
 			botname = luanickname;
 			sendRaw("USER MTABot Bot localhost :IRCBot by Sebas\r\n");
 			sendRaw("NICK " + luanickname + "\r\n");
@@ -100,7 +99,7 @@ int CFunctions::ircConnect ( lua_State* luaVM )
 		}
 	}
     lua_pushboolean(luaVM, false);
-    return 1; // pass 1 argument to lua
+    return 1;
 }
 
 // bool ircDisconnect([string quitMessage])
