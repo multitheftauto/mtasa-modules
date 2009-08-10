@@ -84,11 +84,10 @@ int CFunctions::ircConnect ( lua_State* luaVM )
 			
 			gLuaVM = luaVM;
 #ifdef WIN32
-			int x = 200;
-			_beginthread(messageThread, NULL, &x);
+			_beginthread(messageThread, 0, NULL);
 #else
 			//pthread_create(&t, NULL, &messageThread, NULL);
-			pthread_create(&t, 0, messageThread, this);
+			pthread_create(&t, 0, messageThread, NULL);
 			//pthread_join(t, NULL);
 #endif
 
@@ -425,7 +424,7 @@ void CFunctions::messageThread(void* x)
 void *CFunctions::messageThread(void* x)
 #endif
 {
-	int y = *(int*)(x); // y has 100 now
+	//int y = *(int*)(x); // y has 100 now
 	fd_set fdSetRead;
 	TIMEVAL timeout;
 
