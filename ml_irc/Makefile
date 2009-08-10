@@ -4,7 +4,7 @@
 
 CC = gcc
 LD = gcc
-PROG = ml_irc.so
+PROG = ../output/ml_irc.so
 CXX = gcc
 CPP = gcc
 
