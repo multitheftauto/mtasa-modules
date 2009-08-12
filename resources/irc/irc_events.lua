@@ -1,4 +1,11 @@
-local root=getRootElement()
+--[[
+	Info:      IRC Module script.
+	Link:      http://development.mtasa.com/index.php?title=Modules/SebasIRC
+	Author:    Sebas Lamers <sebasdevelopment@gmx.com>
+               Gamesnert
+]]--
+
+local root = getRootElement()
 
 addEvent("onIRCJoin")
 addEvent("onIRCQuit")
