@@ -1,10 +1,10 @@
 --[[
-	Info:      IRC Module basic script.
+	Info:      IRC Module script.
 	Link:      http://development.mtasa.com/index.php?title=Modules/SebasIRC
-	Author:    Sebas Lamers <baslamers@home.nl>
+	Author:    Sebas Lamers <sebasdevelopment@gmx.com>
 ]]--
 
-local root =  root
+local root = getRootElement()
 local irc = {}
 irc["server"] = "irc.mtasa.com"
 irc["port"] = 6667
@@ -21,25 +21,12 @@ addEventHandler("onResourceStart", root,
 				ircSetMode("+B")
 				ircSay("NickServ", "identify "..tostring(irc["password"]))
 				ircJoin(irc["channel"])
---				ircSay(irc["channel"], "Hello, I started server ["..getServerName().."], max players: "..getMaxPlayers())
 			else
 				outputServerLog("Cannot connect!")
 			end
---		else
---			ircSay(irc["channel"], "* "..getResourceName(res).." loaded!")
 		end
 	end
 )
-
---[[addEventHandler("onResourceStop", root,
-	function(res)
-		if res == getThisResource() then
-			ircDisconnect()
-		else
-			ircSay(irc["channel"], "* "..getResourceName(res).." was stopped!")
-		end
-	end
-)]]
 
 addEventHandler("onGamemodeStart", root,
 	function(res)

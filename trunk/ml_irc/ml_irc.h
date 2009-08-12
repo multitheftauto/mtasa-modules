@@ -5,13 +5,13 @@
 *  Module:       ml_irc
 *  Url:          http://development.mtasa.com/index.php?title=Modules/SebasIRC
 *  Project page: http://multitheftauto-modules.googlecode.com/
-*  Developers:   Sebas Lamers <baslamers@home.nl>
+*  Developers:   Sebas Lamers <sebasdevelopment@gmx.com>
 *
 *********************************************************/
 
 /** MODULE SPECIFIC INFORMATION **/
 #define MODULE_NAME			"ml_irc"
-#define	MODULE_AUTHOR		"Sebas Lamers <baslamers@home.nl>"
+#define	MODULE_AUTHOR		"Sebas Lamers <sebasdevelopment@gmx.com>"
 #define MODULE_VERSION		1.0
 
 #include "Common.h"
