@@ -33,6 +33,7 @@ class CFunctions;
 			static int		ircSetMode			(lua_State* luaVM);
 			static int		ircSetChannelMode	(lua_State* luaVM);
 			static int      ircIsConnected		(lua_State* luaVM);
+			static int		ircUseCustomEvents	(lua_State* luaVM);
 
 			// Sockets
 #ifdef WIN32
