@@ -43,15 +43,9 @@ MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
 		pModuleManager->RegisterFunction ( luaVM, "ircSetMode", CFunctions::ircSetMode );
 		pModuleManager->RegisterFunction ( luaVM, "ircSetChannelMode", CFunctions::ircSetChannelMode );
 		pModuleManager->RegisterFunction ( luaVM, "ircIsConnected", CFunctions::ircIsConnected );
-		pModuleManager->RegisterFunction ( luaVM, "ircUseCustomEvents", CFunctions::ircUseCustomEvents );
 
 		// Events
 		CFunctions::AddEvent( luaVM, "onIRCRaw" );
-		CFunctions::AddEvent( luaVM, "onIRCJoin" );
-		CFunctions::AddEvent( luaVM, "onIRCPart" );
-		CFunctions::AddEvent( luaVM, "onIRCQuit" );
-		CFunctions::AddEvent( luaVM, "onIRCAction" );
-		CFunctions::AddEvent( luaVM, "onIRCPing" );
 	}
 }
 

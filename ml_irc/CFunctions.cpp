@@ -71,6 +71,8 @@ int CFunctions::ircConnect(lua_State* luaVM)
     {
         if (lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TNUMBER && lua_type(luaVM, 3) == LUA_TSTRING)
         {
+			try
+			{
 			string luairc = lua_tostring(luaVM, 1);
 			unsigned short luaport = static_cast < unsigned short > ( atoi ( lua_tostring ( luaVM, 2 ) ) );
 			string luanickname = lua_tostring(luaVM, 3);
@@ -93,7 +95,11 @@ int CFunctions::ircConnect(lua_State* luaVM)
 			botname = luanickname;
 			sendRaw("USER MTABot Bot localhost :IRCBot by Sebas\r\n");
 			sendRaw("NICK " + luanickname + "\r\n");
-
+			}
+			catch( char * str )
+			{
+				sendConsole(str);
+			}
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
@@ -334,12 +340,6 @@ int CFunctions::ircIsConnected(lua_State* luaVM)
     return 1;
 }
 
-int CFunctions::ircUseCustomEvents(lua_State* luaVM)
-{
-    lua_pushboolean(luaVM, true);
-    return 1;
-}
-
 /*
 	-----------------------------------------------------------
 	Other funcs
@@ -486,14 +486,7 @@ void CFunctions::onDataReceived(char* msg)
 		// Send "PONG" back
 		msg[1] = 'O';
 		sendRaw("PONG :REPLY");
-		
-		CLuaArguments args;
-		args.PushString("onIRCPing");
-		lua_getglobal(gLuaVM, "root");
-		CLuaArgument RootElement(gLuaVM, -1);
-		args.PushUserData(RootElement.GetLightUserData());
-		args.Call(gLuaVM, "triggerEvent");
-		
+
 		if (showDebugText)
 		{
 			sendConsole("Ping received, ponged back.");
