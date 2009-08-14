@@ -6,7 +6,7 @@
 
 local root = getRootElement()
 local irc = {}
-irc["server"] = "irc.mtasa.com"
+irc["server"] = "irc.gtanet.com"
 irc["port"] = 6667
 irc["nickname"] = "MTABot"
 irc["channel"] = "#mta.modules"
