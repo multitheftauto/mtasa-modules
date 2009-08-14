@@ -65,7 +65,7 @@ lua_State* gLuaVM;
 */
 
 // bool ircConnect(string host, int port, string nickname)
-int CFunctions::ircConnect ( lua_State* luaVM )
+int CFunctions::ircConnect(lua_State* luaVM)
 {
     if (luaVM)
     {
@@ -103,7 +103,7 @@ int CFunctions::ircConnect ( lua_State* luaVM )
 }
 
 // bool ircDisconnect([string quitMessage])
-int CFunctions::ircDisconnect ( lua_State* luaVM )
+int CFunctions::ircDisconnect(lua_State* luaVM)
 {
     if(luaVM)
     {
@@ -127,7 +127,7 @@ int CFunctions::ircDisconnect ( lua_State* luaVM )
 }
 
 // bool ircJoin(string channel [, string password])
-int CFunctions::ircJoin ( lua_State* luaVM )
+int CFunctions::ircJoin(lua_State* luaVM)
 {
     if(luaVM)
     {
@@ -152,7 +152,7 @@ int CFunctions::ircJoin ( lua_State* luaVM )
 }
 
 // bool ircRaw(string data)
-int CFunctions::ircRaw ( lua_State* luaVM )
+int CFunctions::ircRaw(lua_State* luaVM)
 {
     if(luaVM)
     {
@@ -168,7 +168,7 @@ int CFunctions::ircRaw ( lua_State* luaVM )
 }
 
 // bool ircSay(string target, string message)
-int CFunctions::ircSay ( lua_State* luaVM )
+int CFunctions::ircSay(lua_State* luaVM)
 {
     if(luaVM)
     {
@@ -187,7 +187,7 @@ int CFunctions::ircSay ( lua_State* luaVM )
 }
 
 // bool ircShowDebug(bool show)
-int CFunctions::ircShowDebug ( lua_State* luaVM )
+int CFunctions::ircShowDebug(lua_State* luaVM)
 {
     if(luaVM)
     {
@@ -203,7 +203,7 @@ int CFunctions::ircShowDebug ( lua_State* luaVM )
 }
 
 // bool ircPart(string channel [, string partReason])
-int CFunctions::ircPart ( lua_State* luaVM )
+int CFunctions::ircPart(lua_State* luaVM)
 {
     if(luaVM)
     {
@@ -225,7 +225,7 @@ int CFunctions::ircPart ( lua_State* luaVM )
 }
 
 // bool ircChangeNick(string newnick)
-int CFunctions::ircChangeNick ( lua_State* luaVM )
+int CFunctions::ircChangeNick(lua_State* luaVM)
 {
     if(luaVM)
     {
@@ -265,7 +265,7 @@ int CFunctions::ircChangeNick ( lua_State* luaVM )
 }
 
 // bool ircSetMode(string mode)
-int CFunctions::ircSetMode ( lua_State* luaVM )
+int CFunctions::ircSetMode(lua_State* luaVM)
 {
     if(luaVM)
     {
@@ -284,7 +284,7 @@ int CFunctions::ircSetMode ( lua_State* luaVM )
 
 // bool ircSetChannelMode(string channel, string mode)
 // (also ircSetChannelMode("#bla", "+o Sebas")
-int CFunctions::ircSetChannelMode ( lua_State* luaVM )
+int CFunctions::ircSetChannelMode(lua_State* luaVM)
 {
     if(luaVM)
     {
@@ -313,7 +313,7 @@ int CFunctions::ircSetChannelMode ( lua_State* luaVM )
 }
 
 // bool ircIsConnected()
-int CFunctions::ircIsConnected ( lua_State* luaVM )
+int CFunctions::ircIsConnected(lua_State* luaVM)
 {
     if(luaVM)
     {
@@ -331,6 +331,12 @@ int CFunctions::ircIsConnected ( lua_State* luaVM )
 		}
 	}
     lua_pushboolean(luaVM, false);
+    return 1;
+}
+
+int CFunctions::ircUseCustomEvents(lua_State* luaVM)
+{
+    lua_pushboolean(luaVM, true);
     return 1;
 }
 
@@ -479,9 +485,19 @@ void CFunctions::onDataReceived(char* msg)
 	{
 		// Send "PONG" back
 		msg[1] = 'O';
-		sendRaw(msg);
+		sendRaw("PONG :REPLY");
+		
+		CLuaArguments args;
+		args.PushString("onIRCPing");
+		lua_getglobal(gLuaVM, "root");
+		CLuaArgument RootElement(gLuaVM, -1);
+		args.PushUserData(RootElement.GetLightUserData());
+		args.Call(gLuaVM, "triggerEvent");
+		
 		if (showDebugText)
+		{
 			sendConsole("Ping received, ponged back.");
+		}
 		return;
 	}
 
