@@ -10,17 +10,14 @@
 *********************************************************/
 
 #include "ml_irc.h"
+ILuaModuleManager10 *pModuleManager = NULL;
 
-#ifndef WIN32
-#include <string.h>
-//#define strncpy strcpy
-#endif
-
-MTAEXPORT bool InitModule ( ILuaModuleManager *pManager, char *szModuleName, char *szAuthor, float *fVersion )
+MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, char *szAuthor, float *fVersion )
 {
 	pModuleManager = pManager;
-	strncpy(szModuleName, MODULE_NAME, MAX_INFO_LENGTH);
-	strncpy(szAuthor, MODULE_AUTHOR, MAX_INFO_LENGTH);
+
+	strncpy ( szModuleName, MODULE_NAME, MAX_INFO_LENGTH );
+	strncpy ( szAuthor, MODULE_AUTHOR, MAX_INFO_LENGTH );
 	(*fVersion) = MODULE_VERSION;
 
 	return true;

@@ -1,5 +1,5 @@
 /*
-** $Id: lua.h,v 1.2 2007/08/14 19:23:35 toady Exp $
+** $Id: lua.h,v 1.218.1.5 2008/08/06 13:30:12 roberto Exp $
 ** Lua - An Extensible Extension Language
 ** Lua.org, PUC-Rio, Brazil (http://www.lua.org)
 ** See Copyright Notice at the end of this file
@@ -17,9 +17,9 @@
 
 
 #define LUA_VERSION	"Lua 5.1"
-#define LUA_RELEASE	"Lua 5.1.2"
+#define LUA_RELEASE	"Lua 5.1.4"
 #define LUA_VERSION_NUM	501
-#define LUA_COPYRIGHT	"Copyright (C) 1994-2007 Lua.org, PUC-Rio"
+#define LUA_COPYRIGHT	"Copyright (C) 1994-2008 Lua.org, PUC-Rio"
 #define LUA_AUTHORS 	"R. Ierusalimschy, L. H. de Figueiredo & W. Celes"
 
 
@@ -51,6 +51,11 @@ typedef struct lua_State lua_State;
 
 typedef int (*lua_CFunction) (lua_State *L);
 
+/*
+** MTA Specific stuff written by Oli for pre C Function call hooking
+*/
+typedef int (*lua_PreCallHook) ( lua_CFunction f, lua_State* L );
+void lua_registerPreCallHook ( lua_PreCallHook f );
 
 /*
 ** functions that read/write blocks when loading/dumping Lua chunks
@@ -113,6 +118,9 @@ LUA_API lua_State *(lua_newthread) (lua_State *L);
 
 LUA_API lua_CFunction (lua_atpanic) (lua_State *L, lua_CFunction panicf);
 
+// MTA Specific functions.
+// ChrML: Added function to get the main state from a lua state that is a coroutine
+LUA_API lua_State* (lua_getmainstate) (lua_State* L);
 
 /*
 ** basic stack manipulation
@@ -294,6 +302,9 @@ LUA_API void lua_setallocf (lua_State *L, lua_Alloc f, void *ud);
 #define lua_Chunkwriter		lua_Writer
 
 
+/* hack */
+LUA_API void lua_setlevel	(lua_State *from, lua_State *to);
+
 
 /*
 ** {======================================================================
@@ -359,7 +370,7 @@ struct lua_Debug {
 
 
 /******************************************************************************
-* Copyright (C) 1994-2007 Lua.org, PUC-Rio.  All rights reserved.
+* Copyright (C) 1994-2008 Lua.org, PUC-Rio.  All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining
 * a copy of this software and associated documentation files (the
