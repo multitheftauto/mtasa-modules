@@ -534,6 +534,6 @@ int CFunctions::sendConsole(char* text)
 {
 	time_t t = time(0);
 	struct tm* lt = localtime(&t);
-	printf("[%02d:%02d:%02d] Defender: %s\n", lt->tm_hour, lt->tm_min, lt->tm_sec, text);
+	printf("[%02d:%02d:%02d] IRCModule: %s\n", lt->tm_hour, lt->tm_min, lt->tm_sec, text);
 	return 1;
 }
