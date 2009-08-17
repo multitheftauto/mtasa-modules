@@ -29,14 +29,14 @@ DEPS	= $(patsubst %.o,%.d,$(OBJS))
 all : ml_irc
 
 ml_irc : $(OBJS)
-        @echo 'Compiling...'
-        $(CC) $(CPPFLAGS) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
-        @echo '----------------------------------------'
-        @echo 'Compiled as ml_irc.so in ../output'
-        @echo 'Type: cd ../ouput'
-        @echo 'Thank you for using MTA IRC Module'
-        @echo 'Email: sebasdevelopment@gmx.com'
-        @echo '----------------------------------------'
+	@echo 'Compiling...'
+	$(CC) $(CPPFLAGS) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
+	@echo '----------------------------------------'
+	@echo 'Compiled as ml_irc.so in ../output'
+	@echo 'Type: cd ../ouput'
+	@echo 'Thank you for using MTA IRC Module'
+	@echo 'Email: sebasdevelopment@gmx.com'
+	@echo '----------------------------------------'
 
 clean :
 	@rm *.o
