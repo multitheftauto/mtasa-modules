@@ -9,7 +9,6 @@
 *
 *********************************************************/
 
-/** MODULE SPECIFIC INFORMATION **/
 #define MODULE_NAME			"ml_irc"
 #define	MODULE_AUTHOR		"Sebas Lamers <sebasdevelopment@gmx.com>"
 #define MODULE_VERSION		1.0
@@ -17,5 +16,3 @@
 #include "Common.h"
 #include "CFunctions.h"
 #include "include/ILuaModuleManager.h"
-
-ILuaModuleManager *			pModuleManager = NULL;

@@ -46,8 +46,6 @@ pthread_t t;
 #endif
 
 #include <string.h>
-
-// Namespace
 using namespace std;
 
 // Vars
@@ -71,8 +69,6 @@ int CFunctions::ircConnect(lua_State* luaVM)
     {
         if (lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TNUMBER && lua_type(luaVM, 3) == LUA_TSTRING)
         {
-			try
-			{
 			string luairc = lua_tostring(luaVM, 1);
 			unsigned short luaport = static_cast < unsigned short > ( atoi ( lua_tostring ( luaVM, 2 ) ) );
 			string luanickname = lua_tostring(luaVM, 3);
@@ -86,6 +82,9 @@ int CFunctions::ircConnect(lua_State* luaVM)
 			
 			gLuaVM = luaVM;
 #ifdef WIN32
+			// OK, Reproduced the follow bugs:
+			// Thread sometimes crashes when reconnecting (Windows)
+			// Thread is using 50% from CPU Usage.
 			_beginthread(messageThread, 0, NULL);
 #else
 			//pthread_create(&t, NULL, &messageThread, NULL);
@@ -95,11 +94,7 @@ int CFunctions::ircConnect(lua_State* luaVM)
 			botname = luanickname;
 			sendRaw("USER MTABot Bot localhost :IRCBot by Sebas\r\n");
 			sendRaw("NICK " + luanickname + "\r\n");
-			}
-			catch( char * str )
-			{
-				sendConsole(str);
-			}
+
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
@@ -516,16 +511,16 @@ int CFunctions::search(char *string, char *substring)
             index=i;
 
             for (j=1;substring[j];j++)
-            //match characters until
-            //the end of substring
             {
                 i++;
 
                 if(string[i]==substring[j])
+				{
 					 yes=1;
-				else
+				}else{
 					yes=0;
 					break;
+				}
 			}
 			if(yes==1) return index;
 		}

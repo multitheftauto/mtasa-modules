@@ -47,6 +47,7 @@ CLuaArgument::CLuaArgument ( const char* szString )
     strcpy ( m_szString, szString );
 }
 
+
 CLuaArgument::CLuaArgument ( void* pUserData )
 {
     m_szString = NULL;

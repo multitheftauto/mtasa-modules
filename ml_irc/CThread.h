@@ -9,6 +9,8 @@
 *
 *********************************************************/
 
+/** And remember.. threads on Win32 and POSIX are not similar at all. **/
+
 #ifndef __CTHREAD_H
 #define __CTHREAD_H
 
