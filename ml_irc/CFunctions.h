@@ -17,7 +17,6 @@ class CFunctions;
 #include "include/ILuaModuleManager.h"
 #include <stdio.h>
 #include <string>
-using namespace std;
 
 extern ILuaModuleManager10 *pModuleManager;
 
@@ -40,8 +39,8 @@ class CFunctions
 #ifdef WIN32
 		static int		startWinSocket      ();
 #endif
-		static long		GetAddr             (string hostname);
-		static bool		connectToIRC        (string server, int Port);
+		static long		GetAddr             (std::string hostname);
+		static bool		connectToIRC        (std::string server, int Port);
 		static void		CloseSocket         ();
 #ifdef WIN32
 		static void		messageThread       (void* x);
@@ -49,7 +48,7 @@ class CFunctions
 		static void*	messageThread	    (void* x);
 #endif
 		static void		onDataReceived      (char* msg);
-		static void		sendRaw             (string rawtext);
+		static void		sendRaw             (std::string rawtext);
 		static int		sendConsole         (char* text);
 		static int		search				(char* string, char* substring);
 
