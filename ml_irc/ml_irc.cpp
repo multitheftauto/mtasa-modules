@@ -10,6 +10,7 @@
 *********************************************************/
 
 #include "ml_irc.h"
+#include "string.h"
 ILuaModuleManager10 *pModuleManager = NULL;
 
 MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, char *szAuthor, float *fVersion )
@@ -35,6 +36,7 @@ MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
 		pModuleManager->RegisterFunction ( luaVM, "ircRaw", CFunctions::ircRaw );
 		pModuleManager->RegisterFunction ( luaVM, "ircPart", CFunctions::ircPart );
 		pModuleManager->RegisterFunction ( luaVM, "ircSay", CFunctions::ircSay );
+		pModuleManager->RegisterFunction ( luaVM, "ircNotice", CFunctions::ircNotice );
 		pModuleManager->RegisterFunction ( luaVM, "ircChangeNick", CFunctions::ircChangeNick );
 		pModuleManager->RegisterFunction ( luaVM, "ircShowDebug", CFunctions::ircShowDebug );
 		pModuleManager->RegisterFunction ( luaVM, "ircSetMode", CFunctions::ircSetMode );

@@ -28,6 +28,7 @@ class CFunctions
 		static int		ircJoin				(lua_State* luaVM);
 		static int		ircRaw				(lua_State* luaVM);
 		static int		ircSay				(lua_State* luaVM);
+		static int		ircNotice			(lua_State* luaVM);
 		static int		ircPart				(lua_State* luaVM);
 		static int		ircChangeNick		(lua_State* luaVM);
 		static int		ircShowDebug		(lua_State* luaVM);
