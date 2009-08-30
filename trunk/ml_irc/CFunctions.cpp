@@ -187,6 +187,25 @@ int CFunctions::ircSay(lua_State* luaVM)
     return 1;
 }
 
+// bool ircNotice(string target, string message)
+int CFunctions::ircNotice(lua_State* luaVM)
+{
+    if(luaVM)
+    {
+		if(lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TSTRING)
+		{
+			string luatarget = lua_tostring ( luaVM, 1 );
+			string luatext = lua_tostring ( luaVM, 2 );
+
+			sendRaw("NOTICE " + luatarget + " :" + luatext);
+			lua_pushboolean(luaVM, true);
+			return 1;
+		}
+	}
+    lua_pushboolean(luaVM, false);
+    return 1;
+}
+
 // bool ircShowDebug(bool show)
 int CFunctions::ircShowDebug(lua_State* luaVM)
 {
