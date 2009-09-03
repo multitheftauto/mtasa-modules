@@ -14,42 +14,29 @@
 #include "CFunctions.h"
 #include "extra/CLuaArguments.h"
 #include <time.h>
+#include <string.h>
+#include <stdio.h>
 
 #ifdef WIN32
 #include <process.h>
 #include <winsock.h>
 #else
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <unistd.h>
-
-#include <cstdlib>
-#include <stdio.h>
-
-#include <pthread.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <pthread.h>
+#include <netdb.h>
+#include <cstdlib>
 #include <sys/select.h>
-typedef int SOCKET;
-typedef sockaddr_in SOCKADDR_IN;
-typedef hostent HOSTENT;
-typedef sockaddr SOCKADDR;
-typedef timeval TIMEVAL;
-#define SOCKET_ERROR -1
-#define INVALID_SOCKET -1
-#define Sleep sleep
-#define closesocket close
-#define sprintf_s sprintf
 
 pthread_t t;
 #endif
 
-#include <string.h>
 using namespace std;
 
 // Vars
-long SocketState;
 SOCKET Socket;
 SOCKADDR_IN Addr;
 bool showDebugText = false;
@@ -362,7 +349,7 @@ int CFunctions::ircIsConnected(lua_State* luaVM)
 void CFunctions::sendRaw(string text)
 {
 	string SendMsg = text + "\r\n";
-	SocketState = send(Socket, SendMsg.c_str(), SendMsg.length(), 0);
+	send(Socket, SendMsg.c_str(), SendMsg.length(), 0);
 	return;
 }
 
@@ -399,27 +386,24 @@ long CFunctions::GetAddr(string hostname)
 bool CFunctions::connectToIRC(string server, int port)
 {
 #ifdef WIN32
-    SocketState = startWinSocket();
-    if(SocketState != 0)
+    if(startWinSocket() != 0)
     {
         return false;
     }
 #endif
     Socket = socket(PF_INET, SOCK_STREAM, 0);
-    if(Socket == INVALID_SOCKET)
+    if(Socket == -1)
     {
         return false;
     }
     memset(&Addr, 0, sizeof(SOCKADDR_IN));
     Addr.sin_family = AF_INET;
     Addr.sin_port = htons(port);
-    SocketState = GetAddr(server);
-    if(SocketState == SOCKET_ERROR)
+    if(GetAddr(server) == -1)
     {
         return false;
     }
-    SocketState = connect(Socket, (SOCKADDR*)&Addr, sizeof(SOCKADDR));
-    if(SocketState == SOCKET_ERROR)
+    if(connect(Socket, (SOCKADDR*)&Addr, sizeof(SOCKADDR)) == -1)
     {
         return false;
     }
@@ -433,7 +417,9 @@ void CFunctions::CloseSocket()
     //WSACleanup();
 
     if (showDebugText)
-        CFunctions::sendConsole("Socket closed.");
+	{
+		CFunctions::sendConsole("Socket closed.");
+	}
     return;
 }
 
@@ -443,18 +429,15 @@ void CFunctions::messageThread(void* x)
 void *CFunctions::messageThread(void* x)
 #endif
 {
-	//int y = *(int*)(x); // y has 100 now
 	fd_set fdSetRead;
 	TIMEVAL timeout;
+	FD_ZERO(&fdSetRead); 
+    FD_SET(Socket, &fdSetRead); 
+    timeout.tv_sec = 0; 
+    timeout.tv_usec = 0; 
 
-	while(SocketState != SOCKET_ERROR)
+    while(true)
     {
-        FD_ZERO(&fdSetRead); 
-        FD_SET(Socket, &fdSetRead); 
-        timeout.tv_sec = 0; 
-        timeout.tv_usec = 0; 
-        while((SocketState = select(0, &fdSetRead, NULL, NULL, &timeout)) > 0)
-        {
 			char buf[1024];
             int i = recv(Socket, buf, 1024, 0);
             if(i > 0)
@@ -467,6 +450,11 @@ void *CFunctions::messageThread(void* x)
 					{
 						onDataReceived(part);
 						memset(&part, 0, sizeof(part));
+#ifdef WIN32
+Sleep(50);
+#else
+usleep(50);
+#endif
 					}
 					else if (buf[i] != '\r')
 					{
@@ -474,8 +462,6 @@ void *CFunctions::messageThread(void* x)
 					}
 				}
             }
-			Sleep(50); // prevent the bot from eating your CPU
-        }
     }
 }
 
