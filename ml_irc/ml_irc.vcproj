@@ -44,7 +44,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\include"
+				AdditionalIncludeDirectories=".\src\include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="true"
@@ -68,7 +68,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/LTCG"
-				AdditionalDependencies="./lib/lua5.1.lib Ws2_32.lib"
+				AdditionalDependencies="./src/lib/lua5.1.lib Ws2_32.lib"
 				OutputFile="../output/ml_irc.dll"
 				LinkIncremental="1"
 				ModuleDefinitionFile=""
@@ -138,30 +138,30 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\CFunctions.cpp"
+				RelativePath=".\src\CFunctions.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\CThread.cpp"
+				RelativePath=".\src\CThread.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\CThreadData.cpp"
+				RelativePath=".\src\CThreadData.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ml_irc.cpp"
+				RelativePath=".\src\ml_irc.cpp"
 				>
 			</File>
 			<Filter
 				Name="extra"
 				>
 				<File
-					RelativePath=".\extra\CLuaArgument.cpp"
+					RelativePath=".\src\extra\CLuaArgument.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\extra\CLuaArguments.cpp"
+					RelativePath=".\src\extra\CLuaArguments.cpp"
 					>
 				</File>
 			</Filter>
@@ -172,34 +172,34 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\CFunctions.h"
+				RelativePath=".\src\CFunctions.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Common.h"
+				RelativePath=".\src\Common.h"
 				>
 			</File>
 			<File
-				RelativePath=".\CThread.h"
+				RelativePath=".\src\CThread.h"
 				>
 			</File>
 			<File
-				RelativePath=".\CThreadData.h"
+				RelativePath=".\src\CThreadData.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ml_irc.h"
+				RelativePath=".\src\ml_irc.h"
 				>
 			</File>
 			<Filter
 				Name="extra"
 				>
 				<File
-					RelativePath=".\extra\CLuaArgument.h"
+					RelativePath=".\src\extra\CLuaArgument.h"
 					>
 				</File>
 				<File
-					RelativePath=".\extra\CLuaArguments.h"
+					RelativePath=".\src\extra\CLuaArguments.h"
 					>
 				</File>
 			</Filter>
@@ -207,23 +207,23 @@
 				Name="include"
 				>
 				<File
-					RelativePath=".\include\ILuaModuleManager.h"
+					RelativePath=".\src\include\ILuaModuleManager.h"
 					>
 				</File>
 				<File
-					RelativePath=".\include\lauxlib.h"
+					RelativePath=".\src\include\lauxlib.h"
 					>
 				</File>
 				<File
-					RelativePath=".\include\lua.h"
+					RelativePath=".\src\include\lua.h"
 					>
 				</File>
 				<File
-					RelativePath=".\include\luaconf.h"
+					RelativePath=".\src\include\luaconf.h"
 					>
 				</File>
 				<File
-					RelativePath=".\include\lualib.h"
+					RelativePath=".\src\include\lualib.h"
 					>
 				</File>
 			</Filter>
