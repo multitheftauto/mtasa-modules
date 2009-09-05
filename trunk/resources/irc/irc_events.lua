@@ -5,16 +5,15 @@
                Gamesnert
 ]]--
 
-local root = getRootElement()
+local root=getRootElement()
 
 addEvent("onIRCJoin")
+addEvent("onIRCPart")
 addEvent("onIRCQuit")
 addEvent("onIRCMessage")
 addEvent("onIRCAction")
 
 function handleRawIRCData(msg)
-	outputDebugString(msg)
-	
 	local msgTable=split(msg,32)
 	
 	local userAdress=gettok(msgTable[1],1,33)
@@ -48,6 +47,10 @@ function handleRawIRCData(msg)
 		local channel=msgTable[3]
 		      channel=string.sub(channel,2,#channel)
 		triggerEvent("onIRCJoin",root,user,channel)
+	elseif action=="PART" then
+		local channel=msgTable[3]
+		      channel=string.sub(channel,2,#channel)
+		triggerEvent("onIRCPart",root,user,channel)
 	end
 end
-addEventHandler("onIRCRaw",root,handleRawIRCData)
+addEventHandler("onIRCRaw", root, handleRawIRCData)

@@ -1,17 +1,91 @@
 --[[
-	Info:      IRC Module script.
+	Info:      IRC Module basic script.
 	Link:      http://development.mtasa.com/index.php?title=Modules/SebasIRC
 	Author:    Sebas Lamers <sebasdevelopment@gmx.com>
 ]]--
 
 local root = getRootElement()
 local irc = {}
-irc["server"] = "irc.gtanet.com"
-irc["port"] = 6667
-irc["nickname"] = "MTABot"
-irc["channel"] = "#mta.modules"
-irc["password"] = ""
 
+-- Vars (Edit these).............................
+irc["server"] = "irc.mtasa.com"	-- IRC Adress
+irc["port"] = 6667	-- IRC Port
+irc["nickname"] = "MTABot"	-- Bot nickname
+irc["channel"] = "#mta.test"	-- Default IRC log channel
+irc["password"] = ""	-- NickServ password, or let it blanco!
+irc["consolelog"] = true	-- True for logging things in server console or false for not
+
+-- Don't edit here (But you can).................
+
+--[[
+	Add events
+]]--
+addEvent("onIRCJoin")
+addEvent("onIRCPart")
+addEvent("onIRCQuit")
+addEvent("onIRCMessage")
+addEvent("onIRCAction")
+
+--[[
+	IRC Events
+]]--
+addEventHandler("onIRCJoin", root,
+	function(user, channel)
+		if user == irc["nickname"] then return end
+		local logmessage = "[IRC] * "..tostring(user).." has joined "..tostring(channel)
+		
+		outputChatBox(logmessage)
+		
+		if irc["consolelog"] then
+			outputServerLog(logmessage)
+		end
+	end
+)
+
+addEventHandler("onIRCPart", root,
+	function(user, channel)
+		if user == irc["nickname"] then return end
+		local logmessage = "[IRC] * "..tostring(user).." has left "..tostring(channel)
+		
+		outputChatBox(logmessage)
+		
+		if irc["consolelog"] then
+			outputServerLog(logmessage)
+		end
+	end
+)
+
+addEventHandler("onIRCAction", root,
+	function(channel, user, action)
+		local logmessage = "[IRC] * "..tostring(user).." "..tostring(action)
+		
+		outputChatBox(logmessage)
+		
+		if irc["consolelog"] then
+			outputServerLog(logmessage)
+		end
+	end
+)
+
+addEventHandler("onIRCMessage", root,
+    function(channel, user, message)
+        if string.find(message, "!boo") then
+            ircSay(irc["channel"], "7Boo!")
+        end
+		
+		if string.find(message, "!say") then
+			outputChatBox("[IRC] "..tostring(channel).." <"..tostring(user).."> "..tostring(string.sub(message, 5)))
+		end
+		
+		if irc["consolelog"] then
+			outputServerLog("[IRC] "..tostring(channel).." <"..tostring(user).."> "..tostring(message))
+		end
+    end
+)
+
+--[[
+	Resource events
+]]--
 addEventHandler("onResourceStart", root,
 	function(res)
 		if res == getThisResource() then
@@ -28,7 +102,7 @@ addEventHandler("onResourceStart", root,
 	end
 )
 
-addEventHandler("onGamemodeStart", root,
+addEventHandler("onGamemodeStart",getRootElement(),
 	function(res)
 		local resName = getResourceInfo(res, "name") or getResourceName(res)
 
@@ -36,7 +110,7 @@ addEventHandler("onGamemodeStart", root,
 	end
 )
 
-addEventHandler("onGamemodeStop", root,
+addEventHandler("onGamemodeStop",getRootElement(),
 	function(res)
 		local resName = getResourceInfo(res, "name") or getResourceName(res)
 		
@@ -44,7 +118,7 @@ addEventHandler("onGamemodeStop", root,
 	end
 )
 
-addEventHandler("onGamemodeMapStart", root,
+addEventHandler("onGamemodeMapStart",getRootElement(),
 	function(res)
 		local resName = getResourceInfo(res, "name") or getResourceName(res)
 		
@@ -52,11 +126,11 @@ addEventHandler("onGamemodeMapStart", root,
 	end
 )
 
-addEventHandler("onGamemodeMapStop", root,
+addEventHandler("onGamemodeMapStop",getRootElement(),
 	function(res)
 		local resName = getResourceInfo(res, "name") or getResourceName(res)
 		
-		ircSay(irc["channel"], "* Map '"..resName.."' stopped")
+		ircSay(irc["channel"], "* Map '"..resName.."' stopped.")
 	end
 )
 
