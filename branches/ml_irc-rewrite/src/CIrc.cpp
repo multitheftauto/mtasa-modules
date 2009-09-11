@@ -29,13 +29,15 @@
 
 using namespace std;
 
-SOCKET ircSocket;
-SOCKADDR_IN Addr;
+int ircSocket;
+//SOCKET ircSocket;
+//SOCKADDR_IN Addr;
+struct sockaddr_in Addr;
 
 #ifdef WIN32
-	HANDLE WinThread;
+HANDLE WinThread;
 #else
-	phtread_t UnixThread;
+pthread_t UnixThread;
 #endif
 
 // -------------------------------------------------------------
@@ -52,23 +54,27 @@ bool CIrc::connectToIRC(std::string server, int port, std::string nickname)
     }
 #endif
 	// Create socket.
-	ircSocket = socket(PF_INET, SOCK_STREAM, 0);
+    Addr.sin_family = AF_INET;
+    ircSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	//ircSocket = socket(PF_INET, SOCK_STREAM, 0);
     if(ircSocket == -1)
     {
         return false;
     }
 
 	// Grab IP-Adres
-    memset(&Addr, 0, sizeof(SOCKADDR_IN));
-    Addr.sin_family = AF_INET;
+    //memset(&Addr, 0, sizeof(SOCKADDR_IN));
+    //Addr.sin_family = AF_INET;
+	memset(&Addr, 0, sizeof(Addr));
     Addr.sin_port = htons(port);
     if(GetAddr(server) == -1)
     {
         return false;
     }
-
+    if (connect(ircSocket, (struct sockaddr *)&Addr, sizeof(Addr)) != 0)
+    //{
 	// Connect
-    if(connect(ircSocket, (SOCKADDR*)&Addr, sizeof(SOCKADDR)) == -1)
+    //if(connect(ircSocket, (SOCKADDR*)&Addr, sizeof(SOCKADDR)) == -1)
     {
         return false;
     }
@@ -99,7 +105,7 @@ int CIrc::startWinSocket()
 long CIrc::GetAddr(string hostname)
 {
     unsigned long IP;
-    HOSTENT* he;
+    hostent* he;
     IP = inet_addr(hostname.c_str());
 
     if(IP != INADDR_NONE)
@@ -110,7 +116,7 @@ long CIrc::GetAddr(string hostname)
         he = gethostbyname(hostname.c_str());
         if(he == NULL)
 		{
-            return SOCKET_ERROR;
+            return -1;
 		}else{
             memcpy(&(Addr.sin_addr), he->h_addr_list[0], 4);
 		}
@@ -128,7 +134,8 @@ int CIrc::CloseSocket()
 	WinThread = NULL;
 	ircSocket = NULL;
 #else
-	// TODO
+	// pthread_exit();
+	//UnixThread = NULL;
 #endif
     return 1;
 }
