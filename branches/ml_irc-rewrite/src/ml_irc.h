@@ -12,9 +12,9 @@
 #include "CFunctions.h"
 #include "include/ILuaModuleManager.h"
 
-#define MODULE_NAME			"ml_irc"
+#define MODULE_NAME			"IRC connection module"
 #define	MODULE_AUTHOR		"Sebas <sebasdevelopment@gmx.com>"
-#define MODULE_VERSION		1.0
+#define MODULE_VERSION		1.1
 
 extern "C"
 {

@@ -29,15 +29,14 @@
 
 using namespace std;
 
-int ircSocket;
-//SOCKET ircSocket;
-//SOCKADDR_IN Addr;
-struct sockaddr_in Addr;
-
 #ifdef WIN32
+SOCKET ircSocket;
+SOCKADDR_IN Addr;
 HANDLE WinThread;
 #else
 pthread_t UnixThread;
+int ircSocket;
+struct sockaddr_in Addr;
 #endif
 
 // -------------------------------------------------------------
@@ -47,43 +46,57 @@ pthread_t UnixThread;
 bool CIrc::connectToIRC(std::string server, int port, std::string nickname)
 {
 #ifdef WIN32
-	// Startup (Needed for Win32)
-    if(startWinSocket() != 0)
+// WINDOWS:
+    if(startWinSocket() != 0) // Startup (Needed for Win32)
     {
         return false;
     }
-#endif
-	// Create socket.
-    Addr.sin_family = AF_INET;
-    ircSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	//ircSocket = socket(PF_INET, SOCK_STREAM, 0);
+
+    ircSocket = socket(PF_INET, SOCK_STREAM, 0); // Create Socket
     if(ircSocket == -1)
     {
         return false;
     }
+	
+    memset(&Addr, 0, sizeof(SOCKADDR_IN));
+    Addr.sin_family = AF_INET;
+    Addr.sin_port = htons(port);
+    if(GetAddr(server) == -1) // Grab IP-Adres
+    {
+        return false;
+    }
 
-	// Grab IP-Adres
-    //memset(&Addr, 0, sizeof(SOCKADDR_IN));
-    //Addr.sin_family = AF_INET;
+	if (connect(ircSocket, (struct sockaddr *)&Addr, sizeof(Addr)) != 0) // Connect
+	{
+		return false;
+	}
+	
+	WinThread = (HANDLE)_beginthread(messageThread, 0, NULL);
+	//WinThread = CreateThread(NULL, 0, messageThread, NULL, 0, NULL);
+
+#else
+
+// LINUX:
+    Addr.sin_family = AF_INET;
+    ircSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if(ircSocket == -1) // Create socket.
+    {
+        return false;
+    }
+
+    Addr.sin_family = AF_INET;
 	memset(&Addr, 0, sizeof(Addr));
     Addr.sin_port = htons(port);
-    if(GetAddr(server) == -1)
+    if(GetAddr(server) == -1) // Grab IP-Adres
     {
         return false;
     }
-    if (connect(ircSocket, (struct sockaddr *)&Addr, sizeof(Addr)) != 0)
-    //{
-	// Connect
-    //if(connect(ircSocket, (SOCKADDR*)&Addr, sizeof(SOCKADDR)) == -1)
+	
+    if(connect(ircSocket, (SOCKADDR*)&Addr, sizeof(SOCKADDR)) == -1) // Connect
     {
         return false;
     }
 
-	// Add threads here..
-#ifdef WIN32
-	//WinThread = (HANDLE)_beginthread(messageThread, 0, NULL);
-	WinThread = CreateThread(NULL, 0, messageThread, NULL, 0, NULL);
-#else
 	pthread_create(&UnixThread, 0, messageThread, NULL);
 #endif
 
@@ -141,7 +154,8 @@ int CIrc::CloseSocket()
 }
 
 #ifdef WIN32
-DWORD WINAPI CIrc::messageThread(void* x)
+// DWORD WINAPI CIrc::messageThread(void* x) // Neede for createThread
+void CIrc::messageThread(void* x)
 #else
 void *CIrc::messageThread(void* x)
 #endif

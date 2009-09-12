@@ -42,7 +42,8 @@ class CIrc
 		static bool		connectToIRC        (std::string server, int port, std::string nickname);
 		static int		CloseSocket         ();
 #ifdef WIN32
-		static DWORD WINAPI		messageThread       (void* x);
+		//static DWORD WINAPI		messageThread       (void* x); // Needed for createThread
+		static void		messageThread		(void* x);
 #else
 		static void*	messageThread	    (void* x);
 #endif
