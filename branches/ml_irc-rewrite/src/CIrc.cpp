@@ -143,7 +143,7 @@ int CIrc::CloseSocket()
 	CloseHandle(WinThread);
 	//shutdown(ircSocket, true);
     //closesocket(ircSocket);
-    WSACleanup();
+    //WSACleanup();
 	WinThread = NULL;
 	ircSocket = NULL;
 #else
