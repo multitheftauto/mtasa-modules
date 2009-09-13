@@ -141,8 +141,8 @@ int CIrc::CloseSocket()
 {
 #ifdef WIN32
 	CloseHandle(WinThread);
-	shutdown(ircSocket, true);
-    closesocket(ircSocket);
+	//shutdown(ircSocket, true);
+    //closesocket(ircSocket);
     WSACleanup();
 	WinThread = NULL;
 	ircSocket = NULL;
