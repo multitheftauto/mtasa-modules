@@ -16,6 +16,7 @@
 #include <process.h>
 #include <winsock.h>
 #else
+#include "string.h"
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -92,7 +93,7 @@ bool CIrc::connectToIRC(std::string server, int port, std::string nickname)
         return false;
     }
 	
-    if(connect(ircSocket, (SOCKADDR*)&Addr, sizeof(SOCKADDR)) == -1) // Connect
+    if(connect(ircSocket, (sockaddr*)&Addr, sizeof(Addr)) == -1) // Connect
     {
         return false;
     }
