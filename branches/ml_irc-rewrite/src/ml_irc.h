@@ -14,7 +14,7 @@
 
 #define MODULE_NAME			"IRC connection module"
 #define	MODULE_AUTHOR		"Sebas <sebasdevelopment@gmx.com>"
-#define MODULE_VERSION		1.1
+#define MODULE_VERSION		1.01f
 
 extern "C"
 {
