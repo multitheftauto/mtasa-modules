@@ -142,9 +142,9 @@ int CIrc::CloseSocket()
 {
 #ifdef WIN32
 	CloseHandle(WinThread);
-	//shutdown(ircSocket, true);
-    //closesocket(ircSocket);
-    //WSACleanup();
+	shutdown(ircSocket, true);
+    closesocket(ircSocket);
+    WSACleanup();
 	WinThread = NULL;
 	ircSocket = NULL;
 #else
@@ -216,7 +216,10 @@ int CIrc::onDataReceived(char* msg)
 		CloseSocket(); // Connection was lost with IRC!
 	}
 
-	CFunctions::triggerRawEvent(msg);
+	if(msg != NULL)
+	{
+		CFunctions::triggerRawEvent(msg);
+	}
 	return 1;
 }
 

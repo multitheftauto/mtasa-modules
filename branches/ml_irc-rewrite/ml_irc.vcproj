@@ -104,6 +104,8 @@
 			/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
@@ -146,6 +148,10 @@
 			</File>
 			<File
 				RelativePath=".\src\CIrc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\common.h"
 				>
 			</File>
 			<File

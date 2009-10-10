@@ -34,6 +34,7 @@ class CFunctions
 		static int		ircSetMode			(lua_State* luaVM);
 		//static int		ircSetChannelMode	(lua_State* luaVM);
 		//static int      ircIsConnected		(lua_State* luaVM);
+		static int		SaveLuaData			(ILuaModuleManager10 *pManager, lua_State* luaVM);
 
 		static int		sendConsole         (char* text);
 		static int		search				(char* string, char* substring);

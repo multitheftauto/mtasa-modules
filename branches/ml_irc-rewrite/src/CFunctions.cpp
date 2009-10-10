@@ -10,9 +10,10 @@
 *
 *********************************************************/
 
+#include "extra/CLuaArguments.h"
+#include "include/ILuaModuleManager.h"
 #include "CFunctions.h"
 #include "CIrc.h"
-#include "extra/CLuaArguments.h"
 #include <time.h>
 #include <string.h>
 #include <stdio.h>
@@ -22,6 +23,9 @@ using namespace std;
 // Vars
 string botname;
 //string server;
+
+// Lua
+//ILuaModuleManager10 *pModuleManager = NULL;
 lua_State* gLuaVM;
 
 /*
@@ -43,18 +47,19 @@ int CFunctions::ircConnect(lua_State* luaVM)
 
 			//server = luairc;
 			botname = luanickname;
+			gLuaVM = luaVM;
 
 			if (!CIrc::connectToIRC(luairc, luaport, luanickname))
 			{
 				lua_pushboolean(luaVM, false);
 				return 1;
 			}
-			gLuaVM = luaVM;
 
 			lua_pushboolean(luaVM, true);
 			return 1;
 		}
 	}
+
     lua_pushboolean(luaVM, false);
     return 1;
 }
@@ -307,6 +312,12 @@ int CFunctions::ircIsConnected(lua_State* luaVM)
 	Other funcs
 */
 
+int CFunctions::SaveLuaData(ILuaModuleManager10 *pManager, lua_State *luaVM)
+{
+	gLuaVM = luaVM;
+	return 1;
+}
+
 int CFunctions::AddEvent(lua_State* luaVM, const char* szEventName)
 {
 	CLuaArguments args;
@@ -360,8 +371,10 @@ int CFunctions::search(char *string, char *substring)
 
 int CFunctions::sendConsole(char* text)
 {
-	time_t t = time(0);
+	/*time_t t = time(0);
 	struct tm* lt = localtime(&t);
-	printf("[%02d:%02d:%02d] IRCModule: %s\n", lt->tm_hour, lt->tm_min, lt->tm_sec, text);
+	printf("[%02d:%02d:%02d] IRCModule: %s\n", lt->tm_hour, lt->tm_min, lt->tm_sec, text);*/
+	pModuleManager->Printf(text);
+
 	return 1;
 }

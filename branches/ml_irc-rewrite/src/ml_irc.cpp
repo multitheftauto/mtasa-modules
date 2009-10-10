@@ -25,11 +25,13 @@ MTAEXPORT bool InitModule(ILuaModuleManager10 *pManager, char *szModuleName, cha
 	return true;
 }
 
-
-MTAEXPORT void RegisterFunctions(lua_State * luaVM)
+MTAEXPORT void RegisterFunctions(lua_State *luaVM)
 {
 	if(pModuleManager && luaVM)
 	{
+		// Save luaVM and pModuleManager in CFunctions.cpp
+		CFunctions::SaveLuaData(pModuleManager, luaVM);
+
 		// Functions
 		pModuleManager->RegisterFunction(luaVM, "ircConnect", CFunctions::ircConnect);
 		pModuleManager->RegisterFunction(luaVM, "ircDisconnect", CFunctions::ircDisconnect);
