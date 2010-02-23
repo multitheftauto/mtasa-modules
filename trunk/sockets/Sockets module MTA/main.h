@@ -1,1 +1,0 @@
-//ILuaModuleManager10 *pModuleManager = NULL;
