@@ -31,6 +31,18 @@ class CIrc;
 #include <sys/select.h>
 #endif
 
+#ifdef WIN32			// Win32 threads
+	#include <windows.h>
+
+	typedef HANDLE				ThreadHandle;
+#else					// POSIX threads
+	#include <stdio.h>
+	#include <pthread.h>
+
+	typedef pthread_t			ThreadHandle;
+#endif
+
+
 // ---------------------------------------------------------------
 class CIrc
 {
@@ -42,14 +54,14 @@ class CIrc
 		static bool		connectToIRC        (std::string server, int port, std::string nickname);
 		static int		CloseSocket         ();
 #ifdef WIN32
-		//static DWORD WINAPI		messageThread       (void* x); // Needed for createThread
-		static void		messageThread		(void* x);
+		static DWORD WINAPI messageThread      ( void* );
 #else
-		static void*	messageThread	    (void* x);
+		static void*		messageThread		( void* );
 #endif
 		static int		onDataReceived      (char* msg);
 		static int		sendRaw				(std::string text);
 		static int		search				(char* string, char* substring);
+		static void Sleepz(int ms);
 
 // ---------------------------------------------------------------
 	//private:

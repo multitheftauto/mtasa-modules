@@ -9,6 +9,8 @@
 *
 *********************************************************/
 
+#pragma warning(disable: 4996) // warning C4996: 'strncpy': This function or variable may be unsafe.
+
 #include "CLuaArgument.h"
 #include <assert.h>
 #include <cstring>

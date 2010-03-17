@@ -13,6 +13,6 @@
 #include "common.h"
 #include "include/ILuaModuleManager.h"
 
-#define MODULE_NAME			"IRC connection module"
-#define	MODULE_AUTHOR		"Sebas <sebasdevelopment@gmx.com>"
-#define MODULE_VERSION		1.01f
+#define MODULE_NAME			"UnrealIRCd v3.2.x module"
+#define	MODULE_AUTHOR		"x86 <sebasdevelopment@gmx.com>"
+#define MODULE_VERSION		1.02f

@@ -11,14 +11,14 @@ CPP = gcc
 # Compiler flags
 # NOTE: add -g for debug, remove for release!
 CPPFLAGS = -g -MD -Wall -I./
-LDFLAGS = -fPIC -shared -Wl,-export-dynamic,-soname,$(PROG).1,-R -L ./src/lib/lua/
-LIBS = -lpthread -lstdc++ -llua
+LDFLAGS = -fPIC -shared -Wl,-soname,$(PROG).1,-R./
+LIBS = -lpthread -lstdc++ -L./src/lua/src/.libs -llua
 
 #### End of system configuration section ####
 
 #### Source and object files
 
-SRC_LOCAL =		$(wildcard ./src/*.cpp)
+SRC_LOCAL =		$(wildcard ./src/*.cpp ./src/extra/*.cpp)
 OBJ_LOCAL =		$(patsubst %.cpp,%.o,$(SRC_LOCAL))
 OBJS	= $(OBJ_LOCAL)
 SRCS	= $(SRC_LOCAL)

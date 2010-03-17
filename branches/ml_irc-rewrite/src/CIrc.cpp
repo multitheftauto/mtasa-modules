@@ -30,12 +30,12 @@
 
 using namespace std;
 
+ThreadHandle m_hThread;
+
 #ifdef WIN32
 SOCKET ircSocket;
 SOCKADDR_IN Addr;
-HANDLE WinThread;
 #else
-pthread_t UnixThread;
 int ircSocket;
 struct sockaddr_in Addr;
 #endif
@@ -72,8 +72,7 @@ bool CIrc::connectToIRC(std::string server, int port, std::string nickname)
 		return false;
 	}
 	
-	WinThread = (HANDLE)_beginthread(messageThread, 0, NULL);
-	//WinThread = CreateThread(NULL, 0, messageThread, NULL, 0, NULL);
+	m_hThread = CreateThread(NULL, 0, &CIrc::messageThread, NULL, 0, NULL);
 
 #else
 
@@ -98,7 +97,11 @@ bool CIrc::connectToIRC(std::string server, int port, std::string nickname)
         return false;
     }
 
-	pthread_create(&UnixThread, 0, messageThread, NULL);
+	if ( pthread_create ( &m_hThread, NULL, CIrc::messageThread, this ) )
+	{
+		// Error
+		return false;
+	}
 #endif
 
 	// Send data to IRC.
@@ -140,6 +143,7 @@ long CIrc::GetAddr(string hostname)
 
 int CIrc::CloseSocket()
 {
+/*
 #ifdef WIN32
 	CloseHandle(WinThread);
 	shutdown(ircSocket, true);
@@ -151,58 +155,58 @@ int CIrc::CloseSocket()
 	// pthread_exit();
 	//UnixThread = NULL;
 #endif
+*/
     return 1;
 }
 
 #ifdef WIN32
-// DWORD WINAPI CIrc::messageThread(void* x) // Neede for createThread
-void CIrc::messageThread(void* x)
+DWORD CIrc::messageThread(void* pThis)
 #else
-void *CIrc::messageThread(void* x)
+void* CIrc::messageThread(void* pThis)
 #endif
 {
     while(true)
     {
-#ifdef WIN32
-if(WinThread != NULL)
-#else
-if(UnixThread != NULL)
-#endif
-{ // Thread exists check
-		char buf[1024];
-        int i = recv(ircSocket, buf, 1024, 0);
-        if(i > 0)
-        {
-			buf[i] = '\0';
-			char part[512];
-			for(i = 0; i < (int)strlen(buf); i++)
+		if(m_hThread != NULL)
+		{
+			char buf[1024];
+			int i = recv(ircSocket, buf, 1024, 0);
+			if(i > 0)
 			{
-				if(buf[i] == '\n')
+				buf[i] = '\0';
+				char part[512];
+				for(i = 0; i < (int)strlen(buf); i++)
 				{
-					onDataReceived(part);
-					memset(&part, 0, sizeof(part));
-#ifdef WIN32
-Sleep(50);
-#else
-usleep(50);
-#endif
-				}else
-				if(buf[i] != '\r')
-				{
-					part[strlen(part)] = buf[i];
+					if(buf[i] == '\n')
+					{
+						onDataReceived(part);
+						memset(&part, 0, sizeof(part));
+
+						// ZzZZzZzz
+						CIrc::Sleepz(50);
+					}else
+					if(buf[i] != '\r')
+					{
+						part[strlen(part)] = buf[i];
+					}
 				}
 			}
-        }
-}else{
-#ifdef WIN32
-Sleep(50);
-#else
-usleep(50);
-#endif	
-}// END Thread exists check
+		}else{
+			// Thread sleep, zZzZzzzZ
+			CIrc::Sleepz(50);
+		}
     }
 }
 
+void CIrc::Sleepz(int ms)
+{
+#ifdef WIN32
+	Sleep(ms);
+#else
+	usleep(ms);
+#endif
+	return;
+}
 
 int CIrc::onDataReceived(char* msg)
 {
