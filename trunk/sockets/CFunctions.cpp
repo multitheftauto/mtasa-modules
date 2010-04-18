@@ -19,7 +19,9 @@
 #include "CFunctions.h"
 #include "extra/CLuaArguments.h"
 
-int CFunctions::socketConnect(lua_State *luaVM)
+lua_State* gLuaVM;
+
+int CFunctions::sockOpen(lua_State *luaVM)
 {
 	if (luaVM)
 	{
@@ -36,8 +38,9 @@ int CFunctions::socketConnect(lua_State *luaVM)
 				return 1;
 			}
 
-			lua_pushlightuserdata(luaVM, socket.getUserdata());
-//			lua_pushboolean(luaVM, true);
+			void* userdata = socket.getUserdata();
+			CFunctions::triggerEvent("onSockOpened",userdata,"nil","nil");
+			lua_pushlightuserdata(luaVM,userdata);
 			return 1;
 		}
 	}
@@ -46,9 +49,9 @@ int CFunctions::socketConnect(lua_State *luaVM)
 	return 1;
 }
 
-/*int CFunctions::socketSendData(lua_State *luaVM)
+int CFunctions::sockWrite(lua_State *luaVM)
 {
-	if (luaVM)
+	/*if (luaVM)
 	{
 		if (lua_type(luaVM, 1) == LUA_TLIGHTUSERDATA && lua_type(luaVM, 2) == LUA_TSTRING)
 		{
@@ -76,18 +79,49 @@ int CFunctions::socketConnect(lua_State *luaVM)
 				return 1;
 			}
 		}
-	}
+	}*/ 
 
 	lua_pushboolean(luaVM, false);
 	return 1;
-}*/
+}
 
-void CFunctions::addEvent(lua_State* luaVM, const char* eventName)
+int CFunctions::sockClose(lua_State *luaVM)
 {
-	CLuaArguments args;
-	args.PushString(eventName);
-	args.PushBoolean(false);
-	args.Call(luaVM, "addEvent");
+	lua_pushboolean(luaVM, false);
+	return 1;
+}
+
+int CFunctions::saveLuaData(lua_State *luaVM)
+{
+    gLuaVM = luaVM;
+    return 1;
+}
+
+int CFunctions::addEvent(lua_State* luaVM, const char* szEventName)
+{
+    CLuaArguments args;
+    args.PushString(szEventName);
+    args.PushBoolean(true);
+    args.Call(luaVM, "addEvent");
+    return 1;
+}
+
+int CFunctions::triggerEvent(char* eventName, void* userdata, char* arg1, char* arg2)
+{
+    CLuaArguments args;
+    args.PushString(eventName);
+    lua_getglobal(gLuaVM, "root");
+    CLuaArgument RootElement(gLuaVM, -1);
+    args.PushUserData(RootElement.GetLightUserData());
+	args.PushUserData(userdata);
+	if (arg1 != "nil") {
+		args.PushString(arg1);
+	}
+	if (arg2 != "nil") {
+		args.PushString(arg2);
+	}
+    args.Call(gLuaVM, "triggerEvent");
+    return 1;
 }
 
 void CFunctions::debugPrint(char* text)
