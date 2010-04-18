@@ -32,11 +32,13 @@ extern ILuaModuleManager10 *pModuleManager;
 class CFunctions
 {
 public:
-		static int socketConnect    (lua_State* luaVM);
-		static int socketDisconnect (lua_State* luaVM);
-//		static int socketSendData   (lua_State* luaVM);
+		static int sockOpen			(lua_State* luaVM);
+		static int sockWrite		(lua_State* luaVM);
+		static int sockClose	    (lua_State* luaVM);
 
-		static void addEvent        (lua_State* luaVM, const char* eventName);
+		static int saveLuaData      (lua_State* luaVM);
+		static int addEvent         (lua_State* luaVM, const char* szEventName);
+        static int triggerEvent     (char* eventName, void* userdata, char* arg1, char* arg2);
 
 		static void debugPrint      (char* text);
 };

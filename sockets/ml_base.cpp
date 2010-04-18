@@ -44,15 +44,18 @@ MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
 {
 	if ( pModuleManager && luaVM )
 	{
+		// Save luaVM CFunctions.cpp
+        CFunctions::saveLuaData(luaVM);
+
 		// Functions
-		pModuleManager->RegisterFunction(luaVM, "socketConnect", CFunctions::socketConnect);
-//		pModuleManager->RegisterFunction(luaVM, "socketDisconnect", CFunctions::socketDisconnect);
-//		pModuleManager->RegisterFunction(luaVM, "socketSendData", CFunctions::socketSendData);
+		pModuleManager->RegisterFunction(luaVM, "sockOpen", CFunctions::sockOpen);
+		pModuleManager->RegisterFunction(luaVM, "sockWrite", CFunctions::sockWrite);
+		pModuleManager->RegisterFunction(luaVM, "sockClose", CFunctions::sockClose);
 
 		// Events
-		CFunctions::addEvent(luaVM, "onSocketConnected");
-		CFunctions::addEvent(luaVM, "onSocketDisconnected");
-		CFunctions::addEvent(luaVM, "onSocketDataReceive");
+		CFunctions::addEvent(luaVM, "onSockOpened");
+		CFunctions::addEvent(luaVM, "onSockData");
+		CFunctions::addEvent(luaVM, "onSockClosed");
 	}
 }
 
