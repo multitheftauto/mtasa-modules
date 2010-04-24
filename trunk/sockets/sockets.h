@@ -20,7 +20,6 @@ public:
 	~Socket();
 
 	bool isConnected();
-	bool destroy();
 	bool sendData(const char* data);
 
 	void* getUserdata();
@@ -35,7 +34,5 @@ private:
 
 	bool Socket::VerifyIP(sockaddr_in* sockAddr, string host);
 };
-
-//vector<Socket*> sockets;
 
 #endif

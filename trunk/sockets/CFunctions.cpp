@@ -20,7 +20,7 @@
 #include "extra/CLuaArguments.h"
 
 lua_State* gLuaVM;
-Socket sockets [64];
+vector<Socket*> sockets;
 
 int CFunctions::sockOpen(lua_State *luaVM)
 {
@@ -31,24 +31,17 @@ int CFunctions::sockOpen(lua_State *luaVM)
 			const char* host    = lua_tostring(luaVM, 1);
 			unsigned short port = static_cast<unsigned short>(atoi(lua_tostring(luaVM, 2)));
 
-			Socket socket(luaVM, host, port);
+			Socket* socket = new Socket(luaVM, host, port);
 
-			if (!socket.isConnected())
+			if (!socket->isConnected())
 			{
 				lua_pushboolean(luaVM, false);
 				return 1;
 			}
 
-			void* userdata = socket.getUserdata();
+			void* userdata = socket->getUserdata();
 			
-			for (unsigned int i = 0; i < 64; ++i)
-			{
-				if (!sockets[i].getUserdata())
-				{
-					sockets[i] = socket;
-					break;
-				}
-			}
+			sockets.push_back(socket);
 
 			CFunctions::triggerEvent("onSockOpened",userdata,"nil","nil");
 			lua_pushlightuserdata(luaVM,userdata);
@@ -60,6 +53,22 @@ int CFunctions::sockOpen(lua_State *luaVM)
 	return 1;
 }
 
+int CFunctions::getSocketByUserdata(Socket*& socket, const void* userdata)
+{
+	for (unsigned int i = 0; i < sockets.size(); ++i)
+	{
+		Socket* sock = sockets[i];
+
+		if (sock->getUserdata() == userdata)
+		{
+			socket = sock;
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 int CFunctions::sockWrite(lua_State *luaVM)
 {
 	if (luaVM)
@@ -69,24 +78,13 @@ int CFunctions::sockWrite(lua_State *luaVM)
 			void* userdata   = lua_touserdata(luaVM, 1);
 			const char* data = lua_tostring(luaVM, 2);
 
-			bool socketFound = false;
-			Socket theSocket;
+			Socket* theSocket = NULL;
 
-			for (unsigned int i = 0; i < 64; ++i)
+			getSocketByUserdata(theSocket, userdata);
+
+			if (theSocket != NULL)
 			{
-				Socket socket = sockets[i];
-
-				if (socket.getUserdata() == userdata)
-				{
-					theSocket = socket;
-					socketFound = true;
-					break;
-				}
-			}
-
-			if (socketFound)
-			{
-				lua_pushboolean(luaVM, theSocket.sendData(data));
+				lua_pushboolean(luaVM, theSocket->sendData(data));
 				return 1;
 			}
 		}
@@ -98,38 +96,33 @@ int CFunctions::sockWrite(lua_State *luaVM)
 
 int CFunctions::sockClose(lua_State *luaVM)
 {
-	/*if (luaVM)
+	if (luaVM)
 	{
 		if (lua_type(luaVM, 1) == LUA_TLIGHTUSERDATA)
 		{
-			void* userdata   = lua_touserdata(luaVM, 1);
+			void*   userdata  = lua_touserdata(luaVM, 1);
+			Socket* theSocket = NULL;
+			
+			int index = getSocketByUserdata(theSocket, userdata);
 
-			bool socketFound = false;
-			Socket theSocket;
-
-			for (unsigned int i = 0; i < 64; ++i)
+			if (theSocket != NULL)
 			{
-				Socket socket = sockets[i];
-
-				if (socket.getUserdata() == userdata)
-				{
-					theSocket = socket;
-					socketFound = true;
-					sockets[i] = NULL;
-					break;
-				}
-			}
-
-			if (socketFound)
-			{
-				lua_pushboolean(luaVM, theSocket.destroy());
+				sockets.erase(sockets.begin() + index);
+				delete theSocket;
+				lua_pushboolean(luaVM, true);
 				return 1;
 			}
 		}
-	}*/ 
+	}
 
 	lua_pushboolean(luaVM, false);
 	return 1;
+}
+
+void CFunctions::deleteAllSockets()
+{
+	for (unsigned int i = 0; i < sockets.size(); ++i)
+		delete sockets[i];
 }
 
 int CFunctions::saveLuaData(lua_State *luaVM)

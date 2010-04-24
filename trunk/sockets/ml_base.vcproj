@@ -4,6 +4,7 @@
 	Version="9,00"
 	Name="ml_base"
 	ProjectGUID="{132A627F-058D-46F8-BCBB-63B6C8D2CC1A}"
+	RootNamespace="ml_base"
 	Keyword="MFCDLLProj"
 	TargetFrameworkVersion="131072"
 	>
