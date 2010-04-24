@@ -76,7 +76,6 @@ int CFunctions::sockWrite(lua_State *luaVM)
 		if (lua_type(luaVM, 1) == LUA_TLIGHTUSERDATA && lua_type(luaVM, 2) == LUA_TSTRING)
 		{
 			void* userdata   = lua_touserdata(luaVM, 1);
-			const char* data = lua_tostring(luaVM, 2);
 
 			Socket* theSocket = NULL;
 
@@ -84,7 +83,7 @@ int CFunctions::sockWrite(lua_State *luaVM)
 
 			if (theSocket != NULL)
 			{
-				lua_pushboolean(luaVM, theSocket->sendData(data));
+				lua_pushboolean(luaVM, theSocket->sendData(lua_tostring(luaVM, 2)));
 				return 1;
 			}
 		}

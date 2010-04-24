@@ -3,6 +3,7 @@
 
 //#include "CFunctions.h"
 #include "ml_base.h"
+#include "CThread.h"
 
 #define WIN32_MEAN_AND_LEAN
 
@@ -20,7 +21,7 @@ public:
 	~Socket();
 
 	bool isConnected();
-	bool sendData(const char* data);
+	bool sendData(string data);
 
 	void* getUserdata();
 
@@ -31,6 +32,10 @@ private:
 	void* m_userdata;
 
 	bool m_connected;
+	bool m_connecting;
+
+	CThread*     m_thread;
+	CThreadData* m_threadData;
 
 	bool Socket::VerifyIP(sockaddr_in* sockAddr, string host);
 };

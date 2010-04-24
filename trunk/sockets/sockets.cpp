@@ -2,11 +2,17 @@
 
 Socket::Socket()
 {
-
+	CFunctions::debugPrint("Bummer, I don't want this... :(\n");
 }
 
 Socket::Socket(lua_State *luaVM, string host, unsigned short port)
 {
+//	CFunctions::debugPrint("Creating data...\n");
+//	m_threadData = new CThreadData;
+//	CFunctions::debugPrint("Created data...\n");
+//	m_thread->Start(m_threadData);
+//	CFunctions::debugPrint("Started thread...\n");
+
 	m_connected = false;
 
 	sockaddr_in sockAddr = {0};
@@ -52,6 +58,9 @@ Socket::Socket(lua_State *luaVM, string host, unsigned short port)
 
 Socket::~Socket()
 {
+//	m_thread->Stop();
+//	delete m_threadData;
+
 	if (m_connected)
 		closesocket(m_sock);
 }
@@ -86,11 +95,11 @@ bool Socket::VerifyIP(sockaddr_in* sockAddr, string host)
 	}
 }
 
-bool Socket::sendData(const char* data)
+bool Socket::sendData(string data)
 {
 	CFunctions::debugPrint("Sending data... ");
 
-	if (send(m_sock, data, sizeof(data)-1, 0)==SOCKET_ERROR)
+	if (send(m_sock, data.c_str(), data.length(), 0)==SOCKET_ERROR)
 	{
 		CFunctions::debugPrint("FAILED\n");
 		return false;
