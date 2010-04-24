@@ -20,6 +20,7 @@ public:
 	~Socket();
 
 	bool isConnected();
+	bool destroy();
 	bool sendData(const char* data);
 
 	void* getUserdata();

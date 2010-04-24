@@ -20,6 +20,7 @@
 #include "extra/CLuaArguments.h"
 
 lua_State* gLuaVM;
+Socket sockets [64];
 
 int CFunctions::sockOpen(lua_State *luaVM)
 {
@@ -39,6 +40,16 @@ int CFunctions::sockOpen(lua_State *luaVM)
 			}
 
 			void* userdata = socket.getUserdata();
+			
+			for (unsigned int i = 0; i < 64; ++i)
+			{
+				if (!sockets[i].getUserdata())
+				{
+					sockets[i] = socket;
+					break;
+				}
+			}
+
 			CFunctions::triggerEvent("onSockOpened",userdata,"nil","nil");
 			lua_pushlightuserdata(luaVM,userdata);
 			return 1;
@@ -51,7 +62,7 @@ int CFunctions::sockOpen(lua_State *luaVM)
 
 int CFunctions::sockWrite(lua_State *luaVM)
 {
-	/*if (luaVM)
+	if (luaVM)
 	{
 		if (lua_type(luaVM, 1) == LUA_TLIGHTUSERDATA && lua_type(luaVM, 2) == LUA_TSTRING)
 		{
@@ -61,9 +72,9 @@ int CFunctions::sockWrite(lua_State *luaVM)
 			bool socketFound = false;
 			Socket theSocket;
 
-			for (unsigned int i = 0; i < sockets.size(); ++i)
+			for (unsigned int i = 0; i < 64; ++i)
 			{
-				Socket socket = *sockets[i];
+				Socket socket = sockets[i];
 
 				if (socket.getUserdata() == userdata)
 				{
@@ -79,7 +90,7 @@ int CFunctions::sockWrite(lua_State *luaVM)
 				return 1;
 			}
 		}
-	}*/ 
+	}
 
 	lua_pushboolean(luaVM, false);
 	return 1;
@@ -87,6 +98,36 @@ int CFunctions::sockWrite(lua_State *luaVM)
 
 int CFunctions::sockClose(lua_State *luaVM)
 {
+	/*if (luaVM)
+	{
+		if (lua_type(luaVM, 1) == LUA_TLIGHTUSERDATA)
+		{
+			void* userdata   = lua_touserdata(luaVM, 1);
+
+			bool socketFound = false;
+			Socket theSocket;
+
+			for (unsigned int i = 0; i < 64; ++i)
+			{
+				Socket socket = sockets[i];
+
+				if (socket.getUserdata() == userdata)
+				{
+					theSocket = socket;
+					socketFound = true;
+					sockets[i] = NULL;
+					break;
+				}
+			}
+
+			if (socketFound)
+			{
+				lua_pushboolean(luaVM, theSocket.destroy());
+				return 1;
+			}
+		}
+	}*/ 
+
 	lua_pushboolean(luaVM, false);
 	return 1;
 }
