@@ -52,24 +52,13 @@ Socket::Socket(lua_State *luaVM, string host, unsigned short port)
 
 Socket::~Socket()
 {
-
+	if (m_connected)
+		closesocket(m_sock);
 }
 
 bool Socket::isConnected()
 {
 	return m_connected;
-}
-
-bool Socket::destroy()
-{
-	if (closesocket(m_sock))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
 }
 
 bool Socket::VerifyIP(sockaddr_in* sockAddr, string host)

@@ -67,6 +67,7 @@ MTAEXPORT bool DoPulse ( void )
 
 MTAEXPORT bool ShutdownModule ( void )
 {
+	CFunctions::deleteAllSockets();
 	WSACleanup();
 	return true;
 }
