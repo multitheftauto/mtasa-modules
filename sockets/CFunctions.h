@@ -44,6 +44,11 @@ public:
 		static int getSocketByUserdata (Socket*& socket, const void* userdata);
 
 		static void deleteAllSockets   ();
+		static void socketOnTick       ();
 		static void debugPrint         (char* text);
+
+        static void doPulse            (void* args);
+
+        static void closeSocket        (void* userdata);
 };
 #endif
