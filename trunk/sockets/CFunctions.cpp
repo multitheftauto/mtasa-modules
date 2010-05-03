@@ -33,7 +33,7 @@ int CFunctions::sockOpen(lua_State *luaVM)
 
 			Socket* socket = new Socket(luaVM, host, port);
 
-			if (!socket->isConnected())
+            if (!socket->isConnecting() && !socket->isConnected())
 			{
 				lua_pushboolean(luaVM, false);
 				return 1;
@@ -43,7 +43,6 @@ int CFunctions::sockOpen(lua_State *luaVM)
 			
 			sockets.push_back(socket);
 
-			CFunctions::triggerEvent("onSockOpened",userdata,"nil","nil");
 			lua_pushlightuserdata(luaVM,userdata);
 			return 1;
 		}
@@ -101,16 +100,14 @@ int CFunctions::sockClose(lua_State *luaVM)
 		{
 			void*   userdata  = lua_touserdata(luaVM, 1);
 			Socket* theSocket = NULL;
-			
-			int index = getSocketByUserdata(theSocket, userdata);
 
-			if (theSocket != NULL)
-			{
-				sockets.erase(sockets.begin() + index);
-				delete theSocket;
-				lua_pushboolean(luaVM, true);
-				return 1;
-			}
+            if (getSocketByUserdata(theSocket, userdata) != -1)
+            {
+                closeSocket(userdata);
+
+                lua_pushboolean(luaVM, true);
+		        return 1;
+            }
 		}
 	}
 
@@ -118,10 +115,42 @@ int CFunctions::sockClose(lua_State *luaVM)
 	return 1;
 }
 
+void CFunctions::closeSocket(void* userdata)
+{
+    Socket* theSocket = NULL;
+	
+	int index = getSocketByUserdata(theSocket, userdata);
+
+	if (theSocket != NULL)
+	{
+		sockets.erase(sockets.begin() + index);
+		delete theSocket;
+    }
+}
+
 void CFunctions::deleteAllSockets()
 {
 	for (unsigned int i = 0; i < sockets.size(); ++i)
 		delete sockets[i];
+}
+
+void CFunctions::doPulse(void* args)
+{
+    while (true)
+    {
+        Socket* socket = (Socket*)args;
+
+        if (socket->isConnected() || socket->isConnecting())
+        {        
+            socket->doPulse();
+            Sleep(50);
+        }
+        else
+        {
+            closeSocket(socket->getUserdata());
+            return;
+        }
+    }
 }
 
 int CFunctions::saveLuaData(lua_State *luaVM)

@@ -1,0 +1,4 @@
+<meta>
+	<script src="irc.lua"/>
+	<script src="irctest.lua"/>
+</meta>
