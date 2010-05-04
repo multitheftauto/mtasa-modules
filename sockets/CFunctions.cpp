@@ -148,7 +148,7 @@ void CFunctions::doPulse(void* args)
         else
         {
             closeSocket(socket->getUserdata());
-            return;
+            Sleep(1000);
         }
     }
 }

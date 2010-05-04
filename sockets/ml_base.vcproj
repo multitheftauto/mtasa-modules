@@ -156,7 +156,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="lib/lua5.1s.lib ws2_32.lib"
-				OutputFile="$(OutDir)/ml_base.dll"
+				OutputFile="$(OutDir)/ml_sockets.dll"
 				LinkIncremental="1"
 				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
