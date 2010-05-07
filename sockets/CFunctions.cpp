@@ -134,7 +134,11 @@ void CFunctions::deleteAllSockets()
 		SAFE_DELETE(sockets[i]);
 }
 
+#ifdef WIN32
 void CFunctions::doPulse(void* args)
+#else
+void* CFunctions::doPulse(void* args)
+#endif
 {
     while (true)
     {

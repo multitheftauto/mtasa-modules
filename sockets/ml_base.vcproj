@@ -204,14 +204,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CSockets_Linux.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CSockets_Win32.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CThread.cpp"
 				>
 			</File>
@@ -221,6 +213,10 @@
 			</File>
 			<File
 				RelativePath=".\ml_base.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Socket.cpp"
 				>
 			</File>
 			<Filter
@@ -250,14 +246,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CSockets_Linux.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CSockets_Win32.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CThread.h"
 				>
 			</File>
@@ -267,6 +255,10 @@
 			</File>
 			<File
 				RelativePath=".\ml_base.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Socket.h"
 				>
 			</File>
 			<Filter
