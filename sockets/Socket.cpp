@@ -11,8 +11,7 @@ Socket::Socket(lua_State *luaVM, string host, unsigned short port)
     m_connecting = false;
     m_connected  = false;
 
-#ifdef WIN32
-    memset(&m_addr, 0, sizeof(SOCKADDR_IN));
+    memset(&m_addr, 0, sizeof(m_addr));
     m_addr.sin_family = AF_INET;
     m_addr.sin_port   = htons(port);
     
@@ -22,20 +21,14 @@ Socket::Socket(lua_State *luaVM, string host, unsigned short port)
     }
 
     m_connecting = true;
+
+    // Create Thread
+#ifdef WIN32
     m_thread     = (HANDLE)_beginthread(&CFunctions::doPulse, 0, this);
 #else
-    memset(&m_addr, 0, sizeof(m_addr));
-    m_addr.sin_family = AF_INET;
-    m_addr.sin_port = htons(port);
-
-    if (!VerifyIP(host.c_str()))
-    {
-        return;
-    }
-
-    m_connecting = true;
     m_thread     = pthread_create(&m_thread, NULL, CFunctions::doPulse, this);
 #endif
+
     m_userdata   = lua_newuserdata(luaVM, 128);
 }
 
@@ -76,17 +69,9 @@ void Socket::doPulse()
 {
     if (m_connecting)
     {
-#ifdef WIN32
-        m_sock = socket(PF_INET, SOCK_STREAM, 0);
-        
-        if (m_sock == INVALID_SOCKET || connect(m_sock, reinterpret_cast<sockaddr*>(&m_addr), sizeof(m_addr)) != 0)
-        {
-#else
         m_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-        
         if (m_sock == -1 || connect(m_sock, (sockaddr*)&m_addr, sizeof(m_addr)) != 0)
         {
-#endif
             m_connecting = false;
             return;
         }
