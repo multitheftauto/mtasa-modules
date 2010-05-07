@@ -131,7 +131,7 @@ void CFunctions::closeSocket(void* userdata)
 void CFunctions::deleteAllSockets()
 {
 	for (unsigned int i = 0; i < sockets.size(); ++i)
-		delete sockets[i];
+		SAFE_DELETE(sockets[i]);
 }
 
 void CFunctions::doPulse(void* args)
@@ -143,14 +143,23 @@ void CFunctions::doPulse(void* args)
         if (socket->isConnected() || socket->isConnecting())
         {        
             socket->doPulse();
-            Sleep(50);
+            Cooldown(50);
         }
         else
         {
             closeSocket(socket->getUserdata());
-            Sleep(1000);
+            Cooldown(1000);
         }
     }
+}
+
+void CFunctions::Cooldown(int ms)
+{
+#ifdef WIN32
+    Sleep(ms);
+#else
+    usleep(ms);
+#endif
 }
 
 int CFunctions::saveLuaData(lua_State *luaVM)
@@ -189,6 +198,6 @@ int CFunctions::triggerEvent(char* eventName, void* userdata, char* arg1, char* 
 void CFunctions::debugPrint(char* text)
 {
 #ifdef _DEBUG
-	printf(text);
+    printf(text);
 #endif
 }
