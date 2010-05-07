@@ -15,21 +15,21 @@
 #include <vector>
 
 #ifdef WIN32
-	#define WIN32_MEAN_AND_LEAN
+    #define WIN32_MEAN_AND_LEAN
 
-	#include <process.h>
-	#include <winsock2.h>
-	#include <windows.h>
+    #include <process.h>
+    #include <winsock2.h>
+    #include <windows.h>
 #else
-	#include <unistd.h>
-	#include <sys/types.h>
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	#include <arpa/inet.h>
-	#include <pthread.h>
-	#include <netdb.h>
-	#include <cstdlib>
-	#include <sys/select.h>
+    #include <unistd.h>
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
+    #include <pthread.h>
+    #include <netdb.h>
+    #include <cstdlib>
+    #include <sys/select.h>
 #endif
 
 #define SOCK_RECV_LIMIT 16384
@@ -37,33 +37,33 @@
 class Socket
 {
 public:
-	Socket            (lua_State *luaVM, std::string host, unsigned short port);
-	~Socket           ();
+    Socket            (lua_State *luaVM, std::string host, unsigned short port);
+    ~Socket           ();
 
-	bool isConnected  ();
+    bool isConnected  ();
     bool isConnecting ();
-	bool sendData     (std::string data);
-	bool VerifyIP     (std::string host);
+    bool sendData     (std::string data);
+    bool VerifyIP     (std::string host);
 
-	void* getUserdata ();
+    void* getUserdata ();
 
     void doPulse      ();
 
 private:
 #ifdef WIN32
     HANDLE             m_thread;
-	SOCKET             m_sock;
-	SOCKADDR_IN        m_addr;
+    SOCKET             m_sock;
+    SOCKADDR_IN        m_addr;
 #else
     pthread_t          m_thread;
-	int                m_sock;
+    int                m_sock;
     struct sockaddr_in m_addr;
 #endif
 
-	void* m_userdata;
+    void* m_userdata;
 
-	bool m_connected;
-	bool m_connecting;
+    bool m_connected;
+    bool m_connecting;
 };
 
 #endif

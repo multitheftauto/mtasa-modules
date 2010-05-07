@@ -22,16 +22,16 @@
 #define __ML_BASE_H
 
 #ifdef WIN32
-	#pragma warning (disable : 4267) // DISABLE: conversion from 'size_t' to 'int', possible loss of data
-	#pragma warning (disable : 4996) // DISABLE: 'strcpy': This function or variable may be unsafe.
+    #pragma warning (disable : 4267) // DISABLE: conversion from 'size_t' to 'int', possible loss of data
+    #pragma warning (disable : 4996) // DISABLE: 'strcpy': This function or variable may be unsafe.
 #endif
 
 // Defines
 #define SAFE_DELETE(p) { if (p) { delete (p); (p) = NULL; } }
 
-#define MODULE_NAME			"Sockets Module"
-#define	MODULE_AUTHOR		"Gamesnert, MCvarial & x86"
-#define MODULE_VERSION		0.1f
+#define MODULE_NAME            "Sockets Module"
+#define MODULE_AUTHOR          "Gamesnert, MCvarial & x86"
+#define MODULE_VERSION         0.1f
 
 #include <string.h>
 
