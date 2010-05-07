@@ -1,11 +1,11 @@
 local botData = {
 	host = "irc.gtanet.com",
 	port = 6667,
-	user = "Testbot",
-	nick = "Testbot",
+	user = "Socketbot",
+	nick = "Socketbot",
 	channel = "#mta.dutch",
 --	joinmsg = "Kiekeboe! :D",
-	quitmsg = "Testquit",
+	quitmsg = "/disconnect command used",
 }
 
 local root = getRootElement()
@@ -35,6 +35,14 @@ function say(p,c,...)
 	end
 end
 addCommandHandler("irc",say)
+
+function join(p,c,chan)
+	if ircIsConnected(sock) and chan then
+		outputDebugString("ircjoin "..tostring(chan))
+		ircJoin(sock,chan)
+	end
+end
+addCommandHandler("ircjoin",join)
 
 function handleConnect(connectedSock)
 	if connectedSock == sock then
@@ -133,7 +141,7 @@ addEventHandler("onIRCPart", root,
 )
 
 addEventHandler("onIRCQuit", root,
-	function(socket, user, channel, reason)
+	function(socket, user, reason)
 		if socket == sock then
 			user = ircGetUserNick(user)
 			outputServerLog("IRC: "..user.." quit ("..reason..")")
@@ -144,7 +152,7 @@ addEventHandler("onIRCQuit", root,
 addEventHandler("onIRCMode", root,
 	function(socket, user, channel, modes, targets)
 		if socket == sock then
-			user = ircGetUserNick(user)
+--			user = ircGetUserNick(user)
 			outputServerLog("IRC: "..user.." set mode "..modes.." for "..table.concat(targets,", ").." on channel "..channel)
 		end
 	end
@@ -168,6 +176,14 @@ addEventHandler("onIRCNotice", root,
 	end
 )
 
+addEventHandler("onIRCUserListReceive", root,
+	function(socket, channel, users)
+		if socket == sock then
+			outputServerLog("IRC: Users currently on channel "..channel..": "..table.concat(users," "))
+		end
+	end
+)
+
 addIRCCommandHandler("!hello",
 	function(socket, user, channel, command, target)
 		if target == "Testbot" then
@@ -186,7 +202,7 @@ addIRCCommandHandler("!slap",
 
 function runString (commandstring, source, outputTo)
 	local sourceName=source
-	ircSay(sock,outputTo,sourceName.." gebruikt commando: "..commandstring)
+	ircSay(sock,outputTo,sourceName.." executed command: "..commandstring)
 	local notReturned
 	--First we test with return
 	local commandFunction,errorMsg = loadstring("return "..commandstring)
@@ -197,16 +213,16 @@ function runString (commandstring, source, outputTo)
 	end
 	if errorMsg then
 		--It still failed.  Print the error message and stop the function
---		outputChatBoxR("Error: "..errorMsg, outputTo)
-		ircSay(sock,outputTo,"Fout: "..errorMsg, outputTo)
+--		ircSay(sock,outputTo,"Fout: "..errorMsg, outputTo)
+		ircSay(sock,outputTo,"Error: "..errorMsg, outputTo)
 		return
 	end
 	--Finally, lets execute our function
 	results = { pcall(commandFunction) }
 	if not results[1] then
 		--It failed.
---		outputChatBoxR("Error: "..results[2], outputTo)
-		ircSay(sock,outputTo,"Fout: "..results[2], outputTo)
+--		ircSay(sock,outputTo,"Fout: "..results[2], outputTo)
+		ircSay(sock,outputTo,"Error: "..results[2], outputTo)
 		return
 	end
 	if not notReturned then
@@ -224,11 +240,11 @@ function runString (commandstring, source, outputTo)
 			end
 			resultsString = resultsString..tostring(results[i]).." ["..resultType.."]"
 		end
---		outputChatBoxR("Command results: "..resultsString, outputTo)
-		ircSay(sock,outputTo,"Commando resultaten: "..resultsString, outputTo)
+--		ircSay(sock,outputTo,"Commando resultaten: "..resultsString, outputTo)
+		ircSay(sock,outputTo,"Command results: "..resultsString, outputTo)
 	elseif not errorMsg then
---		outputChatBoxR("Command executed!", outputTo)
-		ircSay(sock,outputTo,"Commando uitgevoerd!", outputTo)
+--		ircSay(sock,outputTo,"Commando uitgevoerd!", outputTo)
+		ircSay(sock,outputTo,"Command executed!", outputTo)
 	end
 end
 
