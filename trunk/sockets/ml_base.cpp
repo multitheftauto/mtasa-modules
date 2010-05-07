@@ -23,51 +23,58 @@ ILuaModuleManager10 *pModuleManager = NULL;
 // Initialisation function (module entrypoint)
 MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, char *szAuthor, float *fVersion )
 {
-	pModuleManager = pManager;
+    pModuleManager = pManager;
 
-	// Set the module info
-	strncpy ( szModuleName, MODULE_NAME, MAX_INFO_LENGTH );
-	strncpy ( szAuthor, MODULE_AUTHOR, MAX_INFO_LENGTH );
-	(*fVersion) = MODULE_VERSION;
+    // Set the module info
+    strncpy ( szModuleName, MODULE_NAME, MAX_INFO_LENGTH );
+    strncpy ( szAuthor, MODULE_AUTHOR, MAX_INFO_LENGTH );
+    (*fVersion) = MODULE_VERSION;
 
-	WSADATA WSA;
-	if(WSAStartup(MAKEWORD(2, 0), &WSA) != 0) // Startup (Needed for Win32)
+#ifdef WIN32
+    WSADATA WSA;
+    if(WSAStartup(MAKEWORD(2, 0), &WSA) != 0) // Startup (Needed for Win32)
     {
+        pModuleManager->ErrorPrintf("[Sockets-WIN32] Can't start 'WSAStartup()', please contact the developers!");
         return false;
     }
+#endif
 
-	return true;
+    return true;
 }
 
 
 MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
 {
-	if ( pModuleManager && luaVM )
-	{
-		// Save luaVM CFunctions.cpp
+    if ( pModuleManager && luaVM )
+    {
+		// Save luaVM in CFunctions.cpp
         CFunctions::saveLuaData(luaVM);
 
-		// Functions
+		// Create functions
 		pModuleManager->RegisterFunction(luaVM, "sockOpen", CFunctions::sockOpen);
 		pModuleManager->RegisterFunction(luaVM, "sockWrite", CFunctions::sockWrite);
 		pModuleManager->RegisterFunction(luaVM, "sockClose", CFunctions::sockClose);
 
-		// Events
+		// Define events
 		CFunctions::addEvent(luaVM, "onSockOpened");
 		CFunctions::addEvent(luaVM, "onSockData");
 		CFunctions::addEvent(luaVM, "onSockClosed");
-	}
+    }
 }
 
 
 MTAEXPORT bool DoPulse ( void )
 {
-	return true;
+    return true;
 }
 
 MTAEXPORT bool ShutdownModule ( void )
 {
-	CFunctions::deleteAllSockets();
-	WSACleanup();
-	return true;
+    CFunctions::deleteAllSockets();
+
+#ifdef WIN32
+    WSACleanup();
+#endif
+
+    return true;
 }
