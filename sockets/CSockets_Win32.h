@@ -32,6 +32,7 @@ public:
 	bool isConnected  ();
     bool isConnecting ();
 	bool sendData     (string data);
+	bool VerifyIP     (string host);
 
 	void* getUserdata ();
 
@@ -46,8 +47,6 @@ private:
 
 	bool m_connected;
 	bool m_connecting;
-
-	bool Socket::VerifyIP(sockaddr_in* sockAddr, string host);
 };
 
 #endif

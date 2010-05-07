@@ -17,7 +17,7 @@ Socket::Socket(lua_State *luaVM, string host, unsigned short port)
 	m_addr.sin_family = AF_INET;
 	m_addr.sin_port   = htons(port);
 	
-	if (!VerifyIP(&m_addr, host.c_str()))
+	if (!VerifyIP(host.c_str()))
 	{
 		return;
 	}
@@ -88,14 +88,14 @@ bool Socket::isConnecting()
 	return m_connecting;
 }
 
-bool Socket::VerifyIP(sockaddr_in* sockAddr, string host)
+bool Socket::VerifyIP(string host)
 {
 	hostent* Hostent;
 	unsigned int IP = inet_addr(host.c_str());
 
 	if (IP != INADDR_NONE)
 	{
-		sockAddr->sin_addr.S_un.S_addr = IP;
+		m_addr.sin_addr.S_un.S_addr = IP;
 		return true;
 	}
 	else
@@ -107,7 +107,7 @@ bool Socket::VerifyIP(sockaddr_in* sockAddr, string host)
 		}
 		else
 		{
-			memcpy(&(sockAddr->sin_addr), Hostent->h_addr_list[0], 4);
+			memcpy(&(m_addr.sin_addr), Hostent->h_addr_list[0], 4);
 			return true;
 		}
 	}
