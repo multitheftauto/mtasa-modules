@@ -114,11 +114,11 @@ bool Socket::isConnecting()
 bool Socket::VerifyIP(string host)
 {
 	hostent* Hostent;
-	unsigned int IP = inet_addr(host.c_str());
+	unsigned long IP = inet_addr(host.c_str());
 
 	if (IP != INADDR_NONE)
 	{
-		m_addr.sin_addr.S_un.S_addr = IP;
+		m_addr.sin_addr.s_addr = IP;
 		return true;
 	}
 	else

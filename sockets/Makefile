@@ -4,7 +4,7 @@
 
 CC = gcc
 LD = gcc
-PROG = ml_base.so
+PROG = ml_sockets.so
 CXX = gcc
 CPP = gcc
 
@@ -12,17 +12,17 @@ CPP = gcc
 # NOTE: add -g for debug, remove for release!
 CPPFLAGS = -g -MD -Wall -I./
 LDFLAGS = -fPIC -shared -Wl,-soname,$(PROG).1,-R./
-LIBS = -lpthread -lstdc++ -llua
+LIBS = -lpthread -lstdc++ -L./lib/lua/src/.libs -llua
 
 #### End of system configuration section ####
 
 #### Source and object files
 
-SRC_LOCAL =		$(wildcard ./*.cpp)
+SRC_LOCAL =		$(wildcard ./*.cpp ./extra/*.cpp)
 OBJ_LOCAL =		$(patsubst %.cpp,%.o,$(SRC_LOCAL))
-OBJS	= $(OBJ_LOCAL)
-SRCS	= $(SRC_LOCAL)
-DEPS	= $(patsubst %.o,%.d,$(OBJS))
+OBJS	  =     $(OBJ_LOCAL)
+SRCS	  =     $(SRC_LOCAL)
+DEPS	  =     $(patsubst %.o,%.d,$(OBJS))
 
 #### Make rules
 

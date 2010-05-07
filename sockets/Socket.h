@@ -10,14 +10,16 @@
 //#include "CFunctions.h"
 #include "ml_base.h"
 
+#include <stdio.h>
+#include <string>
+#include <vector>
+
 #ifdef WIN32
 	#define WIN32_MEAN_AND_LEAN
 
 	#include <process.h>
 	#include <winsock2.h>
 	#include <windows.h>
-	#include <string>
-	#include <vector>
 #else
 	#include <unistd.h>
 	#include <sys/types.h>
@@ -30,20 +32,18 @@
 	#include <sys/select.h>
 #endif
 
-using namespace std;
-
 #define SOCK_RECV_LIMIT 16384
 
 class Socket
 {
 public:
-	Socket            (lua_State *luaVM, string host, unsigned short port);
+	Socket            (lua_State *luaVM, std::string host, unsigned short port);
 	~Socket           ();
 
 	bool isConnected  ();
     bool isConnecting ();
-	bool sendData     (string data);
-	bool VerifyIP     (string host);
+	bool sendData     (std::string data);
+	bool VerifyIP     (std::string host);
 
 	void* getUserdata ();
 
