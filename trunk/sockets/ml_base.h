@@ -33,6 +33,8 @@
 #define	MODULE_AUTHOR		"Gamesnert, MCvarial & x86"
 #define MODULE_VERSION		0.1f
 
+#include <string.h>
+
 // Includes
 #include "Common.h"
 #include "CFunctions.h"
