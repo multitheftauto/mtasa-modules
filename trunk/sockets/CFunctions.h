@@ -22,13 +22,7 @@ class CFunctions;
 #define __CFUNCTIONS_H
 
 #include "ml_base.h"
-
-#ifdef WIN32
-	#include "CSockets_Win32.h"
-#else
-	#include "CSockets_Linux.h"
-#endif
-
+#include "Socket.h"
 #include <stdio.h>
 
 #include "include/ILuaModuleManager.h"
@@ -53,7 +47,11 @@ public:
 		static void debugPrint         (char* text);
 		static void Cooldown           (int ms);
 
+#ifdef WIN32
         static void doPulse            (void* args);
+#else
+        static void* doPulse           (void* args);
+#endif
 
         static void closeSocket        (void* userdata);
 };
