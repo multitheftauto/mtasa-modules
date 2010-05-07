@@ -12,7 +12,7 @@ CPP = gcc
 # NOTE: add -g for debug, remove for release!
 CPPFLAGS = -g -MD -Wall -I./
 LDFLAGS = -fPIC -shared -Wl,-soname,$(PROG).1,-R./
-LIBS = -lpthread -lstdc++ -L./lib/lua/src/.libs -llua
+LIBS = -lpthread -lstdc++ -L./lib/lua51/src/.libs -llua
 
 #### End of system configuration section ####
 

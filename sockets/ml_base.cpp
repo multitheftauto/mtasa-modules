@@ -47,18 +47,18 @@ MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
 {
     if ( pModuleManager && luaVM )
     {
-		// Save luaVM in CFunctions.cpp
+        // Save luaVM in CFunctions.cpp
         CFunctions::saveLuaData(luaVM);
 
-		// Create functions
-		pModuleManager->RegisterFunction(luaVM, "sockOpen", CFunctions::sockOpen);
-		pModuleManager->RegisterFunction(luaVM, "sockWrite", CFunctions::sockWrite);
-		pModuleManager->RegisterFunction(luaVM, "sockClose", CFunctions::sockClose);
+        // Create functions
+        pModuleManager->RegisterFunction(luaVM, "sockOpen", CFunctions::sockOpen);
+        pModuleManager->RegisterFunction(luaVM, "sockWrite", CFunctions::sockWrite);
+        pModuleManager->RegisterFunction(luaVM, "sockClose", CFunctions::sockClose);
 
-		// Define events
-		CFunctions::addEvent(luaVM, "onSockOpened");
-		CFunctions::addEvent(luaVM, "onSockData");
-		CFunctions::addEvent(luaVM, "onSockClosed");
+        // Define events
+        CFunctions::addEvent(luaVM, "onSockOpened");
+        CFunctions::addEvent(luaVM, "onSockData");
+        CFunctions::addEvent(luaVM, "onSockClosed");
     }
 }
 
