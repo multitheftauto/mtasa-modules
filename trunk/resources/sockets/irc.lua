@@ -8,6 +8,11 @@ addEvent("onIRCQuit")
 addEvent("onIRCMode")
 addEvent("onIRCNick")
 addEvent("onIRCNotice")
+addEvent("onIRCTopicReceive")
+addEvent("onIRCTopicDataReceive")
+addEvent("onIRCUserListReceive")
+
+local log = fileCreate("raw.log")
 
 local getSockTableBySock
 
@@ -165,12 +170,15 @@ end
 addEventHandler("onResourceStop",getResourceRootElement(),
 	function()
 		for index,sock in ipairs(connectingSockets) do
-			ircDisconnect(sock.sock)
+			ircDisconnect(sock.sock,"Resource stopping")
 		end
 		
 		for index,sock in ipairs(connectedSockets) do
-			ircDisconnect(sock.sock)
+			ircDisconnect(sock.sock,"Resource stopping")
 		end
+		
+		fileFlush(log)
+		fileClose(log)
 	end
 )
 
@@ -213,82 +221,109 @@ addEventHandler("onSockClosed",getRootElement(),
 	end
 )
 
+local ignoreEntries = {"001","002","003","004","005","251","252","254","255","265","266","366","372","375","376"}
+
+local function processData(theSock,procData)
+	local time    = getRealTime()
+	local logData = "["..string.format("%02i",time.hour)..":"..string.format("%02i",time.minute)..":"..string.format("%02i",time.second).."] "..procData.."\r\n"
+	
+	fileWrite(log,logData)
+	fileFlush(log)
+	
+	if string.find(procData,"PING") == 1 then
+		sockWrite(theSock,"PONG :REPLY\r\n")
+	else
+		local dataTable = split(procData,32)
+		
+		local user   = string.sub(table.remove(dataTable,1),2)
+		local name   = gettok(user,1,33)
+		local action = table.remove(dataTable,1)
+		
+		if action == "PRIVMSG" then
+			local channel = table.remove(dataTable,1)
+			local msg     = string.sub(table.concat(dataTable," "),2)
+			
+			if string.find(msg,"ACTION") == 1 then
+				local action = string.sub(msg,9,#msg-1)
+				
+				triggerEvent("onIRCAction",getRootElement(),theSock,user,channel,action)
+			else
+				triggerEvent("onIRCMessage",getRootElement(),theSock,user,channel,msg)
+			end
+		elseif action == "JOIN" then
+			local channel = string.sub(dataTable[1],2)
+			
+			triggerEvent("onIRCJoin",getRootElement(),theSock,user,channel)
+		elseif action == "PART" then
+			local channel = dataTable[1]
+			
+			triggerEvent("onIRCPart",getRootElement(),theSock,user,channel)
+		elseif action == "QUIT" then
+			local reason = string.sub(table.concat(dataTable," "),2)
+			
+			triggerEvent("onIRCQuit",getRootElement(),theSock,user,reason)
+		elseif action == "MODE" then
+			local channel     = table.remove(dataTable,1)
+			local modeSet     = table.remove(dataTable,1)
+			
+			triggerEvent("onIRCMode",getRootElement(),theSock,user,channel,modeSet,dataTable)
+		elseif action == "NICK" then
+			local newNick = string.sub(dataTable[1],2)
+			
+			triggerEvent("onIRCNick",getRootElement(),theSock,user,newNick)
+		elseif action == "NOTICE" then
+			local target = table.remove(dataTable,1)
+			local notice = string.sub(table.concat(dataTable," "),2)
+			
+			triggerEvent("onIRCNotice",getRootElement(),theSock,user,target,notice)
+		elseif action == "332" then
+			local target  = table.remove(dataTable,1) -- Bot nickname; practically useless
+			local channel = table.remove(dataTable,1)
+			local topic   = string.sub(table.concat(dataTable," "),2)
+			
+			triggerEvent("onIRCTopicReceive",getRootElement(),theSock,channel,topic)
+		elseif action == "333" then
+			local target    = table.remove(dataTable,1) -- Bot nickname; practically useless
+			local channel   = table.remove(dataTable,1)
+			local setter    = table.remove(dataTable,1)
+			local timestamp = table.remove(dataTable,1)
+			
+			triggerEvent("onIRCTopicDataReceive",getRootElement(),theSock,channel,setter,timestamp)
+		elseif action == "353" then
+			local target    = table.remove(dataTable,1) -- Bot nickname; practically useless
+			local equalSign = table.remove(dataTable,1) -- 100% useless
+			local channel   = table.remove(dataTable,1)
+			local users     = dataTable
+			
+			if #users > 0 then users[1] = string.sub(users[1],2) end
+			
+			triggerEvent("onIRCUserListReceive",getRootElement(),theSock,channel,users)
+		else
+			for index,ignoreValue in ipairs(ignoreEntries) do
+				if action == ignoreValue then
+					return
+				end
+			end
+			
+			outputServerLog("? ("..action.."): "..procData)
+		end
+	end
+end
+
 local procBuffer = ""
 
 addEventHandler("onSockData",getRootElement(),
 	function(theSock,data)
 		if ircIsConnected(theSock) then
-			local procData
-			
 			for i=1, #data do
 				local char = string.sub(data,i,i)
 				
-				if char ~= "\n" and char ~= "\r" then
-					procBuffer = procBuffer .. char
-				elseif char == "\n" then
-					procData   = procBuffer
-					procBuffer = ""
-				end
-			end
-			
-			if procData then
-				if string.find(procData,"PING") == 1 then
-					sockWrite(theSock,"PONG :REPLY\r\n")
-				else
-					local dataTable = split(procData,32)
-					
-					local user   = string.sub(table.remove(dataTable,1),2)
-					local name   = gettok(user,1,33)
-					local action = table.remove(dataTable,1)
-					
-					if action == "PRIVMSG" then
-						local channel = table.remove(dataTable,1)
-						local msg     = string.sub(table.concat(dataTable," "),2)
-						
-						if string.find(msg,"ACTION") == 1 then
-							local action = string.sub(msg,9,#msg-1)
-							
-							triggerEvent("onIRCAction",getRootElement(),theSock,user,channel,action)
-	--						outputServerLog("IRC: *"..name.."("..channel..") "..action)
-						else
-							triggerEvent("onIRCMessage",getRootElement(),theSock,user,channel,msg)
-	--						outputServerLog("IRC: "..name.."("..channel.."): "..msg)
-						end
-					elseif action == "JOIN" then
-						local channel = string.sub(dataTable[1],2)
-						
-						triggerEvent("onIRCJoin",getRootElement(),theSock,user,channel)
-	--					outputServerLog("IRC: ."..name.." joined channel "..channel)
-					elseif action == "PART" then
-						local channel = dataTable[1]
-						
-						triggerEvent("onIRCPart",getRootElement(),theSock,user,channel)
-	--					outputServerLog("IRC: ."..name.." left channel "..channel)
-					elseif action == "QUIT" then
-						local reason = table.concat(dataTable," ")
-						
-						triggerEvent("onIRCQuit",getRootElement(),theSock,user,reason)
-	--					outputServerLog("IRC: ."..name.." quit ("..reason..")")
-					elseif action == "MODE" then
-						local channel     = table.remove(dataTable,1)
-						local modeSet     = table.remove(dataTable,1)
-	--					local modeTargets = table.concat(dataTable,", ")
-						
-						triggerEvent("onIRCMode",getRootElement(),theSock,user,channel,modeSet,dataTable)
-	--					outputServerLog("IRC: ."..name.." set mode "..modeSet.." for "..modeTargets)
-					elseif action == "NICK" then
-						local newNick = string.sub(dataTable[1],2)
-						
-						triggerEvent("onIRCNick",getRootElement(),theSock,user,newNick)
-	--					outputServerLog("IRC: ."..name.." changed his nick to "..newNick)
-					elseif action == "NOTICE" then
-						local target = table.remove(dataTable,1)
-						local notice = string.sub(table.concat(dataTable," "),2)
-						
-						triggerEvent("onIRCNotice",getRootElement(),theSock,user,target,notice)
-	--					outputServerLog("IRC NOTICE: "..procData)
-					else
-						print("? ("..action.."): "..procData)
+				if char then
+					if char ~= "\n" and char ~= "\r" then
+						procBuffer = procBuffer .. char
+					elseif char == "\n" then
+						processData(theSock,procBuffer)
+						procBuffer = ""
 					end
 				end
 			end

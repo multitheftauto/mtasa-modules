@@ -1,4 +1,7 @@
 <meta>
 	<script src="irc.lua"/>
 	<script src="irctest.lua"/>
+
+	<script src="MTAIRC_s.lua"/>
+	<script src="MTAIRC_c.lua" type="client"/>
 </meta>
