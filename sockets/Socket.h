@@ -42,8 +42,8 @@ public:
 
     bool isConnected  ();
     bool isConnecting ();
-    bool sendData     (std::string data);
-    bool VerifyIP     (std::string host);
+    bool sendData     (const string& data);
+    bool VerifyIP     (const string& host);
 
     void* getUserdata ();
 

@@ -34,7 +34,8 @@ Socket::Socket(lua_State *luaVM, string host, unsigned short port)
 
 Socket::~Socket()
 {
-    CFunctions::triggerEvent("onSockClosed", m_userdata, "nil", "nil");
+//    CFunctions::triggerEvent("onSockClosed", m_userdata, "nil", "nil");
+    AddEventToQueue("onSockClosed", m_userdata, "nil");
 
 #ifdef WIN32
     if ( m_thread )
@@ -76,7 +77,8 @@ void Socket::doPulse()
             return;
         }
 
-        CFunctions::triggerEvent("onSockOpened",m_userdata,"nil","nil");
+//        CFunctions::triggerEvent("onSockOpened",m_userdata,"nil","nil");
+        AddEventToQueue("onSockOpened", m_userdata, "nil");
 
         m_connected  = true;
         m_connecting = false;
@@ -91,7 +93,8 @@ void Socket::doPulse()
         {
             buffer[retval] = '\0';
 
-            CFunctions::triggerEvent("onSockData", m_userdata, buffer, "nil");
+//            CFunctions::triggerEvent("onSockData", m_userdata, buffer, "nil");
+            AddEventToQueue("onSockData", m_userdata, buffer);
         }
         else
         {
@@ -112,7 +115,7 @@ bool Socket::isConnecting()
     return m_connecting;
 }
 
-bool Socket::VerifyIP(string host)
+bool Socket::VerifyIP(const string& host)
 {
     hostent* Hostent;
     unsigned long IP = inet_addr(host.c_str());
@@ -137,16 +140,9 @@ bool Socket::VerifyIP(string host)
     }
 }
 
-bool Socket::sendData(string data)
+bool Socket::sendData(const string& data)
 {
-    if (send(m_sock, data.c_str(), data.length(), 0) == -1)
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
+    return send(m_sock, data.c_str(), data.length(), 0) != -1;
 }
 
 void* Socket::getUserdata()

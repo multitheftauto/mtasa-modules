@@ -34,10 +34,22 @@
 #define MODULE_VERSION         0.1f
 
 #include <string.h>
+#include <queue>
 
 // Includes
 #include "Common.h"
 #include "CFunctions.h"
 #include "include/ILuaModuleManager.h"
+
+using namespace std;
+
+void AddEventToQueue(string eventName, void* userdata, string arg);
+
+struct EventItem
+{
+    string strEventName;
+    void*  pUserdata;
+    string strArg;
+};
 
 #endif
