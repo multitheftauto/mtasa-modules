@@ -166,22 +166,20 @@ void CFunctions::Cooldown(int ms)
 #endif
 }
 
-int CFunctions::saveLuaData(lua_State *luaVM)
+void CFunctions::saveLuaData(lua_State *luaVM)
 {
     gLuaVM = luaVM;
-    return 1;
 }
 
-int CFunctions::addEvent(lua_State* luaVM, const char* szEventName)
+void CFunctions::addEvent(lua_State* luaVM, const char* szEventName)
 {
     CLuaArguments args;
     args.PushString(szEventName);
     args.PushBoolean(true);
     args.Call(luaVM, "addEvent");
-    return 1;
 }
 
-int CFunctions::triggerEvent(char* eventName, void* userdata, char* arg1, char* arg2)
+void CFunctions::triggerEvent(const char* eventName, void* userdata, const char* arg1)
 {
     CLuaArguments args;
     args.PushString(eventName);
@@ -192,11 +190,7 @@ int CFunctions::triggerEvent(char* eventName, void* userdata, char* arg1, char* 
     if (arg1 != "nil") {
         args.PushString(arg1);
     }
-    if (arg2 != "nil") {
-        args.PushString(arg2);
-    }
     args.Call(gLuaVM, "triggerEvent");
-    return 1;
 }
 
 void CFunctions::debugPrint(char* text)

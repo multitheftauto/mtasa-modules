@@ -33,26 +33,24 @@ class Socket;
 class CFunctions
 {
 public:
-        static int sockOpen               (lua_State* luaVM);
+        static int sockOpen            (lua_State* luaVM);
         static int sockWrite           (lua_State* luaVM);
         static int sockClose           (lua_State* luaVM);
-
-        static int saveLuaData         (lua_State* luaVM);
-        static int addEvent            (lua_State* luaVM, const char* szEventName);
-        static int triggerEvent        (char* eventName, void* userdata, char* arg1, char* arg2);
+        
         static int getSocketByUserdata (Socket*& socket, const void* userdata);
 
         static void deleteAllSockets   ();
-        static void socketOnTick       ();
         static void debugPrint         (char* text);
         static void Cooldown           (int ms);
+        static void saveLuaData        (lua_State* luaVM);
+        static void addEvent           (lua_State* luaVM, const char* szEventName);
+        static void triggerEvent       (const char* eventName, void* userdata, const char* arg1);
+        static void closeSocket        (void* userdata);
 
 #ifdef WIN32
         static void doPulse            (void* args);
 #else
         static void* doPulse           (void* args);
 #endif
-
-        static void closeSocket        (void* userdata);
 };
 #endif
