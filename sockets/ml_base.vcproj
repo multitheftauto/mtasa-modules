@@ -204,14 +204,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CThread.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CThreadData.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\ml_base.cpp"
 				>
 			</File>
@@ -243,14 +235,6 @@
 			</File>
 			<File
 				RelativePath=".\Common.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CThread.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CThreadData.h"
 				>
 			</File>
 			<File
