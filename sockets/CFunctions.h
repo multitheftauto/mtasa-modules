@@ -40,11 +40,11 @@ public:
         static int getSocketByUserdata (Socket*& socket, const void* userdata);
 
         static void deleteAllSockets   ();
-        static void debugPrint         (char* text);
+//      static void debugPrint         (char* text);
         static void Cooldown           (int ms);
         static void saveLuaData        (lua_State* luaVM);
         static void addEvent           (lua_State* luaVM, const char* szEventName);
-        static void triggerEvent       (const char* eventName, void* userdata, const char* arg1);
+        static void triggerEvent       (const string& eventName, void* userdata, const string& arg1);
         static void closeSocket        (void* userdata);
 
 #ifdef WIN32

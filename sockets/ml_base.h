@@ -43,7 +43,7 @@
 
 using namespace std;
 
-void AddEventToQueue(string eventName, void* userdata, string arg);
+void AddEventToQueue(const string& eventName, void* userdata, const string& arg = "");
 
 struct EventItem
 {

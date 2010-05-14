@@ -63,7 +63,7 @@ MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
     }
 }
 
-void AddEventToQueue(string eventName, void* userdata, string arg)
+void AddEventToQueue(const string& eventName, void* userdata, const string& arg)
 {
     EventItem eventData;
     eventData.strEventName = eventName;
@@ -80,7 +80,7 @@ MTAEXPORT bool DoPulse ( void )
         EventItem eventData = qEventQueue.front();
         qEventQueue.pop();
 
-        CFunctions::triggerEvent(eventData.strEventName.c_str(),eventData.pUserdata,eventData.strArg.c_str());
+        CFunctions::triggerEvent(eventData.strEventName, eventData.pUserdata, eventData.strArg);
     }
 
     return true;

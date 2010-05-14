@@ -15,7 +15,7 @@ Socket::Socket(lua_State *luaVM, string host, unsigned short port)
     m_addr.sin_family = AF_INET;
     m_addr.sin_port   = htons(port);
     
-    if (!VerifyIP(host.c_str()))
+    if (!VerifyIP(host))
     {
         return;
     }
@@ -34,8 +34,7 @@ Socket::Socket(lua_State *luaVM, string host, unsigned short port)
 
 Socket::~Socket()
 {
-//    CFunctions::triggerEvent("onSockClosed", m_userdata, "nil", "nil");
-    AddEventToQueue("onSockClosed", m_userdata, "nil");
+    AddEventToQueue("onSockClosed", m_userdata);
 
 #ifdef WIN32
     if ( m_thread )
@@ -77,8 +76,7 @@ void Socket::doPulse()
             return;
         }
 
-//        CFunctions::triggerEvent("onSockOpened",m_userdata,"nil","nil");
-        AddEventToQueue("onSockOpened", m_userdata, "nil");
+        AddEventToQueue("onSockOpened", m_userdata);
 
         m_connected  = true;
         m_connecting = false;
@@ -93,7 +91,6 @@ void Socket::doPulse()
         {
             buffer[retval] = '\0';
 
-//            CFunctions::triggerEvent("onSockData", m_userdata, buffer, "nil");
             AddEventToQueue("onSockData", m_userdata, buffer);
         }
         else

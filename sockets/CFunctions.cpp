@@ -179,23 +179,26 @@ void CFunctions::addEvent(lua_State* luaVM, const char* szEventName)
     args.Call(luaVM, "addEvent");
 }
 
-void CFunctions::triggerEvent(const char* eventName, void* userdata, const char* arg1)
+void CFunctions::triggerEvent(const string& eventName, void* userdata, const string& arg1)
 {
     CLuaArguments args;
-    args.PushString(eventName);
+    args.PushString(eventName.c_str());
+
     lua_getglobal(gLuaVM, "root");
     CLuaArgument RootElement(gLuaVM, -1);
-    args.PushUserData(RootElement.GetLightUserData());
+
+    args.PushUserData(RootElement.GetLightUserData()); // source
     args.PushUserData(userdata);
-    if (arg1 != "nil") {
-        args.PushString(arg1);
-    }
+
+    if (arg1.length() > 0)
+        args.PushString(arg1.c_str());
+
     args.Call(gLuaVM, "triggerEvent");
 }
 
-void CFunctions::debugPrint(char* text)
+/*void CFunctions::debugPrint(char* text)
 {
 #ifdef _DEBUG
     printf(text);
 #endif
-}
+}*/
