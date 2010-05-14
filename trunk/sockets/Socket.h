@@ -7,7 +7,6 @@
 #ifndef __MTA_SOCK_H
 #define __MTA_SOCK_H
 
-//#include "CFunctions.h"
 #include "ml_base.h"
 
 #include <stdio.h>
@@ -37,7 +36,7 @@
 class Socket
 {
 public:
-    Socket            (lua_State *luaVM, std::string host, unsigned short port);
+    Socket            (lua_State *luaVM, string host, unsigned short port);
     ~Socket           ();
 
     bool isConnected  ();
