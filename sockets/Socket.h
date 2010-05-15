@@ -36,17 +36,18 @@
 class Socket
 {
 public:
-    Socket            (lua_State *luaVM, string host, unsigned short port);
-    ~Socket           ();
+    Socket              (lua_State *luaVM, string host, unsigned short port);
+    ~Socket             ();
 
-    bool isConnected  ();
-    bool isConnecting ();
-    bool sendData     (const string& data);
-    bool VerifyIP     (const string& host);
+    bool isConnected    ();
+    bool isConnecting   ();
+    bool sendData       (const string& data);
+    bool VerifyIP       (const string& host);
 
-    void* getUserdata ();
+    void* getUserdata   ();
 
-    void doPulse      ();
+    void doConnectPulse ();
+    void doPulse        ();
 
 private:
 #ifdef WIN32
@@ -63,6 +64,7 @@ private:
 
     bool m_connected;
     bool m_connecting;
+    bool m_connectTriggered;
 };
 
 #endif

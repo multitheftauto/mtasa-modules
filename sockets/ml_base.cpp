@@ -19,7 +19,7 @@
 #include "ml_base.h"
 
 ILuaModuleManager10 *pModuleManager = NULL;
-queue<EventItem> qEventQueue;
+//queue<EventItem> qEventQueue;
 
 // Initialisation function (module entrypoint)
 MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, char *szAuthor, float *fVersion )
@@ -63,7 +63,7 @@ MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
     }
 }
 
-void AddEventToQueue(const string& eventName, void* userdata, const string& arg)
+/*void AddEventToQueue(const string& eventName, void* userdata, const string& arg)
 {
     EventItem eventData;
     eventData.strEventName = eventName;
@@ -71,17 +71,19 @@ void AddEventToQueue(const string& eventName, void* userdata, const string& arg)
     eventData.strArg       = arg;
 
     qEventQueue.push(eventData);
-}
+}*/
 
 MTAEXPORT bool DoPulse ( void )
 {
-    while (!qEventQueue.empty())
+/*    while (!qEventQueue.empty())
     {
         EventItem eventData = qEventQueue.front();
         qEventQueue.pop();
 
         CFunctions::triggerEvent(eventData.strEventName, eventData.pUserdata, eventData.strArg);
-    }
+    }*/
+
+    CFunctions::doPulse();
 
     return true;
 }
