@@ -33,8 +33,9 @@ int CFunctions::sockOpen(lua_State *luaVM)
 
             Socket* socket = new Socket(luaVM, host, port);
 
-            if (!socket->isConnecting() && !socket->isConnected())
+            if (socket->isAwaitingDestruction())
             {
+                SAFE_DELETE(socket);
                 lua_pushboolean(luaVM, false);
                 return 1;
             }
@@ -103,7 +104,7 @@ int CFunctions::sockClose(lua_State *luaVM)
 
             if (getSocketByUserdata(theSocket, userdata) != -1)
             {
-                closeSocket(userdata);
+                theSocket->makeAwaitDestruction();
 
                 lua_pushboolean(luaVM, true);
                 return 1;
@@ -115,43 +116,10 @@ int CFunctions::sockClose(lua_State *luaVM)
     return 1;
 }
 
-void CFunctions::closeSocket(void* userdata)
-{
-    Socket* theSocket;
-    
-    int index = getSocketByUserdata(theSocket, userdata);
-
-    if (index != -1)
-    {
-        sockets.erase(sockets.begin() + index);
-        delete theSocket;
-    }
-}
-
 void CFunctions::deleteAllSockets()
 {
     for (unsigned int i = 0; i < sockets.size(); ++i)
         SAFE_DELETE(sockets[i]);
-}
-
-#ifdef WIN32
-void CFunctions::doSocketConnectPulse(void* args)
-#else
-void* CFunctions::doSocketConnectPulse(void* args)
-#endif
-{
-    Socket* socket = (Socket*)args;
-
-    if (socket->isConnecting())
-    {        
-        socket->doConnectPulse();
-        Cooldown(50);
-    }
-    else if (!socket->isConnected())
-    {
-        closeSocket(socket->getUserdata());
-        Cooldown(1000);
-    }
 }
 
 void CFunctions::doPulse()
@@ -162,15 +130,15 @@ void CFunctions::doPulse()
     {
         Socket* socket = sockets[i];
 
-        if (socket->isConnected())
+        if (!socket->isAwaitingDestruction())
         {
             sockets[i]->doPulse();
             ++i;
         }
-        else if (!socket->isConnecting())
+        else
         {
             sockets.erase(sockets.begin() + i);
-            delete socket;
+            SAFE_DELETE(socket);
         }
     }
 }

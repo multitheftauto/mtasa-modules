@@ -23,7 +23,7 @@ class CFunctions;
 
 #include "ml_base.h"
 #include "Socket.h"
-#include <stdio.h>
+//#include <stdio.h>
 
 #include "include/ILuaModuleManager.h"
 extern ILuaModuleManager10 *pModuleManager;
@@ -44,13 +44,13 @@ public:
         static void saveLuaData        (lua_State* luaVM);
         static void addEvent           (lua_State* luaVM, const char* szEventName);
         static void triggerEvent       (const string& eventName, void* userdata, const string& arg1 = "");
-        static void closeSocket        (void* userdata);
+//        static void closeSocket        (void* userdata);
         static void doPulse            ();
 
-#ifdef WIN32
+/*#ifdef WIN32
         static void doSocketConnectPulse      (void* args);
 #else
         static void* doSocketConnectPulse     (void* args);
-#endif
+#endif*/
 };
 #endif

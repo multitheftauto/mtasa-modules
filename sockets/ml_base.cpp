@@ -19,7 +19,6 @@
 #include "ml_base.h"
 
 ILuaModuleManager10 *pModuleManager = NULL;
-//queue<EventItem> qEventQueue;
 
 // Initialisation function (module entrypoint)
 MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, char *szAuthor, float *fVersion )
@@ -32,10 +31,11 @@ MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, c
     (*fVersion) = MODULE_VERSION;
 
 #ifdef WIN32
+    // Winsock startup (Needed for Win32)
     WSADATA WSA;
-    if(WSAStartup(MAKEWORD(2, 0), &WSA) != 0) // Startup (Needed for Win32)
+    if(WSAStartup(MAKEWORD(2, 0), &WSA) != 0) 
     {
-        pModuleManager->ErrorPrintf("[Sockets-WIN32] Can't start 'WSAStartup()', please contact the developers!");
+        pModuleManager->ErrorPrintf("[Sockets module] Can't start Winsock, aborting...");
         return false;
     }
 #endif
@@ -63,26 +63,9 @@ MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
     }
 }
 
-/*void AddEventToQueue(const string& eventName, void* userdata, const string& arg)
-{
-    EventItem eventData;
-    eventData.strEventName = eventName;
-    eventData.pUserdata    = userdata;
-    eventData.strArg       = arg;
-
-    qEventQueue.push(eventData);
-}*/
-
 MTAEXPORT bool DoPulse ( void )
 {
-/*    while (!qEventQueue.empty())
-    {
-        EventItem eventData = qEventQueue.front();
-        qEventQueue.pop();
-
-        CFunctions::triggerEvent(eventData.strEventName, eventData.pUserdata, eventData.strArg);
-    }*/
-
+    // CFunction has access to the sockets vector, that's why this spaghetti is here
     CFunctions::doPulse();
 
     return true;
@@ -90,9 +73,11 @@ MTAEXPORT bool DoPulse ( void )
 
 MTAEXPORT bool ShutdownModule ( void )
 {
+    // CFunctions has access to the sockets vector, that's why this spaghetti is here
     CFunctions::deleteAllSockets();
 
 #ifdef WIN32
+    // Cleaning up all Winsock stuff
     WSACleanup();
 #endif
 
