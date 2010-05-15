@@ -8,8 +8,9 @@
 
 Socket::Socket(lua_State *luaVM, string host, unsigned short port)
 {
-    m_connecting = false;
-    m_connected  = false;
+    m_connecting       = false;
+    m_connected        = false;
+    m_connectTriggered = false;
 
     memset(&m_addr, 0, sizeof(m_addr));
     m_addr.sin_family = AF_INET;
@@ -24,9 +25,9 @@ Socket::Socket(lua_State *luaVM, string host, unsigned short port)
 
     // Create Thread
 #ifdef WIN32
-    m_thread     = (HANDLE)_beginthread(&CFunctions::doPulse, 0, this);
+    m_thread     = (HANDLE)_beginthread(&CFunctions::doSocketConnectPulse, 0, this);
 #else
-    m_thread     = pthread_create(&m_thread, NULL, CFunctions::doPulse, this);
+    m_thread     = pthread_create(&m_thread, NULL, CFunctions::doSocketConnectPulse, this);
 #endif
 
     m_userdata   = lua_newuserdata(luaVM, 128);
@@ -34,13 +35,12 @@ Socket::Socket(lua_State *luaVM, string host, unsigned short port)
 
 Socket::~Socket()
 {
-    AddEventToQueue("onSockClosed", m_userdata);
+    CFunctions::triggerEvent("onSockClosed", m_userdata);
+//    AddEventToQueue("onSockClosed", m_userdata);
 
 #ifdef WIN32
     if ( m_thread )
-    {
         CloseHandle(m_thread);
-    }
 
     if (m_connected)
     {
@@ -65,35 +65,55 @@ Socket::~Socket()
     m_connected  = false;
 }
 
-void Socket::doPulse()
+void Socket::doConnectPulse()
 {
     if (m_connecting)
     {
         m_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
         if (m_sock == -1 || connect(m_sock, (sockaddr*)&m_addr, sizeof(m_addr)) != 0)
         {
+            printf("Error: %i\n",WSAGetLastError());
             m_connecting = false;
             return;
         }
 
-        AddEventToQueue("onSockOpened", m_userdata);
+        u_long ulMode = 1;
+        ioctlsocket(m_sock, FIONBIO, &ulMode);
 
         m_connected  = true;
         m_connecting = false;
+
+        CloseHandle(m_thread);
+
+        m_thread = NULL;
     }
-    else if (m_connected)
+}
+
+void Socket::doPulse()
+{
+    if (m_connected)
     {
+        if (!m_connectTriggered)
+        {
+            CFunctions::triggerEvent("onSockOpened", m_userdata);
+//            AddEventToQueue("onSockOpened", m_userdata);
+            m_connectTriggered = true;
+        }
+
         char buffer[SOCK_RECV_LIMIT + 1];
 
         int retval = recv(m_sock, buffer, SOCK_RECV_LIMIT, 0);
+
+        int iError = WSAGetLastError();
 
         if (retval > 0)
         {
             buffer[retval] = '\0';
 
-            AddEventToQueue("onSockData", m_userdata, buffer);
+            CFunctions::triggerEvent("onSockData", m_userdata, buffer);
+//            AddEventToQueue("onSockData", m_userdata, buffer);
         }
-        else
+        else if(iError != WSAEWOULDBLOCK && iError != 0)
         {
             m_connected  = false;
             m_connecting = false;

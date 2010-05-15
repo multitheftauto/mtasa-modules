@@ -117,11 +117,11 @@ int CFunctions::sockClose(lua_State *luaVM)
 
 void CFunctions::closeSocket(void* userdata)
 {
-    Socket* theSocket = NULL;
+    Socket* theSocket;
     
     int index = getSocketByUserdata(theSocket, userdata);
 
-    if (theSocket != NULL)
+    if (index != -1)
     {
         sockets.erase(sockets.begin() + index);
         delete theSocket;
@@ -135,24 +135,42 @@ void CFunctions::deleteAllSockets()
 }
 
 #ifdef WIN32
-void CFunctions::doPulse(void* args)
+void CFunctions::doSocketConnectPulse(void* args)
 #else
-void* CFunctions::doPulse(void* args)
+void* CFunctions::doSocketConnectPulse(void* args)
 #endif
 {
-    while (true)
-    {
-        Socket* socket = (Socket*)args;
+    Socket* socket = (Socket*)args;
 
-        if (socket->isConnected() || socket->isConnecting())
-        {        
-            socket->doPulse();
-            Cooldown(50);
-        }
-        else
+    if (socket->isConnecting())
+    {        
+        socket->doConnectPulse();
+        Cooldown(50);
+    }
+    else if (!socket->isConnected())
+    {
+        closeSocket(socket->getUserdata());
+        Cooldown(1000);
+    }
+}
+
+void CFunctions::doPulse()
+{
+    unsigned int i = 0;
+
+    while (i < sockets.size())
+    {
+        Socket* socket = sockets[i];
+
+        if (socket->isConnected())
         {
-            closeSocket(socket->getUserdata());
-            Cooldown(1000);
+            sockets[i]->doPulse();
+            ++i;
+        }
+        else if (!socket->isConnecting())
+        {
+            sockets.erase(sockets.begin() + i);
+            delete socket;
         }
     }
 }
@@ -195,10 +213,3 @@ void CFunctions::triggerEvent(const string& eventName, void* userdata, const str
 
     args.Call(gLuaVM, "triggerEvent");
 }
-
-/*void CFunctions::debugPrint(char* text)
-{
-#ifdef _DEBUG
-    printf(text);
-#endif
-}*/

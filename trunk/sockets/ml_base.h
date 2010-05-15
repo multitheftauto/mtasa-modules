@@ -34,7 +34,7 @@
 #define MODULE_VERSION         0.1f
 
 #include <string.h>
-#include <queue>
+//#include <queue>
 
 // Includes
 #include "Common.h"
@@ -43,13 +43,13 @@
 
 using namespace std;
 
-void AddEventToQueue(const string& eventName, void* userdata, const string& arg = "");
+/*void AddEventToQueue(const string& eventName, void* userdata, const string& arg = "");
 
 struct EventItem
 {
     string strEventName;
     void*  pUserdata;
     string strArg;
-};
+};*/
 
 #endif
