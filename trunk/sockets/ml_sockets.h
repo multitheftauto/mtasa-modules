@@ -2,7 +2,7 @@
 *
 *  Multi Theft Auto: San Andreas - Deathmatch
 *
-*  ml_base, External lua add-on module
+*  ml_sockets, External lua add-on module
 *
 *  Copyright © 2003-2008 MTA.  All Rights Reserved.
 *
@@ -18,8 +18,8 @@
 
 /** MODULE SPECIFIC INFORMATION **/
 
-#ifndef __ML_BASE_H
-#define __ML_BASE_H
+#ifndef __ml_sockets_H
+#define __ml_sockets_H
 
 // Disabling warnings
 #ifdef WIN32
@@ -32,7 +32,7 @@
 
 // Defines
 #define MODULE_NAME            "Sockets Module"
-#define MODULE_AUTHOR          "Gamesnert, MCvarial & x86"
+#define MODULE_AUTHOR          "Gamesnert, mabako, MCvarial & x86"
 #define MODULE_VERSION         0.1f
 
 #define SOCK_RECV_LIMIT 16384
@@ -45,21 +45,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef WIN32
-    #include <winsock2.h>
-#else
-    #include <unistd.h>
-    #include <sys/types.h>
-    #include <sys/socket.h>
-    #include <netinet/in.h>
-    #include <arpa/inet.h>
-//  #include <pthread.h>
-    #include <netdb.h>
-    #include <cstdlib>
-    #include <sys/select.h>
-#endif
-
 #include "Common.h"
+#include "Sockets.h"
 #include "CFunctions.h"
 #include "include/ILuaModuleManager.h"
 

@@ -1,42 +1,48 @@
 /****************************************************************
 *        Multi Theft Auto : San Andreas - Socket module.
 *        Info: Win32/Linux Sockets
-*        Developers: Gamesnert & x86
+*        Developers: Gamesnert, mabako & x86
 ****************************************************************/
 
-#ifndef __MTA_SOCK_H
-#define __MTA_SOCK_H
+#ifndef __MTA_SOCKET_H
+#define __MTA_SOCKET_H
 
-#include "ml_base.h"
+/* OpenSSL headers */
+#include <openssl/bio.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+
+#include <string>
+#include "ml_sockets.h"
 
 class Socket
 {
+friend class Sockets;
 public:
-    Socket                     ( lua_State *luaVM, string host, unsigned short port );
-    ~Socket                    ( );
+			 Socket					( lua_State *luaVM );
+private:
+			 Socket					( lua_State *luaVM, const string host, const unsigned short port );
+protected:
+			~Socket					( void );
 
-    bool isAwaitingDestruction ( ) { return m_awaitingDestruction; }
-    bool sendData              ( const string& data );
-    bool VerifyIP              ( const string& host );
+	void	DoPulse					( void );
 
-    void doPulse               ( );
-    void makeAwaitDestruction  ( );
+public:
+	bool	SendData				( const string& data );
 
-    void* getUserdata          ( );
+	bool	IsAwaitingDestruction	( void ) { return m_bAwaitingDestruction; };
+	void	MakeAwaitDestruction	( void ) { m_bAwaitingDestruction = true; };
+
+	void*	GetUserData				( void )	{ return m_pUserData; };
+
+protected:
+	BIO*	m_pBIO;
 
 private:
-#ifdef WIN32
-    SOCKET             m_sock;
-    SOCKADDR_IN        m_addr;
-#else
-    int                m_sock;
-    struct sockaddr_in m_addr;
-#endif
+	void*	m_pUserData;
 
-    void* m_userdata;
-
-    bool m_connected;
-    bool m_awaitingDestruction;
+	bool	m_bConnected;
+	bool	m_bAwaitingDestruction;
 };
 
 #endif
