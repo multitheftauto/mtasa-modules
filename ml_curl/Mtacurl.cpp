@@ -47,7 +47,36 @@ CURLcode Mtacurl::setopt_string( CURLoption option, const char* val)
 	return curl_easy_setopt(m_pCurl, option, val);
 }
 
+CURLcode Mtacurl::perform( void )
+{
+	return curl_easy_perform( m_pCurl );
+}
+
+CURLcode Mtacurl::send( void )
+{
+	m_pBuflen = sizeof(m_pBuffer);
+	return curl_easy_send(m_pCurl, m_pBuffer, m_pBuflen, m_pBufsize);
+}
+
+void Mtacurl::cleanup( void )
+{
+	return curl_easy_cleanup(m_pCurl);
+}
+
+char *Mtacurl::escape( const char* url )
+{
+	return curl_easy_escape(m_pCurl, url, sizeof(url));
+}
+
+const char* Mtacurl::strerror( CURLcode error )
+{
+	return curl_easy_strerror( error );
+}
+
 void Mtacurl::DoPulse( )
 {
-
+	if(sizeof(m_pBuffer) > 0)
+	{
+		CFunctions::triggerEvent("onCurlResult", GetUserData());
+	}
 }

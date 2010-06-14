@@ -27,16 +27,25 @@ public:
 	CURLcode setopt_boolean			( CURLoption option, bool val );
 	CURLcode setopt_number			( CURLoption option, int val );
 	CURLcode setopt_string			( CURLoption option, const char* val );
+	CURLcode perform				( void );
+	CURLcode send					( void );
+	void cleanup					( void );
+	char *escape					( const char* url );
+	const char* strerror			( CURLcode error );
 
 	bool	IsAwaitingDestruction	( void ) { return m_bAwaitingDestruction; };
 	void	MakeAwaitDestruction	( void ) { m_bAwaitingDestruction = true; };
 	void*	GetUserData				( void ) { return m_pUserData; };
 
 private:
-	void*	m_pUserData;
-	bool	m_pConnected;
-	CURL*	m_pCurl;
-	bool	m_bAwaitingDestruction;
+	void*			m_pUserData;
+	bool			m_pConnected;
+	CURL*			m_pCurl;
+	bool			m_bAwaitingDestruction;
+	// buffer
+	const void*		m_pBuffer[1024];
+	size_t			m_pBuflen;
+	size_t*			m_pBufsize;
 };
 
 #endif

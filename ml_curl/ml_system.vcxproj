@@ -129,7 +129,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CCurl.cpp" />
     <ClCompile Include="CFunctions.cpp" />
     <ClCompile Include="ml_system.cpp" />
     <ClCompile Include="extra\CLuaArgument.cpp" />
@@ -138,7 +137,6 @@
     <ClCompile Include="Mtacurls.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CCurl.h" />
     <ClInclude Include="CFunctions.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="include\curl\curl.h" />
@@ -168,6 +166,8 @@
     <None Include="include\curl\Makefile.am" />
     <None Include="include\curl\Makefile.in" />
     <None Include="Makefile" />
+    <None Include="ml_system.vcproj" />
+    <None Include="UpgradeLog.XML" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
