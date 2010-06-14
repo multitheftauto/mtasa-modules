@@ -26,9 +26,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ml_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -38,20 +35,17 @@
     <ClCompile Include="extra\CLuaArguments.cpp">
       <Filter>Source Files\extra</Filter>
     </ClCompile>
-    <ClCompile Include="CCurl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Mtacurl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mtacurls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -109,13 +103,13 @@
     <ClInclude Include="include\curl\types.h">
       <Filter>Header Files\include\curl</Filter>
     </ClInclude>
-    <ClInclude Include="CCurl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Mtacurl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mtacurls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -135,5 +129,7 @@
     <None Include="include\curl\Makefile.in">
       <Filter>Header Files\include\curl</Filter>
     </None>
+    <None Include="ml_system.vcproj" />
+    <None Include="UpgradeLog.XML" />
   </ItemGroup>
 </Project>

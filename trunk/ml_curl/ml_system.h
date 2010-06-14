@@ -17,6 +17,9 @@
 #ifdef WIN32
     #pragma warning (disable : 4267) // DISABLE: conversion from 'size_t' to 'int', possible loss of data
     #pragma warning (disable : 4996) // DISABLE: 'strcpy': This function or variable may be unsafe.
+	// Disable the next two warnings. Till i find a good solution for it.
+	#pragma warning (disable : 4800) // DISABLE: forcing value to bool 'true' or 'false' (lua_toboolean)
+	#pragma warning (disable : 4244) // DISABLE: Conversion from 'lua_Number' to 'int'
 #endif
 
 // Function for making sure a pointer has a value before deleting it; possibly prevents crashes
@@ -33,6 +36,7 @@
 // Includes
 #include <string.h>
 #include <stdio.h>
+#include <valarray>
 
 #include "Common.h"
 #include "Mtacurls.h"
