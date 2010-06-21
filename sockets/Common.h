@@ -2,7 +2,7 @@
 *
 *  Multi Theft Auto: San Andreas - Deathmatch
 *
-*  ml_sockets, External lua add-on module
+*  ml_base, External lua add-on module
 *
 *  Copyright © 2003-2008 MTA.  All Rights Reserved.
 *

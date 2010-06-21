@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="ml_sockets"
+	Name="ml_base"
 	ProjectGUID="{132A627F-058D-46F8-BCBB-63B6C8D2CC1A}"
-	RootNamespace="ml_sockets"
+	RootNamespace="ml_base"
 	Keyword="MFCDLLProj"
 	TargetFrameworkVersion="131072"
 	>
@@ -70,7 +70,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="lib/lua5.1sd.lib ws2_32.lib libeay32MDd.lib ssleay32MDd.lib"
+				AdditionalDependencies="lib/lua5.1sd.lib ws2_32.lib"
 				OutputFile="$(OutDir)/ml_sockets.dll"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="MSVCRT"
@@ -79,7 +79,7 @@
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/ml_sockets.lib"
+				ImportLibrary="$(OutDir)/ml_base.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -155,7 +155,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="lib/lua5.1s.lib ws2_32.lib libeay32MD.lib ssleay32MD.lib"
+				AdditionalDependencies="lib/lua5.1s.lib ws2_32.lib"
 				OutputFile="$(OutDir)/ml_sockets.dll"
 				LinkIncremental="1"
 				ModuleDefinitionFile=""
@@ -165,7 +165,7 @@
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/ml_sockets.lib"
+				ImportLibrary="$(OutDir)/ml_base.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -204,19 +204,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ml_sockets.cpp"
+				RelativePath=".\ml_base.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Socket.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Sockets.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SocketSSL.cpp"
 				>
 			</File>
 			<Filter
@@ -246,19 +238,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ml_sockets.h"
+				RelativePath=".\ml_base.h"
 				>
 			</File>
 			<File
 				RelativePath=".\Socket.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Sockets.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SocketSSL.h"
 				>
 			</File>
 			<Filter

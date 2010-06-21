@@ -1,89 +1,123 @@
 /****************************************************************
 *        Multi Theft Auto : San Andreas - Socket module.
 *        Info: Win32/Linux Sockets
-*        Developers: Gamesnert, mabako & x86
+*        Developers: Gamesnert & x86
 ****************************************************************/
 
 #include "Socket.h"
-#include <sstream>
 
-Socket::Socket( lua_State *luaVM )
+Socket::Socket(lua_State *luaVM, string host, unsigned short port)
 {
-	m_bConnected           = false;
-	m_bAwaitingDestruction = false;
-	m_pUserData            = lua_newuserdata(luaVM, 128);
-	m_pBIO                 = NULL;
+    m_connected           = false;
+    m_awaitingDestruction = false;
+
+    memset(&m_addr, 0, sizeof(m_addr));
+    m_addr.sin_family = AF_INET;
+    m_addr.sin_port   = htons(port);
+    
+    if (!VerifyIP(host))
+    {
+        return;
+    }
+
+    m_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    u_long ulMode = 1;
+    ioctlsocket(m_sock, FIONBIO, &ulMode);
+
+    if (m_sock == -1 || connect(m_sock, (sockaddr*)&m_addr, sizeof(m_addr)) != 0)
+    {
+        int error = WSAGetLastError();
+
+        if (error != WSAEWOULDBLOCK)
+        {
+            makeAwaitDestruction();
+            return;
+        }
+    }
+
+    m_userdata   = lua_newuserdata(luaVM, 128);
 }
 
-Socket::Socket( lua_State *luaVM, const string host, const unsigned short port )
+Socket::~Socket()
 {
-	m_bConnected           = false;
-	m_bAwaitingDestruction = false;
-	m_pUserData            = lua_newuserdata(luaVM, 128);
-	m_pBIO                 = NULL;
-	
-	// Concat host and port
-	stringstream host_port;
-	host_port << host << ":" << port;
-	
-	// Create a new connection
-	m_pBIO = BIO_new_connect( (char *) host_port.str( ).c_str( ) );
-	if( m_pBIO == NULL )
-	{
-		return;
-	}
-	
-	// Use non-blocking I/O
-	BIO_set_nbio( m_pBIO, 1 );
-	
-	// Actually connect
-	while( BIO_do_connect( m_pBIO ) <= 0 )
-	{
-		if( BIO_should_retry( m_pBIO ) )
+    CFunctions::triggerEvent("onSockClosed", m_userdata);
+
+    if (m_connected)
+    {
+        shutdown(m_sock, 1);
 #ifdef WIN32
-			Sleep(1);
+        closesocket(m_sock);
 #else
-			usleep(1);
+        close(m_sock);
 #endif
-		else
-			return;
-	}
+    }
 }
 
-Socket::~Socket( )
+void Socket::doPulse()
 {
-	if( m_bConnected && m_pUserData )
-	{
-		CFunctions::triggerEvent( "onSockClosed", m_pUserData );
-	}
-	
-	if( m_pBIO )
-	{
-		BIO_free_all( m_pBIO );
-	}
+    char buffer[SOCK_RECV_LIMIT + 1];
+
+    int retval = recv(m_sock, buffer, SOCK_RECV_LIMIT, 0);
+
+    int iError = WSAGetLastError();
+
+    if (!m_connected && (iError == WSAEWOULDBLOCK || iError == 0))
+    {
+        m_connected  = true;
+        CFunctions::triggerEvent("onSockOpened", m_userdata);
+    }
+
+    if (retval > 0)
+    {
+        buffer[retval] = '\0';
+
+        CFunctions::triggerEvent("onSockData", m_userdata, buffer);
+    }
+    else if(iError != WSAEWOULDBLOCK && iError != WSAENOTCONN && iError != 0)
+    {
+        m_connected  = false;
+        makeAwaitDestruction();
+        return;
+    }
 }
 
-void Socket::DoPulse( )
+void Socket::makeAwaitDestruction()
 {
-	if( !m_bConnected )
-	{
-		// Trigger the event the first time we pulse it.
-		CFunctions::triggerEvent( "onSockOpened", m_pUserData );
-		m_bConnected = true;
-	}
-	
-	// Read some stuff
-	char pBuffer[SOCK_RECV_LIMIT + 1];
-	int iReadLength = BIO_read( m_pBIO, pBuffer, sizeof(pBuffer)-1 ); // >0: success, length; == 0: no data read; <0: error
-	
-	if( iReadLength > 0 )
-	{
-		pBuffer[iReadLength] = '\0';
-		CFunctions::triggerEvent("onSockData", m_pUserData, pBuffer);
-	}
+    m_awaitingDestruction = true;
 }
 
-bool Socket::SendData( const string& data )
+bool Socket::VerifyIP(const string& host)
 {
-	return BIO_write( m_pBIO, data.c_str( ), data.length( ) ) > 0;
+    hostent* Hostent;
+    unsigned long IP = inet_addr(host.c_str());
+
+    if (IP != INADDR_NONE)
+    {
+        m_addr.sin_addr.s_addr = IP;
+        return true;
+    }
+    else
+    {
+        Hostent = gethostbyname(host.c_str());
+        if (Hostent == NULL)
+        {
+            return false;
+        }
+        else
+        {
+            memcpy(&(m_addr.sin_addr), Hostent->h_addr_list[0], 4);
+            return true;
+        }
+    }
+}
+
+bool Socket::sendData(const string& data)
+{
+    return send(m_sock, data.c_str(), data.length(), 0) != -1;
+}
+
+void* Socket::getUserdata()
+{
+    return m_userdata;
 }

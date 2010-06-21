@@ -2,7 +2,7 @@
 *
 *  Multi Theft Auto: San Andreas - Deathmatch
 *
-*  ml_sockets, External lua add-on module
+*  ml_base, External lua add-on module
 *
 *  Copyright © 2003-2008 MTA.  All Rights Reserved.
 *
@@ -20,101 +20,164 @@
 #include "extra/CLuaArguments.h"
 
 lua_State* gLuaVM;
-extern Sockets* sockets;
+vector<Socket*> sockets;
 
-int CFunctions::sockOpen( lua_State *luaVM )
+int CFunctions::sockOpen(lua_State *luaVM)
 {
-	if( luaVM )
-	{
-		if( lua_type( luaVM, 1 ) == LUA_TSTRING && lua_type( luaVM, 2 ) == LUA_TNUMBER )
-		{
-			const char* host = lua_tostring( luaVM, 1 );
-			unsigned short port = static_cast < unsigned short > ( lua_tonumber( luaVM, 2 ) );
+    if (luaVM)
+    {
+        if (lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TNUMBER)
+        {
+            const char* host    = lua_tostring(luaVM, 1);
+            unsigned short port = static_cast<unsigned short>(atoi(lua_tostring(luaVM, 2)));
 
-			// Check for SSL
-			bool ssl = false;
-			if( lua_type( luaVM, 3 ) == LUA_TBOOLEAN )
-				ssl = lua_toboolean( luaVM, 3 ) == 1;
+            Socket* socket = new Socket(luaVM, host, port);
 
-			Socket* pSocket = sockets->Create( luaVM, host, port, ssl );
-			if( pSocket )
-			{
-				lua_pushlightuserdata( luaVM, pSocket->GetUserData( ) );
-				return 1;
-			}
-		}
-	}
+            if (socket->isAwaitingDestruction())
+            {
+                SAFE_DELETE(socket);
+                lua_pushboolean(luaVM, false);
+                return 1;
+            }
 
-	lua_pushboolean( luaVM, false );
-	return 1;
+            void* userdata = socket->getUserdata();
+            
+            sockets.push_back(socket);
+
+            lua_pushlightuserdata(luaVM,userdata);
+            return 1;
+        }
+    }
+
+    lua_pushboolean(luaVM, false);
+    return 1;
 }
 
-int CFunctions::sockWrite( lua_State *luaVM )
+int CFunctions::getSocketByUserdata(Socket*& socket, const void* userdata)
 {
-	if( luaVM )
-	{
-		if( lua_type( luaVM, 1 ) == LUA_TLIGHTUSERDATA && lua_type( luaVM, 2 ) == LUA_TSTRING )
-		{
-			Socket* pSocket = sockets->Get( lua_touserdata( luaVM, 1 ) );
-			if( pSocket != NULL )
-			{
-				lua_pushboolean( luaVM, pSocket->SendData( lua_tostring( luaVM, 2 ) ) );
-				return 1;
-			}
-		}
-	}
+    for (unsigned int i = 0; i < sockets.size(); ++i)
+    {
+        Socket* sock = sockets[i];
 
-	lua_pushboolean(luaVM, false);
-	return 1;
+        if (sock->getUserdata() == userdata)
+        {
+            socket = sock;
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+int CFunctions::sockWrite(lua_State *luaVM)
+{
+    if (luaVM)
+    {
+        if (lua_type(luaVM, 1) == LUA_TLIGHTUSERDATA && lua_type(luaVM, 2) == LUA_TSTRING)
+        {
+            void* userdata   = lua_touserdata(luaVM, 1);
+
+            Socket* theSocket = NULL;
+
+            getSocketByUserdata(theSocket, userdata);
+
+            if (theSocket != NULL)
+            {
+                lua_pushboolean(luaVM, theSocket->sendData(lua_tostring(luaVM, 2)));
+                return 1;
+            }
+        }
+    }
+
+    lua_pushboolean(luaVM, false);
+    return 1;
 }
 
 int CFunctions::sockClose(lua_State *luaVM)
 {
-	if( luaVM )
-	{
-		if( lua_type( luaVM, 1 ) == LUA_TLIGHTUSERDATA )
-		{
-			Socket* pSocket = sockets->Get( lua_touserdata( luaVM, 1 ) );
-			if( pSocket != NULL )
-			{
-				pSocket->MakeAwaitDestruction( );
-				
-				lua_pushboolean( luaVM, true );
-				return 1;
-			}
-		}
-	}
-	
-	lua_pushboolean( luaVM, false );
-	return 1;
+    if (luaVM)
+    {
+        if (lua_type(luaVM, 1) == LUA_TLIGHTUSERDATA)
+        {
+            void*   userdata  = lua_touserdata(luaVM, 1);
+            Socket* theSocket = NULL;
+
+            if (getSocketByUserdata(theSocket, userdata) != -1)
+            {
+                theSocket->makeAwaitDestruction();
+
+                lua_pushboolean(luaVM, true);
+                return 1;
+            }
+        }
+    }
+
+    lua_pushboolean(luaVM, false);
+    return 1;
 }
 
-void CFunctions::saveLuaData( lua_State *luaVM )
+void CFunctions::deleteAllSockets()
 {
-	gLuaVM = luaVM;
+    for (unsigned int i = 0; i < sockets.size(); ++i)
+        SAFE_DELETE(sockets[i]);
+}
+
+void CFunctions::doPulse()
+{
+    unsigned int i = 0;
+
+    while (i < sockets.size())
+    {
+        Socket* socket = sockets[i];
+
+        if (!socket->isAwaitingDestruction())
+        {
+            sockets[i]->doPulse();
+            ++i;
+        }
+        else
+        {
+            sockets.erase(sockets.begin() + i);
+            SAFE_DELETE(socket);
+        }
+    }
+}
+
+void CFunctions::Cooldown(int ms)
+{
+#ifdef WIN32
+    Sleep(ms);
+#else
+    usleep(ms);
+#endif
+}
+
+void CFunctions::saveLuaData(lua_State *luaVM)
+{
+    gLuaVM = luaVM;
 }
 
 void CFunctions::addEvent(lua_State* luaVM, const char* szEventName)
 {
-	CLuaArguments args;
-	args.PushString(szEventName);
-	args.PushBoolean(true);
-	args.Call(luaVM, "addEvent");
+    CLuaArguments args;
+    args.PushString(szEventName);
+    args.PushBoolean(true);
+    args.Call(luaVM, "addEvent");
 }
 
 void CFunctions::triggerEvent(const string& eventName, void* userdata, const string& arg1)
 {
-	CLuaArguments args;
-	args.PushString(eventName.c_str());
+    CLuaArguments args;
+    args.PushString(eventName.c_str());
 
-	lua_getglobal(gLuaVM, "root");
-	CLuaArgument RootElement(gLuaVM, -1);
+    lua_getglobal(gLuaVM, "root");
+    CLuaArgument RootElement(gLuaVM, -1);
 
-	args.PushUserData(RootElement.GetLightUserData()); // source
-	args.PushUserData(userdata);
+    args.PushUserData(RootElement.GetLightUserData()); // source
+    args.PushUserData(userdata);
 
-	if (arg1.length() > 0)
-		args.PushString(arg1.c_str());
+    if (arg1.length() > 0)
+        args.PushString(arg1.c_str());
 
-	args.Call(gLuaVM, "triggerEvent");
+    args.Call(gLuaVM, "triggerEvent");
 }
