@@ -21,7 +21,7 @@
     #include <errno.h>
     #include <fcntl.h>
     
-    typedef int SOCKET
+    typedef int SOCKET;
 #endif
 
 class CSocket {
