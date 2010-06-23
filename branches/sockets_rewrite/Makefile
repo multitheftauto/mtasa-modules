@@ -4,7 +4,7 @@
 
 CC = gcc
 LD = gcc
-PROG = ml_base.so
+PROG = ml_sockets.so
 CXX = gcc
 CPP = gcc
 
@@ -18,7 +18,7 @@ LIBS = -lpthread -lstdc++ -llua
 
 #### Source and object files
 
-SRC_LOCAL =		$(wildcard ./*.cpp)
+SRC_LOCAL =		$(wildcard ./*.cpp ./extra/*.cpp)
 OBJ_LOCAL =		$(patsubst %.cpp,%.o,$(SRC_LOCAL))
 OBJS	= $(OBJ_LOCAL)
 SRCS	= $(SRC_LOCAL)
@@ -26,9 +26,9 @@ DEPS	= $(patsubst %.o,%.d,$(OBJS))
 
 #### Make rules
 
-all : ml_base
+all : ml_sockets
 
-ml_base : $(OBJS)
+ml_sockets : $(OBJS)
 	$(CC) $(CPPFLAGS) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
 
 clean :
