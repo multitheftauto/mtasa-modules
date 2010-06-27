@@ -27,7 +27,7 @@ int CFunctions::sockOpen(lua_State* luaVM)
         {
             // Put the host in a string, and the port in an unsigned short
             string strHost        = lua_tostring(luaVM, 1);
-            unsigned short usPort = static_cast<unsigned short>(atoi(lua_tostring(luaVM, 2)));
+            unsigned short usPort = static_cast < unsigned short > ( lua_tonumber ( luaVM, 2 ) );
 
             // Create the socket
             CSocket* pSocket = new CSocket(luaVM, strHost, usPort);

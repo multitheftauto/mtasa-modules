@@ -48,13 +48,13 @@ MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
 	if ( pModuleManager && luaVM )
 	{
         // Register functions
-        pModuleManager->RegisterFunction ( luaVM, "sockOpen",  CFunctions::sockOpen  );
+        pModuleManager->RegisterFunction ( luaVM, "sockOpen",  CFunctions::sockOpen );
         pModuleManager->RegisterFunction ( luaVM, "sockWrite", CFunctions::sockWrite );
         pModuleManager->RegisterFunction ( luaVM, "sockClose", CFunctions::sockClose );
 
         // Add events
         CFunctions::AddEvent(luaVM, "onSockOpened");
-        CFunctions::AddEvent(luaVM, "onSockData"  );
+        CFunctions::AddEvent(luaVM, "onSockData");
         CFunctions::AddEvent(luaVM, "onSockClosed");
 	}
 }

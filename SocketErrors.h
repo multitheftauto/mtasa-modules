@@ -1,3 +1,11 @@
+/******************************************************
+*
+* Project:    ml_sockets (Win32, Linux).
+* Website:    http://multitheftauto-modules.googlecode.com/
+* Developers: Gamesnert
+*
+******************************************************/
+
 #ifndef _SOCKERRORS_H
 #define _SOCKERRORS_H
 
@@ -14,7 +22,7 @@
     #define ERR_NOT_CONNECTED WSAENOTCONN
 #else
     // Linux specific
-    #define ERR_WOULD_BLOCK   EWOULDBLOCK
+    #define ERR_WOULD_BLOCK   EINPROGRESS
     #define ERR_NOT_CONNECTED ENOTCONN
 #endif
 

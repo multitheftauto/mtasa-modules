@@ -23,12 +23,13 @@
 #ifdef WIN32
     #pragma warning (disable : 4267) // DISABLE: conversion from 'size_t' to 'int', possible loss of data
     #pragma warning (disable : 4996) // DISABLE: 'strcpy': This function or variable may be unsafe.
+    #pragma warning (disable : 4244) // DISABLE: conversion from 'SOCKET' to 'int', possible loss of data
 #endif
 
 /** MODULE SPECIFIC INFORMATION **/
 #define MODULE_NAME			"Sockets Module"
 #define	MODULE_AUTHOR		"Gamesnert, MCvarial & x86"
-#define MODULE_VERSION		1.1f
+#define MODULE_VERSION		1.2f
 
 // Include default MTA module SDK includes
 #include "Common.h"

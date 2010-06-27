@@ -1,3 +1,11 @@
+/******************************************************
+*
+* Project:    ml_sockets (Win32, Linux).
+* Website:    http://multitheftauto-modules.googlecode.com/
+* Developers: Gamesnert, x86
+*
+******************************************************/
+
 #ifndef _CSOCK_H
 #define _CSOCK_H
 
@@ -20,11 +28,12 @@
     #include <sys/select.h>
     #include <errno.h>
     #include <fcntl.h>
-    
+
     typedef int SOCKET;
 #endif
 
-class CSocket {
+class CSocket
+{
 public:
     CSocket           (lua_State *luaVM, const string& strHost, const unsigned short& usPort);
     ~CSocket          ();

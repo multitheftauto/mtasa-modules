@@ -1,3 +1,11 @@
+/******************************************************
+*
+* Project:    ml_sockets (Win32, Linux).
+* Website:    http://multitheftauto-modules.googlecode.com/
+* Developers: Gamesnert
+*
+******************************************************/
+
 #include "CSocketManager.h"
 
 // Vector for holding all sockets
