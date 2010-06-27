@@ -1,3 +1,11 @@
+/******************************************************
+*
+* Project:    ml_sockets (Win32, Linux).
+* Website:    http://multitheftauto-modules.googlecode.com/
+* Developers: Gamesnert
+*
+******************************************************/
+
 #ifndef _CSOCKMANAGER_H
 #define _CSOCKMANAGER_H
 
@@ -6,7 +14,8 @@ class CSocket;
 #include <vector>
 #include "ml_sockets.h"
 
-class CSocketManager {
+class CSocketManager
+{
 public:
     static void DoPulse();
     

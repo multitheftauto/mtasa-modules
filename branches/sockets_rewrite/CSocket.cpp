@@ -1,3 +1,11 @@
+/******************************************************
+*
+* Project:    ml_sockets (Win32, Linux).
+* Website:    http://multitheftauto-modules.googlecode.com/
+* Developers: Gamesnert, ccw
+*
+******************************************************/
+
 #include "CSocket.h"
 
 CSocket::CSocket(lua_State *luaVM, const string& strHost, const unsigned short& usPort)
@@ -67,6 +75,21 @@ bool CSocket::DoPulse()
     // Make sure the socket exists before taking action
     if (m_pSocket)
     {
+        // Wait for connect to complete before proceeding
+        if (!m_bConnected)
+        {
+            struct timeval tv = { 0, 0 };
+            fd_set wfds;
+            FD_ZERO(&wfds);
+            FD_SET(m_pSocket, &wfds);
+            // See if socket it writable
+            int ret = select(m_pSocket+1, NULL, &wfds, NULL, &tv);
+            if (ret == 0)
+               return true;     // Not writable yet
+            if (ret == -1)
+               return false;    // select error
+        }
+
         // Create a buffer for catching received data
         // (1 byte larger than receive limit, because another character has to be added)
         char chBuffer[SOCK_RECV_LIMIT + 1];
