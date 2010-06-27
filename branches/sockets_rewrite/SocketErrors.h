@@ -16,14 +16,17 @@
 #define ERR_CONNECT_SUCCESS 0
 #define ERR_NO_ERROR        0
 
+
 #ifdef WIN32
     // Win32 specific
-    #define ERR_WOULD_BLOCK   WSAEWOULDBLOCK
-    #define ERR_NOT_CONNECTED WSAENOTCONN
+    #define ERR_WOULD_BLOCK             WSAEWOULDBLOCK
+    #define ERR_CONNECT_IN_PROGRESS     WSAEWOULDBLOCK
+    #define ERR_NOT_CONNECTED           WSAENOTCONN
 #else
     // Linux specific
-    #define ERR_WOULD_BLOCK   EINPROGRESS
-    #define ERR_NOT_CONNECTED ENOTCONN
+    #define ERR_WOULD_BLOCK             EWOULDBLOCK
+    #define ERR_CONNECT_IN_PROGRESS     EINPROGRESS
+    #define ERR_NOT_CONNECTED           ENOTCONN
 #endif
 
 #endif

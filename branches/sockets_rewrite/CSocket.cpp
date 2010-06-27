@@ -38,7 +38,7 @@ CSocket::CSocket(lua_State *luaVM, const string& strHost, const unsigned short& 
         int iError = GetLastSocketError();
 
         // If the error is ERR_WOULD_BLOCK (meaning it's in progress) then ignore
-        if (iError != ERR_WOULD_BLOCK)
+        if (iError != ERR_CONNECT_IN_PROGRESS)
         {
             // Error, so unload the socket and exit the function
             CloseSocket();
