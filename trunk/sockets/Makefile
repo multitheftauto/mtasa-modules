@@ -12,7 +12,7 @@ CPP = gcc
 # NOTE: add -g for debug, remove for release!
 CPPFLAGS = -g -MD -Wall -I./
 LDFLAGS = -fPIC -shared -Wl,-soname,$(PROG).1,-R./
-LIBS = -lpthread -lstdc++ -L./lib/lua51/src/.libs -llua
+LIBS = -lpthread -lstdc++ -llua
 
 #### End of system configuration section ####
 
@@ -20,15 +20,15 @@ LIBS = -lpthread -lstdc++ -L./lib/lua51/src/.libs -llua
 
 SRC_LOCAL =		$(wildcard ./*.cpp ./extra/*.cpp)
 OBJ_LOCAL =		$(patsubst %.cpp,%.o,$(SRC_LOCAL))
-OBJS	  =     $(OBJ_LOCAL)
-SRCS	  =     $(SRC_LOCAL)
-DEPS	  =     $(patsubst %.o,%.d,$(OBJS))
+OBJS	= $(OBJ_LOCAL)
+SRCS	= $(SRC_LOCAL)
+DEPS	= $(patsubst %.o,%.d,$(OBJS))
 
 #### Make rules
 
-all : ml_base
+all : ml_sockets
 
-ml_base : $(OBJS)
+ml_sockets : $(OBJS)
 	$(CC) $(CPPFLAGS) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
 
 clean :
