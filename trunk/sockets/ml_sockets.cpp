@@ -32,6 +32,7 @@ MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, c
 
 #ifdef WIN32
     WSADATA wsaData;
+    memset(&wsaData, 0, sizeof(WSADATA)); // Same as ZeroMemory.
     if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
     {
         pModuleManager->ErrorPrintf("[Sockets] Can't start Winsock, aborting...");
