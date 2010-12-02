@@ -30,6 +30,7 @@
 #ifndef __HANDLER_H
 #define __HANDLER_H
 
+#include <cstring>
 #include <map>
 #include <mysql.h>
 #include "result.h"
