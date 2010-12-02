@@ -30,7 +30,7 @@
 
 #define MODULE_NAME     "MySQL 5.0 database module"
 #define MODULE_AUTHOR   "Alberto Alonso <rydencillo@gmail.com>"
-#define MODULE_VERSION  0.41f
+#define MODULE_VERSION  0.50f
 
 #include "common.h"
 #include "ILuaModuleManager.h"

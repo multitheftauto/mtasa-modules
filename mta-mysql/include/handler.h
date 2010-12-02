@@ -30,6 +30,7 @@
 #ifndef __HANDLER_H
 #define __HANDLER_H
 
+#include <map>
 #include <mysql.h>
 #include "result.h"
 
@@ -40,12 +41,33 @@ class MySQL
  /**
   ** Static interface methods
   **/
+private:
+  static unsigned int GetNextHandler ()
+  {
+    static unsigned int s_num = 0;
+    return s_num++;
+  }
+
 public:
   /* Metatable */
+  struct C_String_Compare {
+    bool operator() ( const char* s1, const char* s2 ) const
+    {
+      return strcmp ( s1, s2 ) < 0;
+    }
+  };
+
+  typedef std::map<const char*, lua_CFunction, C_String_Compare> mapType;
+  static mapType ms_handlerMaps [ 256 ];
+  static mapType ms_resultMaps [ 256 ];
+  static bool ms_bHandlerMapInitialized;
+  static bool ms_bResultMapInitialized;
   static int HandlerGC(lua_State* L);
   static int HandlerTostring(lua_State* L);
+  static int HandlerIndex(lua_State* L);
   static int ResultGC(lua_State* L);
   static int ResultTostring(lua_State* L);
+  static int ResultIndex(lua_State* L);
   static int NullEqual(lua_State* L);
 
   static void Startup(lua_State* L);
@@ -111,9 +133,12 @@ public:
   unsigned int Errno();
   const char* Error();
 
+  unsigned int GetNumHandler () const { return m_numHandler; }
+
 private:
   MYSQL* m_handle;
   bool m_ok;
+  unsigned int m_numHandler;
 };
 
 #endif /* #ifndef __HANDLER_H */

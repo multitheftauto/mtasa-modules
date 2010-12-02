@@ -40,6 +40,13 @@ class MySQL_Result
   /**
    ** Static interface functions
    **/
+private:
+  static unsigned int GetNextResult ()
+  {
+    static unsigned int s_num = 0;
+    return s_num++;
+  }
+
 public:
   static int DataSeek(lua_State* L);
   static int FetchField(lua_State* L);
@@ -75,8 +82,11 @@ public:
   unsigned int NumFields();
   unsigned long long NumRows();
 
+  unsigned int GetNumResult () const { return m_numResult; }
+
 private:
   MYSQL_RES* m_result;
+  unsigned int m_numResult;
 };
 
 #endif /* #ifndef __RESULT_H */

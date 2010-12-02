@@ -41,7 +41,7 @@
  **/
 static inline MySQL_Result* checkMySQLResult(lua_State* L)
 {
-  void *ud = luaL_checkudata(L, 1, "LuaBook.mysqlResult");
+  void *ud = luaL_checkudata(L, 1, "mysqlResult");
   MySQL_Result* result = *((MySQL_Result **)ud);
 
   luaL_argcheck(L, result != 0, 1, "Expected a valid MySQL result");
@@ -321,7 +321,7 @@ int MySQL_Result::FetchLengths(lua_State* L)
 
 int MySQL_Result::FreeResult(lua_State* L)
 {
-  void *ud = luaL_checkudata(L, 1, "LuaBook.mysqlResult");
+  void *ud = luaL_checkudata(L, 1, "mysqlResult");
   MySQL_Result* result = *((MySQL_Result **)ud);
 
   if (result != 0)
@@ -612,6 +612,7 @@ int MySQL_Result::Null(lua_State* L)
  **/
 MySQL_Result::MySQL_Result(MYSQL_RES* res)
   : m_result(res)
+  , m_numResult ( GetNextResult() )
 {
 }
 

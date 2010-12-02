@@ -32,6 +32,7 @@
 #include <windows.h>
 #include <winsock.h>
 #endif
+#include <map>
 #include <mysql.h>
 #include "module.h"
 #include "handler.h"
@@ -92,7 +93,7 @@ static inline unsigned long getClientFlag(const char* flagStr, size_t len)
 
 static inline MySQL* checkMySQLHandler(lua_State* L)
 {
-  void *ud = luaL_checkudata(L, 1, "LuaBook.mysqlHandler");
+  void *ud = luaL_checkudata(L, 1, "mysqlHandler");
   MySQL* handler = *((MySQL **)ud);
   luaL_argcheck(L, handler != 0 && handler->OK() == true, 1, "Expected a valid MySQL link");
 
@@ -107,7 +108,7 @@ static inline MySQL* checkMySQLHandler(lua_State* L)
 /** Metatable functions for this module userdatas **/
 int MySQL::HandlerGC(lua_State* L)
 {
-  void *ud = luaL_checkudata(L, 1, "LuaBook.mysqlHandler");
+  void *ud = luaL_checkudata(L, 1, "mysqlHandler");
 
   if (ud != 0 && *((MySQL **)ud) != 0)
   {
@@ -120,11 +121,14 @@ int MySQL::HandlerGC(lua_State* L)
 
 int MySQL::HandlerTostring(lua_State* L)
 {
-  void *ud = luaL_checkudata(L, 1, "LuaBook.mysqlHandler");
+  void *ud = luaL_checkudata(L, 1, "mysqlHandler");
 
   if (ud != 0 && *((MySQL **)ud) != 0)
   {
-    lua_pushstring(L, "MySQL connection");
+    char szName [ 64 ];
+    MySQL* mysql = *((MySQL **)ud);
+    snprintf ( szName, sizeof(szName), "MySQL handler (#%u)", mysql->GetNumHandler() );
+    lua_pushstring(L, szName);
   }
   else
   {
@@ -135,7 +139,7 @@ int MySQL::HandlerTostring(lua_State* L)
 
 int MySQL::ResultGC(lua_State* L)
 {
-  void *ud = luaL_checkudata(L, 1, "LuaBook.mysqlResult");
+  void *ud = luaL_checkudata(L, 1, "mysqlResult");
 
   if (ud != 0 && *((MySQL_Result**)ud) != 0)
   {
@@ -148,11 +152,14 @@ int MySQL::ResultGC(lua_State* L)
 
 int MySQL::ResultTostring(lua_State* L)
 {
-  void *ud = luaL_checkudata(L, 1, "LuaBook.mysqlResult");
+  void *ud = luaL_checkudata(L, 1, "mysqlResult");
 
   if (ud != 0 && *((MySQL_Result**)ud) != 0)
   {
-    lua_pushstring(L, "MySQL result");
+    char szName [ 64 ];
+    MySQL_Result* result = *((MySQL_Result **)ud);
+    snprintf ( szName, sizeof(szName), "MySQL result (#%u)", result->GetNumResult() );
+    lua_pushstring(L, szName);
   }
   else
   {
@@ -162,24 +169,143 @@ int MySQL::ResultTostring(lua_State* L)
 }
 
 
+MySQL::mapType MySQL::ms_handlerMaps [ 256 ];
+MySQL::mapType MySQL::ms_resultMaps [ 256 ];
+bool MySQL::ms_bHandlerMapInitialized = false;
+bool MySQL::ms_bResultMapInitialized = false;
+
+int MySQL::HandlerIndex(lua_State* L)
+{
+  using std::make_pair;
+
+  void *ud = luaL_checkudata(L, 1, "mysqlHandler");
+
+  if ( !ms_bHandlerMapInitialized )
+  {
+#define ADD(s, fn) ms_handlerMaps[*(s)].insert ( make_pair<const char*, lua_CFunction> ( (s), MySQL :: fn ) )
+    ADD("close", Close);
+    ADD("errno", Errno);
+    ADD("error", Error);
+    ADD("ping", Ping);
+    ADD("select_db", SelectDB);
+    ADD("escape_string", EscapeString);
+    ADD("affected_rows", AffectedRows);
+    ADD("change_user", ChangeUser);
+    ADD("get_character_set_info", GetCharacterSetInfo);
+    ADD("get_client_info", GetClientInfo);
+    ADD("get_client_version", GetClientVersion);
+    ADD("get_host_info", GetHostInfo);
+    ADD("get_proto_info", GetProtoInfo);
+    ADD("get_server_info", GetServerInfo);
+    ADD("get_server_version", GetServerVersion);
+    ADD("hex_string", HexString);
+    ADD("info", Info);
+    ADD("insert_id", InsertID);
+    ADD("query", Query);
+    ADD("unbuffered_query", UnbufferedQuery);
+    ADD("set_character_set", SetCharacterSet);
+    ADD("stat", Stat);
+    ADD("warning_count", WarningCount);
+#undef ADD
+    ms_bHandlerMapInitialized = true;
+  }
+
+  if (ud != 0 && *((MySQL **)ud) != 0)
+  {
+    const char* p = lua_tostring ( L, 2 );
+    if ( p == 0 )
+      lua_pushnil(L);
+    else
+    {
+      mapType::iterator it = ms_handlerMaps[*p].find ( p );
+      if ( it == ms_handlerMaps[*p].end() )
+        lua_pushnil(L);
+      else
+        lua_pushcfunction(L, it->second);
+    }
+  }
+  else
+  {
+    lua_pushnil(L);
+  }
+
+  return 1;
+}
+
+int MySQL::ResultIndex(lua_State* L)
+{
+  void *ud = luaL_checkudata(L, 1, "mysqlResult");
+
+  if ( !ms_bResultMapInitialized )
+  {
+#define ADD(s, fn) ms_resultMaps[*(s)].insert ( make_pair<const char*, lua_CFunction> ( (s), MySQL_Result :: fn ) )
+    ADD("data_seek", DataSeek);
+    ADD("fetch_field", FetchField);
+    ADD("fields", Fields);
+    ADD("fetch_lengths", FetchLengths);
+    ADD("fetch_row", FetchRow);
+    ADD("rows", Rows);
+    ADD("fetch_assoc", FetchAssoc);
+    ADD("rows_assoc", RowsAssoc);
+    ADD("field_length", FieldLength);
+    ADD("field_name", FieldName);
+    ADD("field_seek", FieldSeek);
+    ADD("field_tell", FieldTell);
+    ADD("num_fields", NumFields);
+    ADD("numfields", NumFields);
+    ADD("num_rows", NumRows);
+    ADD("numrows", NumRows);
+    ADD("result", Result);
+    ADD("free_result", FreeResult);
+    ADD("free", FreeResult);
+#undef ADD
+    ms_bResultMapInitialized = true;
+  }
+
+  if (ud != 0 && *((MySQL_Result**)ud) != 0)
+  {
+    const char* p = lua_tostring ( L, 2 );
+    if ( p == 0 )
+      lua_pushnil(L);
+    else
+    {
+      mapType::iterator it = ms_resultMaps[*p].find ( p );
+      if ( it == ms_resultMaps[*p].end() )
+        lua_pushnil(L);
+      else
+        lua_pushcfunction(L, it->second);
+    }
+  }
+  else
+  {
+    lua_pushnil(L);
+  }
+  return 1;
+}
 
 /** Module startup, create the metatables **/
 void MySQL::Startup(lua_State* L)
 {
-  luaL_newmetatable(L, "LuaBook.mysqlHandler");
+  luaL_newmetatable(L, "mysqlHandler");
   lua_pushstring(L, "__gc");
   lua_pushcfunction(L, MySQL::HandlerGC);
   lua_settable(L, -3);
   lua_pushstring(L, "__tostring");
   lua_pushcfunction(L, MySQL::HandlerTostring);
   lua_settable(L, -3);
+  lua_pushstring(L, "__index");
+  lua_pushcfunction(L, MySQL::HandlerIndex);
+  lua_settable(L, -3);
 
-  luaL_newmetatable(L, "LuaBook.mysqlResult");
+  luaL_newmetatable(L, "mysqlResult");
   lua_pushstring(L, "__gc");
   lua_pushcfunction(L, MySQL::ResultGC);
   lua_settable(L, -3);
   lua_pushstring(L, "__tostring");
   lua_pushcfunction(L, MySQL::ResultTostring);
+  lua_settable(L, -3);
+  lua_pushstring(L, "__index");
+  lua_pushcfunction(L, MySQL::ResultIndex);
   lua_settable(L, -3);
 }
 
@@ -261,7 +387,7 @@ int MySQL::Connect(lua_State* L)
   else
   {
     MySQL** pResource = (MySQL**)lua_newuserdata(L, sizeof(MySQL*));
-    luaL_getmetatable(L, "LuaBook.mysqlHandler");
+    luaL_getmetatable(L, "mysqlHandler");
     lua_setmetatable(L, -2);
     *pResource = handler;
   }
@@ -278,7 +404,7 @@ int MySQL::Connect(lua_State* L)
  **/
 int MySQL::Close(lua_State* L)
 {
-  void *ud = luaL_checkudata(L, 1, "LuaBook.mysqlHandler");
+  void *ud = luaL_checkudata(L, 1, "mysqlHandler");
   MySQL* handler = *((MySQL **)ud);
 
   luaL_argcheck(L, handler != 0 && handler->OK() == true, 1, "Expected a valid MySQL link");
@@ -580,7 +706,7 @@ int MySQL::Query(lua_State* L)
   else
   {
     MySQL_Result** pResult = (MySQL_Result**)lua_newuserdata(L, sizeof(MySQL_Result*));
-    luaL_getmetatable(L, "LuaBook.mysqlResult");
+    luaL_getmetatable(L, "mysqlResult");
     lua_setmetatable(L, -2);
     *pResult = result;
   }
@@ -599,7 +725,7 @@ int MySQL::UnbufferedQuery(lua_State* L)
   else
   {
     MySQL_Result** pResult = (MySQL_Result**)lua_newuserdata(L, sizeof(MySQL_Result*));
-    luaL_getmetatable(L, "LuaBook.mysqlResult");
+    luaL_getmetatable(L, "mysqlResult");
     lua_setmetatable(L, -2);
     *pResult = result;
   }
@@ -670,6 +796,7 @@ MySQL::MySQL(const char* hostname,
              const char* unixSocket,
              unsigned long clientFlags)
   : m_ok(false)
+  , m_numHandler ( GetNextHandler() )
 {
   m_handle = mysql_init(0);
   if (m_handle)
