@@ -1,0 +1,20 @@
+<settings>
+	<!-- example:
+		<server
+			host="irc.hostname.com"
+			nick="nickname"
+			channels="#channel1,#channel2 password" put ',' between channels and ' ' between a channel & a password first channel is the echochannel
+			port="6667" (optional default: 6667)
+			password="server password" (optional)
+			secure="false" (optional default: false)
+			
+			nickservpass="password" if your nick is registered on the nickserver put it here (optional)
+		/>
+		add as many servers as you want
+	-->
+	<server 
+		host="irc.gtanet.com"
+		nick="SocketsBot"
+		channels="#MCvarial"
+	/>
+</settings>

@@ -1,0 +1,98 @@
+<meta>
+	<!-- Touch this and you'll burn in hell! -->
+	<info author="MCvarial" version="1.0.0" type="misc" name="Internet Relay Chat Echo Bot" description="Echobot to be used on irc" />
+	
+	<settings>
+		<!-- Activate ingame irc client? -->
+		<setting 
+			name="*irc-client" 
+			value="true"
+			friendlyname="Ungame irc client"
+			examples="true,false"
+			desc="Activate ingame irc client?"
+		/>
+		
+		<!-- Notice users about the irc channel? -->
+		<setting 
+			name="*irc-notice" 
+			value="true"
+			friendlyname="IRC info popup"
+			examples="true,false"
+			desc="Notice players of the irc echo"
+		/>
+		
+		<!-- How many seconds should there be between the notices? -->
+		<setting 
+			name="*irc-notice-timeout" 
+			value="120"
+			friendlyname="IRC info popup timeout"
+			examples="0-inf"
+			desc="IRC info popup timeout in seconds"
+		/>
+	</settings>
+	
+	<export function="ircHop" type="server" http="false" />
+	<export function="ircSay" type="server" http="false" />
+	<export function="ircRaw" type="server" http="false" />
+	<export function="ircPart" type="server" http="false" />
+	<export function="ircJoin" type="server" http="false" />
+	<export function="ircAction" type="server" http="false" />
+	<export function="ircNotice" type="server" http="false" />
+	<export function="outputIRC" type="server" http="false" />
+	<export function="ircConnect" type="server" http="false" />
+	<export function="ircIdentify" type="server" http="false" />
+	<export function="ircReconnect" type="server" http="false" />
+	<export function="ircDisconnect" type="server" http="false" />
+	<export function="ircChangeNick" type="server" http="false" />
+	
+	<export function="ircGetServers" type="server" http="false" />
+	<export function="ircGetServerName" type="server" http="false" />
+	<export function="ircGetServerHost" type="server" http="false" />
+	<export function="ircGetServerPort" type="server" http="false" />
+	<export function="ircGetServerPass" type="server" http="false" />
+	<export function="ircGetServerNick" type="server" http="false" />
+	<export function="ircIsServerSecure" type="server" http="false" />
+	<export function="ircGetServerChannels" type="server" http="false" />
+	
+	<export function="ircGetChannelServer" type="server" http="false" />
+	<export function="ircSetChannels" type="server" http="false" />
+	<export function="ircSetChannelMode" type="server" http="false" />
+	<export function="ircGetChannelName" type="server" http="false" />
+	<export function="ircGetChannelMode" type="server" http="false" />
+	<export function="ircGetChannelUsers" type="server" http="false" />
+	<export function="ircGetChannelTopic" type="server" http="false" />
+	<export function="ircGetChannelFromName" type="server" http="false" />
+	<export function="ircIsEchoChannel" type="server" http="false" />
+	
+	<export function="ircSetUserMode" type="server" http="false" />
+	<export function="ircGetUserMode" type="server" http="false" />
+	<export function="ircIsUserBot" type="server" http="false" />
+	<export function="ircGetUserNick" type="server" http="false" />
+	<export function="ircGetUsers" type="server" http="false" />
+	<export function="ircGetUserServer" type="server" http="false" />
+	<export function="ircGetUserLevel" type="server" http="false" />
+	<export function="ircGetUserVhost" type="server" http="false" />
+	<export function="ircIsUserSecure" type="server" http="false" />
+	<export function="ircGetUserFromName" type="server" http="false" />
+	<export function="ircGetUserRealName" type="server" http="false" />
+	<export function="ircGetUserChannels" type="server" http="false" />
+	
+	<export function="addIRCCommandHandler" type="server" http="false" />
+	<export function="ircGetCommands" type="server" http="false" />
+	<export function="ircGetCommandLevel" type="server" http="false" />
+	<export function="ircIsCommandEchoChannelOnly" type="server" http="false" />
+	
+	<!-- Don't touch this, you might break it. -->
+	<script src="scripts/loading.lua" type="server" />
+	<script src="scripts/utility.lua" type="server" />
+	<script src="scripts/channels.lua" type="server" />
+	<script src="scripts/logging.lua" type="server" />
+	<script src="scripts/servers.lua" type="server" />
+	<script src="scripts/users.lua" type="server" />
+	<script src="scripts/handling.lua" type="server" />
+	<script src="scripts/commands.lua" type="server" />
+	<script src="scripts/levels.lua" type="server" />
+	<script src="scripts/acl.lua" type="server" />
+	<script src="scripts/irccommands.lua" type="server" />
+	<script src="scripts/echo.lua" type="server" />
+</meta>
