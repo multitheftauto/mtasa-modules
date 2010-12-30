@@ -51,6 +51,7 @@ addEventHandler("onIRCRaw",root,
 			end
 		end
 		if t[2] == "376" then
+			--users[(createElement("irc-user"))] = {ircGetServerNick(source),"+iwxz","?","?","?",{}}
 			triggerEvent("onIRCConnect",source)
 		end
 		if t[2] == "001" then
@@ -68,6 +69,7 @@ addEventHandler("onIRCRaw",root,
 				channels[channel][6] = true
 			end
 			if user then
+				users[user][3] = vhost
 				table.insert(users[user][6],channel)
 			else
 				user = createElement("irc-user")
@@ -95,6 +97,22 @@ addEventHandler("onIRCRaw",root,
 			end
 			triggerEvent("onIRCUserPart",user,channel,reason)
 		end
+		if t[2] == "KICK" then
+			local user = ircGetUserFromNick(t[4])
+			local reason = getMessageFromRaw(data)
+			local channel = ircGetChannelFromName(t[3])
+			local kicker = ircGetUserFromNick(getNickFromRaw(data))
+			for i,chan in ipairs (users[user][6]) do
+				if channel == chan then
+					table.remove(users[user][6],i)
+					break
+				end
+			end
+			triggerEvent("onIRCUserKick",user,channel,reason,kicker)
+			if t[4] == ircGetServerNick(source) then
+				ircJoin(source,t[3])
+			end
+		end
 		if t[2] == "353" then
 			local nicks = split(getMessageFromRaw(data),32)
 			local channel = ircGetChannelFromName(t[5])
@@ -112,6 +130,14 @@ addEventHandler("onIRCRaw",root,
 					userlevels[channel] = {}
 				end
 				userlevels[channel][user] = level
+			end
+		end
+		if t[2] == "433" then
+			triggerEvent("onIRCFailConnect",source,"Nickname already in use")
+			ircChangeNick(source,t[4].."_")
+			if servers[source][8] then
+				ircRaw(source,"PRIVMSG NickServ :GHOST "..t[4].." "..servers[source][8])
+				ircChangeNick(source,t[4])
 			end
 		end
 		if t[2] == "PRIVMSG" then
@@ -135,10 +161,14 @@ addEventHandler("onIRCRaw",root,
 			end
 		end
 		if t[2] == "QUIT" then
-			local user = ircGetUserFromNick(getNickFromRaw(data))
+			local nick = getNickFromRaw(data)
+			local user = ircGetUserFromNick(nick)
 			triggerEvent("onIRCUserQuit",user,getMessageFromRaw(data))
 			users[user] = nil
 			destroyElement(user)
+			if nick == string.sub(ircGetServerNick(source),1,-2) then
+				ircChangeNick(source,nick)
+			end
 		end
 		if t[1] == "ERROR" then
 			triggerEvent("onIRCFailConnect",source,getMessageFromRaw(data))
@@ -153,5 +183,7 @@ addEventHandler("onIRCConnect",root,
 			ircRaw(source,raw)
 		end
 		servers[source][16] = {}
+		killTimer(servers[source][12])
+		servers[source][12] = setTimer(checkForTimeout,60000,0,source)
 	end
 )

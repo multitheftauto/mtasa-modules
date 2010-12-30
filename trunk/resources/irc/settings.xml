@@ -16,5 +16,6 @@
 		host="irc.gtanet.com"
 		nick="SocketsBot"
 		channels="#MCvarial"
+		nickservpass="waffles"
 	/>
 </settings>

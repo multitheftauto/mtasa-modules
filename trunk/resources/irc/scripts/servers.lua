@@ -15,6 +15,7 @@ servers = {} -- syntax: [server] = {element socket,string name,string host,strin
 function func_ircRaw (server,data)
 	if servers[server] and servers[server][1] then
 		if servers[server][15] then
+			writeLog("-> "..data)
 			return sockWrite(servers[server][1],data.."\r\n")
 		end
 		table.insert(servers[server][16],data)
@@ -35,6 +36,12 @@ function func_ircHop (channel,reason)
 end
 
 function func_ircSay (target,message)
+	if #message > 400 then
+		for i=1,math.ceil(#message/400) do
+			ircSay(target,string.sub(message,(i-1)*400,i*400))
+		end
+		return true
+	end
 	local server = getElementParent(target)
 	local targetName = ircGetChannelName(target)
 	if not targetName then
@@ -83,6 +90,12 @@ function func_ircJoin (server,channel,password)
 end
 
 function func_ircAction (channel,message)
+	if #message > 400 then
+		for i=1,math.ceil(#message/400) do
+			ircAction(channel,string.sub(message,(i-1)*400,i*400))
+		end
+		return true
+	end
 	local server = getElementParent(channel,0)
 	local channelName = ircGetChannelName(channel)
 	if server and channelName then
@@ -92,10 +105,16 @@ function func_ircAction (channel,message)
 end
 
 function func_ircNotice (target,message)
-	local server = getElementParent(channel,0)
+	if #message > 400 then
+		for i=1,math.ceil(#message/400) do
+			ircNotice(target,string.sub(message,(i-1)*400,i*400))
+		end
+		return true
+	end
+	local server = getElementParent(target,0)
 	local targetName = ircGetChannelName(target)
 	if not targetName then
-		targetName = ircGetUserName(target)
+		targetName = ircGetUserNick(target)
 	end
 	if server and targetName then
 		return ircRaw(server,"NOTICE "..targetName.." :"..(message or "<no message>"))
@@ -104,13 +123,21 @@ function func_ircNotice (target,message)
 end
 
 function func_outputIRC (message)
+	if #message > 400 then
+		for i=1,math.ceil(#message/400) do
+			outputIRC(string.sub(message,(i-1)*400,i*400))
+		end
+		return true
+	end
 	for channel,info in pairs (channels) do
 		if info[7] then
-			if channel then
-				local server = getElementParent(channel)
-				if server then
-					return ircRaw(server,"PRIVMSG "..info[1].." :"..(message or "<no message>"))
+			local server = getElementParent(channel)
+			local localuser = ircGetUserFromNick(ircGetServerNick(server))
+			if server then
+				if localuser then
+					triggerEvent("onIRCMessage",localuser,channel,message)
 				end
+				return ircRaw(server,"PRIVMSG "..info[1].." :"..(message or "<no message>"))
 			end
 		end
 	end
@@ -118,13 +145,17 @@ function func_outputIRC (message)
 end
 
 function func_ircIdentify (server,password)
-	return ircRaw(server,"PRIVMSG NickServ :IDENTIFY "..(password or ""))
+	if servers[server] then
+		servers[server][8] = password
+		return ircRaw(server,"PRIVMSG NickServ :IDENTIFY "..(password or ""))
+	end
+	return false
 end
 
 function func_ircConnect (host,nick,port,password,secure)
 	local server = createElement("irc-server")
 	local socket = sockOpen(host,port,secure)
-	local timer = setTimer(checkForTimeout,120000,0,server)
+	local timer = setTimer(connectingTimedOut,10000,0,server)
 	if server and socket then
 		servers[server] = {socket,host,host,nick,password,port,secure,false,false,false,getTickCount(),timer,0,{},false,{}}
 		triggerEvent("onIRCConnecting",server)
@@ -135,8 +166,10 @@ end
 
 function func_ircReconnect (server)
 	if servers[server] then
-		servers[server][15] = false
-		ircRaw(server,"QUIT :Reconnect")
+		if servers[server][15] then
+			servers[server][15] = false
+			ircRaw(server,"QUIT :Reconnect")
+		end
 		sockClose(servers[server][1])
 		servers[server][1] = sockOpen(servers[server][2],servers[server][6],servers[server][7])
 		return true
@@ -213,4 +246,21 @@ function func_ircGetServerChannels (server)
 		return servers[server][14]
 	end
 	return false
+end
+
+function connectingTimedOut (server)
+	triggerEvent("onIRCFailConnect",server,"Connection timed out")
+	return ircReconnect(server)
+end
+
+function checkForTimeout (server)
+	--[[
+	if not servers[server][15] then
+		return ircReconnect(server)
+	end
+	if (getTickCount() - servers[server][11]) > 240000 then
+		return ircReconnect(server)
+	end
+	ircRaw(server,"PING "..servers[server][3])
+	]]
 end
