@@ -18,6 +18,40 @@ addEventHandler("onResourceStart",resourceRoot,
 			return
 		end
 		
+		-- Parse rights file.
+		local rightsFile = fileOpen("scripts/rights.txt",true)
+		if rightsFile then
+			local missingRights = {}
+			for i,line in ipairs (split(fileRead(rightsFile,fileGetSize(rightsFile)),44)) do
+				line = string.sub(line,2)
+				if not hasObjectPermissionTo(getThisResource(),"function."..line,true) then
+					table.insert(missingRights,"function."..line)
+				end
+			end
+			if #missingRights ~= 0 then
+				outputServerLog("IRC: "..#missingRights.." missing rights: ")
+				for i,missingRight in ipairs (missingRights) do
+					outputServerLog("	- "..missingRight)
+				end
+				outputServerLog("Please give the irc resource these rights or it will not work properly!")
+			end
+		else
+			outputServerLog("IRC: could not start resource, the rights file can't be loaded!")
+			outputServerLog("IRC: restart the resource to retry")
+			return
+		end
+		
+		-- Is the resource up-to-date?
+		function checkVersion (res,version)
+			if res ~= "ERROR" and version then
+				if getNumberFromVersion(version) > getNumberFromVersion(getResourceInfo(getThisResource(),"version")) then
+					outputServerLog("IRC: resource is outdated, newest version: "..version)
+					outputIRC("The irc resource is outdated, newest version: "..version)
+				end
+			end
+		end
+		callRemote("http://community.mtasa.com/mta/resources.php",checkVersion,"version","irc")
+		
 		-- Parse functions file.
 		local functionsFile = fileOpen("scripts/functions.txt",true)
 		if functionsFile then
@@ -92,6 +126,9 @@ addEventHandler("onResourceStop",resourceRoot,
 		for i,server in ipairs (ircGetServers()) do
 			ircDisconnect(server,"resource stopped")
 		end
+		servers = {}
+		channels = {}
+		users = {}
 	end
 )
 

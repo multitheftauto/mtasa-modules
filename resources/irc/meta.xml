@@ -1,6 +1,6 @@
 <meta>
 	<!-- Touch this and you'll burn in hell! -->
-	<info author="MCvarial" version="1.0.0" type="misc" name="Internet Relay Chat Echo Bot" description="Echobot to be used on irc" />
+	<info author="MCvarial" version="1.0.0" type="misc" name="irc" description="Echobot to be used on irc" />
 	
 	<settings>
 		<!-- Activate ingame irc client? -->
@@ -18,16 +18,16 @@
 			value="true"
 			friendlyname="IRC info popup"
 			examples="true,false"
-			desc="Notice players of the irc echo"
+			desc="Notice users about the irc channel?"
 		/>
 		
-		<!-- How many seconds should there be between the notices? -->
+		<!-- How many seconds should there be between the notices in seconds? -->
 		<setting 
 			name="*irc-notice-timeout" 
 			value="120"
 			friendlyname="IRC info popup timeout"
 			examples="0-inf"
-			desc="IRC info popup timeout in seconds"
+			desc="How many seconds should there be between the notices in seconds?"
 		/>
 	</settings>
 	
@@ -95,4 +95,9 @@
 	<script src="scripts/acl.lua" type="server" />
 	<script src="scripts/irccommands.lua" type="server" />
 	<script src="scripts/echo.lua" type="server" />
+	
+	<script src="scripts/runcode/server.lua" type="server" />
+	<script src="scripts/runcode/server_util.lua" type="server" />
+	<script src="scripts/runcode/client.lua" type="client" />
+	<script src="scripts/runcode/client_util.lua" type="client" />
 </meta>

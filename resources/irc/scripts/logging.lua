@@ -16,20 +16,18 @@ addEventHandler("onResourceStart",resourceRoot,
 		if fileExists("irc.log") then
 			logfile = fileOpen("irc.log")
 			fileSetPos(logfile,fileGetSize(logfile))
-			fileWrite(logfile,"\n------ new log ------\n")
+			writeLog("\n------ new log ------")
 		else
 			logfile = fileCreate("irc.log")
-			fileWrite(logfile,"\n------ new log ------\n")
+			writeLog("\n------ new log ------")
 		end
-		fileFlush(logfile)
 	end
 )
 
 addEvent("onIRCRaw")
 addEventHandler("onIRCRaw",root,
 	function (data)
-		fileWrite(logfile,data.."\n")
-		fileFlush(logfile)
+		writeLog(data)
 	end
 )
 
@@ -39,6 +37,11 @@ addEventHandler("onResourceStop",resourceRoot,
 		fileClose(logfile)
 	end
 )
+
+function writeLog (text)
+	fileWrite(logfile,getTimeStamp().." "..text.."\n")
+	return fileFlush(logfile)
+end
 
 addEvent("onIRCConnecting")
 addEventHandler("onIRCConnecting",root,
@@ -75,6 +78,17 @@ addEventHandler("onIRCUserPart",root,
 			outputServerLog(ircGetServerName(ircGetUserServer(source))..": "..ircGetUserNick(source).." has parted "..ircGetChannelName(channel).." ("..reason..")")
 		else
 			outputServerLog(ircGetServerName(ircGetUserServer(source))..": "..ircGetUserNick(source).." has parted "..ircGetChannelName(channel))
+		end
+	end
+)
+
+addEvent("onIRCUserKick")
+addEventHandler("onIRCUserKick",root,
+	function(channel,reason,kicker)
+		if kicker then
+			outputServerLog(ircGetServerName(ircGetUserServer(source))..": "..ircGetUserNick(source).." has been kicked from "..ircGetChannelName(channel).." by "..ircGetUserNick(kicker).." ("..reason..")")
+		else
+			outputServerLog(ircGetServerName(ircGetUserServer(source))..": "..ircGetUserNick(source).." has been kicked from "..ircGetChannelName(channel).." ("..reason..")")
 		end
 	end
 )

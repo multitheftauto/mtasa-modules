@@ -65,13 +65,32 @@ addIRCCommandHandler("!ban",
 
 addIRCCommandHandler("!mute",
 	function (server,channel,user,command,name,...)
-		if not name then ircNotice(user,"syntax is !mute <name> [reason]") return end
+		if not name then ircNotice(user,"syntax is !mute <name> [reason] [(time)]") return end
 		local reason = table.concat({...}," ") or ""
+		local t = split(reason,40)
+		if #t > 2 then
+			ircNotice(user,"Don't use '(' more then once in your reason")
+			return
+		end
+		local reason = t[1]
+		local time
+		if t[2] then
+			time = "("..t[2]
+		end
 		local player = getPlayerFromPartialName(name)
 		if player then
 			setPlayerMuted(player,true)
-			outputChatBox("* "..getPlayerName(player).." was muted by "..ircGetUserNick(user).." ("..reason..")",root,0,0,255)
-			ircSay(channel,"12* "..getPlayerName(player).." was muted by "..ircGetUserNick(user).." ("..reason..")")
+			if time then
+				muteSerial(getPlayerSerial(player),reason,time)
+				outputChatBox("* "..getPlayerName(player).." was muted by "..ircGetUserNick(user).." ("..reason..")"..time,root,0,0,255)
+				ircSay(channel,"12* "..getPlayerName(player).." was muted by "..ircGetUserNick(user).." ("..reason..")"..time)
+			elseif reason then
+				outputChatBox("* "..getPlayerName(player).." was muted by "..ircGetUserNick(user).." ("..reason..")",root,0,0,255)
+				ircSay(channel,"12* "..getPlayerName(player).." was muted by "..ircGetUserNick(user).." ("..reason..")")
+			else
+				outputChatBox("* "..getPlayerName(player).." was muted by "..ircGetUserNick(user),root,0,0,255)
+				ircSay(channel,"12* "..getPlayerName(player).." was muted by "..ircGetUserNick(user))
+			end
 		else
 			ircNotice(user,"'"..name.."' no such player")
 		end
@@ -266,15 +285,41 @@ addIRCCommandHandler("!run",
 	function (server,channel,user,command,...)
 		local str = table.concat({...}," ")
 		if not str then ircNotice(user,"syntax is !run <string>") return end
-		runServer(str,server,channel)
+		runString(str,root,ircGetUserNick(user))
 	end
 )
 
 addIRCCommandHandler("!crun",
 	function (server,channel,user,command,...)
-		local str = table.concat({...}," ")
+		local t = {...}
+		local str = table.concat(t," ")
 		if not str then ircNotice(user,"syntax is !crun <string>") return end
-		runClient(str,server,channel)
+		if #getElementsByType("player") == 0 then
+			ircNotice(user,"No player ingame!")
+		end
+		for i,player in ipairs (getElementsByType("player")) do
+			if i == 1 then
+				triggerClientEvent(player,"doCrun",root,str,ircGetUserNick(user),true)
+			else
+				triggerClientEvent(player,"doCrun",root,str,ircGetUserNick(user),false)
+			end
+		end
+	end
+)
+
+addIRCCommandHandler("!resources",
+	function (server,channel,user,command)
+		local resources = getResources()
+		for i,resource in ipairs (resources) do
+			if getResourceState(resource) == "running" then
+				resources[i] = "03"..getResourceName(resource).."01"
+			elseif getResourceState(resource) == "failed to load" then
+				resources[i] = "04"..getResourceName(resource).." ("..getResourceLoadFailureReason(resource)..")01"
+			else
+				resources[i] = "07"..getResourceName(resource).."01"
+			end
+		end
+		ircSay(channel,"07Resources: "..table.concat(resources,", "))
 	end
 )
 
@@ -338,5 +383,35 @@ function outputCommands (server,channel,user,command)
 end
 addIRCCommandHandler("!commands",outputCommands)
 addIRCCommandHandler("!cmds",outputCommands)
-		
-end		
+
+addIRCCommandHandler("!account",
+	function (server,channel,user,command,name)
+		if not name then ircNotice(user,"syntax is !account <name>") return end
+		local player = getPlayerFromPartialName(name)
+		if player then
+			ircNotice(user,getPlayerName(player).."'s account name: "..(getAccountName(getPlayerAccount(player)) or "Guest Account"))
+		else
+			ircNotice(user,"'"..name.."' no such player")
+		end
+	end
+)
+
+addIRCCommandHandler("!community",
+	function (server,channel,user,command,name)
+		if not name then ircNotice(user,"syntax is !account <name>") return end
+		local player = getPlayerFromPartialName(name)
+		if player then
+			ircNotice(user,getPlayerName(player).."'s community account name: "..(getPlayerUserName(player) or "None"))
+		else
+			ircNotice(user,"'"..name.."' no such player")
+		end
+	end
+)
+
+addIRCCommandHandler("!modules",
+	function (server,channel,user,command)
+		ircSay(channel,"07Loaded modules: "..table.concat(getLoadedModules(),", "))
+	end
+)
+
+end	

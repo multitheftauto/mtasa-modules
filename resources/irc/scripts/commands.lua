@@ -42,6 +42,18 @@ addCommandHandler("users",
 	end
 )
 
+addCommandHandler("ircsay",
+	function (source,cmd,...)
+		if source ~= getElementsByType("console")[1] then return end
+		local msg = {...}
+		if msg then
+			outputIRC(table.concat(msg," "))
+		else
+			outputServerLog("IRC: syntax is /ircsay <message>")
+		end
+	end
+)
+
 addCommandHandler("levels",
 	function (source)
 		if source ~= getElementsByType("console")[1] then return end
