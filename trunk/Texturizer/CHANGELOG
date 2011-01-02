@@ -1,0 +1,19 @@
+Version 0.9.2 - Not Released
+
+	02.01.2010
+
+	- Memory leak in imageSetStyle.
+	- Memory leak in TextureImage::Compress( ).
+	- Added destructors to structs which contain allocated memory pointers which automatically clean up after me. :)
+	- Since I hate warnings added _SECURE_SCL functions when compiling on WIN32.
+	- Source Cleanup
+	- Added function txdContainerAddImagePtr - Add image from image ptr.
+	
+	- txdContainerAddImage now automatically switches between the following functions based on parameters:
+	
+		* txdContainerAddImage - From png, gif and jpeg files...
+		* txdContainerAddImagePtr - From image pointers.
+
+Version 0.9.1 - 30.12.2010
+
+	- Initial Release
