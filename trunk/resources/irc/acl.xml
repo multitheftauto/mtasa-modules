@@ -32,5 +32,11 @@
 	<command name="!stop" level="3" echoChannelOnly="true" />
 	<command name="!account" level="3" echoChannelOnly="true" />
 	<command name="!community" level="3" echoChannelOnly="true" />
+	<command name="!money" level="0" echoChannelOnly="true" />
+	<command name="!health" level="0" echoChannelOnly="true" />
+	<command name="!wantedlevel" level="0" echoChannelOnly="true" />
+	<command name="!team" level="0" echoChannelOnly="true" />
+	<command name="!ping" level="0" echoChannelOnly="true" />
 	<command name="!modules" level="3" echoChannelOnly="true" />
+        <command name="!changemap" level="3" echoChannelOnly="true" />
 </acl>

@@ -12,10 +12,10 @@
 		/>
 		add as many servers as you want
 	-->
-	<server 
-		host="irc.gtanet.com"
-		nick="SocketsBot"
-		channels="#MCvarial"
-		nickservpass="waffles"
-	/>
+	
+		<server
+			host="irc.gtanet.com"
+			nick="SocketsBot"
+			channels="#MCvarial"
+		/>
 </settings>

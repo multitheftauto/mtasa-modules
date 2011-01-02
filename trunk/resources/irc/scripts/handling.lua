@@ -88,7 +88,7 @@ addEventHandler("onIRCRaw",root,
 		if t[2] == "PART" then
 			local user = ircGetUserFromNick(getNickFromRaw(data))
 			local reason = getMessageFromRaw(data)
-			local channel = ircGetChannelFromName(string.sub(t[3],1,-2))
+			local channel = ircGetChannelFromName(t[3]) or ircGetChannelFromName(string.sub(t[3],1,-2))
 			for i,chan in ipairs (users[user][6]) do
 				if channel == chan then
 					table.remove(users[user][6],i)

@@ -299,9 +299,9 @@ addIRCCommandHandler("!crun",
 		end
 		for i,player in ipairs (getElementsByType("player")) do
 			if i == 1 then
-				triggerClientEvent(player,"doCrun",root,str,ircGetUserNick(user),true)
+				triggerClientEvent(player,"doCrun",root,str,false)
 			else
-				triggerClientEvent(player,"doCrun",root,str,ircGetUserNick(user),false)
+				triggerClientEvent(player,"doCrun",root,str,false)
 			end
 		end
 	end
@@ -396,14 +396,90 @@ addIRCCommandHandler("!account",
 	end
 )
 
+addIRCCommandHandler("!money",
+	function (server,channel,user,command,name)
+		if not name then ircNotice(user,"syntax is !money <name>") return end
+		local player = getPlayerFromPartialName(name)
+		if player then
+			ircNotice(user,getPlayerName(player).."'s money: "..tostring(getPlayerMoney(player)))
+		else
+			ircNotice(user,"'"..name.."' no such player")
+		end
+	end
+)
+
+addIRCCommandHandler("!health",
+	function (server,channel,user,command,name)
+		if not name then ircNotice(user,"syntax is !health <name>") return end
+		local player = getPlayerFromPartialName(name)
+		if player then
+			ircNotice(user,getPlayerName(player).."'s health: "..tostring(getPlayerHealth(player)))
+		else
+			ircNotice(user,"'"..name.."' no such player")
+		end
+	end
+)
+
+addIRCCommandHandler("!wantedlevel",
+	function (server,channel,user,command,name)
+		if not name then ircNotice(user,"syntax is !wantedlevel <name>") return end
+		local player = getPlayerFromPartialName(name)
+		if player then
+			outputIRC(getPlayerName(player).."'s wanted level: "..tostring(getPlayerWantedLevel(player)))
+		else
+			outputIRC("'"..name.."' no such player")
+		end
+	end
+)
+
+addIRCCommandHandler("!team",
+	function (server,channel,user,command,name)
+		if not name then ircNotice(user,"syntax is !team <name>") return end
+		local player = getPlayerFromPartialName(name)
+		if player then
+			local team = getPlayerTeam(player)
+			if team then
+				outputIRC(getPlayerName(player).."'s team: "..getTeamName(team))
+			else
+				outputIRC(getPlayerName(player).." is in no team")
+			end
+		else
+			outputIRC("'"..name.."' no such player")
+		end
+	end
+)
+
+addIRCCommandHandler("!ping",
+	function (server,channel,user,command,name)
+		if not name then ircNotice(user,"syntax is !ping <name>") return end
+		local player = getPlayerFromPartialName(name)
+		if player then
+			outputIRC(getPlayerName(player).."'s ping: "..getPlayerPing(player))
+		else
+			outputIRC("'"..name.."' no such player")
+		end
+	end
+)
+
 addIRCCommandHandler("!community",
 	function (server,channel,user,command,name)
-		if not name then ircNotice(user,"syntax is !account <name>") return end
+		if not name then ircNotice(user,"syntax is !community <name>") return end
 		local player = getPlayerFromPartialName(name)
 		if player then
 			ircNotice(user,getPlayerName(player).."'s community account name: "..(getPlayerUserName(player) or "None"))
 		else
 			ircNotice(user,"'"..name.."' no such player")
+		end
+	end
+)
+
+addIRCCommandHandler("!changemap",
+	function (server,channel,user,command,name,...)
+		if not name then ircNotice(user,"syntax is !changemap <name>") return end
+		local map = table.concat({...}," ")
+		local resource = getResourceFromPartialName(map)
+		if resource then
+			exports.mapmanager:changeGameModeMap(resource)
 		end
 	end
 )

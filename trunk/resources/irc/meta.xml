@@ -21,13 +21,22 @@
 			desc="Notice users about the irc channel?"
 		/>
 		
-		<!-- How many seconds should there be between the notices in seconds? -->
+		<!-- How many seconds should there be between the notices in seconds? (use 0 if it should always be visible) -->
 		<setting 
 			name="*irc-notice-timeout" 
-			value="120"
+			value="300"
 			friendlyname="IRC info popup timeout"
-			examples="0-inf"
-			desc="How many seconds should there be between the notices in seconds?"
+			examples="1-inf"
+			desc="How many seconds should there be between the notices in seconds? (use 0 if it should always be visible)"
+		/>
+		
+		<!-- How long should these notices stay on the screen? -->
+		<setting 
+			name="*irc-notice-duration" 
+			value="20"
+			friendlyname="IRC info popup duration"
+			examples="1-inf"
+			desc="How long should these notices stay on the screen?"
 		/>
 	</settings>
 	
@@ -93,8 +102,11 @@
 	<script src="scripts/commands.lua" type="server" />
 	<script src="scripts/levels.lua" type="server" />
 	<script src="scripts/acl.lua" type="server" />
+	<script src="scripts/ads.lua" type="client" />
 	<script src="scripts/irccommands.lua" type="server" />
 	<script src="scripts/echo.lua" type="server" />
+	<script src="scripts/ircclient_server.lua" type="server" />
+	<script src="scripts/ircclient_client.lua" type="client" />
 	
 	<script src="scripts/runcode/server.lua" type="server" />
 	<script src="scripts/runcode/server_util.lua" type="server" />
