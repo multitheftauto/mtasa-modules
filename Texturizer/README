@@ -1,0 +1,44 @@
+******************************************************************************
+*                                                                            *
+*  Multi Theft Auto: San Andreas - Deathmatch                                *
+*                                                                            *
+*  Texturizer by jyrno42, 		                                     *
+*  based on:             		                                     *
+*                                                                            *
+*  ml_base, External lua add-on module                                       *
+*  http://www.multitheftauto.com                                             *
+*                                                                            *
+*  Copyright © 2003-2008 MTA.  All Rights Reserved.                          *
+*                                                                            *
+******************************************************************************
+
+* INTRODUCTION
+    This is Texturizer, a module which provides TXD libary writing and GD functions
+    to MTASA server. It will be available Windows only, however since the build system
+    is CMake it should be pretty simple to use it on another platforms.
+    
+    The package version specific info is in VERSION file.
+
+* INSTALLATION
+    Uncompress the file Texturizer.dll into your 
+        %PROGRAMFILES%\MTA San Andreas\server\mods\deathmatch\modules\ 
+    directory.
+
+    Uncompress the GD libary binary bgd.dll and libpng14.dll into your
+        %PROGRAMFILES%\MTA San Andreas\server\
+    directory.
+
+* LICENSING
+    Please read the LICENSE file for ml_base licensing information.
+
+* MORE INFORMATION
+    More information about Texturizer can be found at MTA: SA wiki on the following URL:
+    
+    http://wiki.multitheftauto.com/wiki/Modules/Texturizer
+    
+    More information about Multi Theft Auto scripting and/or module development
+    can be found on any of the following URLs:
+
+    http://www.mtasa.com/
+    http://www.multitheftauto.com/
+    http://development.mtasa.com/
