@@ -30,6 +30,17 @@ addEventHandler("startIRCClient",root,
 	end
 )
 
+addCommandHandler("ircsay",
+	function (source,cmd,...)
+		local message = table.concat({...}," ")
+		if message then
+			outputIRC(getPlayerName(source)..": "..message)
+		else
+			outputChatBox("* syntax is /ircsay <message>",source,255,100,70)
+		end
+	end,false,false
+)
+
 addEvent("ircSay",true)
 addEventHandler("ircSay",root,
 	function (chantitle,message)

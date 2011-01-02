@@ -161,7 +161,7 @@ end
 function func_ircConnect (host,nick,port,password,secure)
 	local server = createElement("irc-server")
 	local socket = sockOpen(host,(port or 6667),secure)
-	local timer = setTimer(connectingTimedOut,10000,0,server)
+	local timer = setTimer(connectionTimedOut,10000,0,server)
 	if server and socket then
 		servers[server] = {socket,host,host,nick,password,port,secure,false,false,false,getTickCount(),timer,0,{},false,{}}
 		triggerEvent("onIRCConnecting",server)
@@ -254,19 +254,7 @@ function func_ircGetServerChannels (server)
 	return false
 end
 
-function connectingTimedOut (server)
+function connectionTimedOut (server)
 	triggerEvent("onIRCFailConnect",server,"Connection timed out")
 	return ircReconnect(server)
-end
-
-function checkForTimeout (server)
-	--[[
-	if not servers[server][15] then
-		return ircReconnect(server)
-	end
-	if (getTickCount() - servers[server][11]) > 240000 then
-		return ircReconnect(server)
-	end
-	ircRaw(server,"PING "..servers[server][3])
-	]]
 end
