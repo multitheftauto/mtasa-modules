@@ -6,6 +6,8 @@
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
+local adTimer
+
 ------------------------------------
 -- Loading
 ------------------------------------
@@ -51,6 +53,19 @@ addEventHandler("onResourceStart",resourceRoot,
 			end
 		end
 		callRemote("http://community.mtasa.com/mta/resources.php",checkVersion,"version","irc")
+		
+		-- Start the ads.
+		addEvent("onIRCPlayerDelayedJoin",true)
+		if get("irc-notice") == "true" then
+			local timeout = tonumber(get("irc-notice-timeout"))
+			if timeout then
+				if timeout == 0 then
+					addEventHandler("onIRCPlayerDelayedJoin",root,showContinuousAd)
+				else
+					adTimer = setTimer(showAd,timeout*1000,0)
+				end
+			end
+		end
 		
 		-- Parse functions file.
 		local functionsFile = fileOpen("scripts/functions.txt",true)
@@ -165,5 +180,24 @@ function internalConnect ()
 		outputServerLog("IRC: could not start resource, the settings.xml can't be parsed!")
 		outputServerLog("IRC: restart the resource to retry")
 		return
+	end
+end
+
+function showAd ()
+	for i,channel in ipairs (ircGetChannels()) do
+		if ircIsEchoChannel(channel) then
+			--outputChatBox("Join us on irc! Server: "..ircGetServerHost(ircGetChannelServer(channel)).." Channel: "..ircGetChannelName(channel),root,0,255,0)
+			triggerClientEvent("showAd",root,ircGetServerHost(ircGetChannelServer(channel)),ircGetChannelName(channel),tonumber(get("irc-notice-duration")))
+			return
+		end
+	end
+end
+
+function showContinuousAd ()
+	for i,channel in ipairs (ircGetChannels()) do
+		if ircIsEchoChannel(channel) then
+			triggerClientEvent(source,"showAd",root,ircGetServerHost(ircGetChannelServer(channel)),ircGetChannelName(channel),0)
+			return
+		end
 	end
 end

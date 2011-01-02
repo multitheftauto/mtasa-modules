@@ -139,3 +139,27 @@ addEventHandler("onUnban",root,
 		outputIRC("12* Ban removed by "..(getPlayerName(source) or "Console")..": name: "..(getBanNick(ban) or "/")..", ip: "..(getBanIP(ban) or "/")..", serial: "..(getBanSerial(ban) or "/")..", banned by: "..(getBanAdmin(ban) or "/").." banned for: "..(getBanReason(ban) or "/"))
 	end
 )
+
+-- called from the admin resource
+addEvent("onPlayerFreeze")
+addEventHandler("onPlayerFreeze",root,
+	function (state)
+		if state then
+			outputIRC("12* "..getPlayerName(source).." was frozen!")
+		else
+			outputIRC("12* "..getPlayerName(source).." was unfrozen!")
+		end
+	end
+)
+
+-- called from the admin resource
+addEvent("onPlayerMute")
+addEventHandler("onPlayerMute",root,
+	function (state)
+		if state then
+			outputIRC("12* "..getPlayerName(source).." was muted!")
+		else
+			outputIRC("12* "..getPlayerName(source).." was unmuted!")
+		end
+	end
+)

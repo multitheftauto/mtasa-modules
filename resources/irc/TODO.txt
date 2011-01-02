@@ -1,8 +1,4 @@
 - test all functions
 - test all events
 - test all commands
-- make ingame irc client
-- make ingame irc ad
 - add ssl to the module
-- add interaction with admin panel
-- ...

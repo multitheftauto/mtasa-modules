@@ -43,12 +43,18 @@ function func_ircSay (target,message)
 		return true
 	end
 	local server = getElementParent(target)
-	local targetName = ircGetChannelName(target)
-	if not targetName then
-		targetName = ircGetUserName(target)
-	end
-	if server and targetName then
-		return ircRaw(server,"PRIVMSG "..targetName.." :"..(message or "<no message>"))
+	local channel = ircGetChannelName(target)
+	local user = ircGetUserNick(target)
+	if server then
+		local localuser = ircGetUserFromNick(ircGetServerNick(server))
+		if localuser then
+			if channel then
+				triggerEvent("onIRCMessage",localuser,target,message)
+			else
+				triggerEvent("onIRCPrivateMessage",target,message)
+			end
+		end
+		return ircRaw(server,"PRIVMSG "..(channel or user).." :"..(message or "<no message>"))
 	end
 	return false
 end
