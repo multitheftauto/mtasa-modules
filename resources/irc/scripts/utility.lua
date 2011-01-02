@@ -104,7 +104,7 @@ end
 local mutes = {}
 function muteSerial (serial,reason,time)
 	mutes[serial] = reason
-	setTimer(unmuteSerial,toMs(time),1,serial)
+	setTimer(unmuteSerial,time,1,serial)
 	return true
 end
 
