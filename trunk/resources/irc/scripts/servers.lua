@@ -160,7 +160,7 @@ end
 
 function func_ircConnect (host,nick,port,password,secure)
 	local server = createElement("irc-server")
-	local socket = sockOpen(host,port,secure)
+	local socket = sockOpen(host,(port or 6667),secure)
 	local timer = setTimer(connectingTimedOut,10000,0,server)
 	if server and socket then
 		servers[server] = {socket,host,host,nick,password,port,secure,false,false,false,getTickCount(),timer,0,{},false,{}}

@@ -51,12 +51,20 @@ addIRCCommandHandler("!kick",
 
 addIRCCommandHandler("!ban",
 	function (server,channel,user,command,name,...)
-		if not name then ircNotice(user,"syntax is !ban <name> [reason]") return end
+		if not name then ircNotice(user,"syntax is !ban <name> [reason] (time)") return end
 		local reason = table.concat({...}," ") or ""
+		local t = split(reason,40)
+		local time
+		if #t > 1 then
+			time = "("..t[#t]
+		end
 		local player = getPlayerFromPartialName(name)
 		if player then
-			local nick = getPlayerName(player)
-			addBan(getPlayerIP(player),nil,getPlayerSerial(player),ircGetUserNick(user),reason)
+			if time then
+				addBan(getPlayerIP(player),nil,getPlayerSerial(player),ircGetUserNick(user),reason,toMs(time)/1000)
+			else
+				addBan(getPlayerIP(player),nil,getPlayerSerial(player),ircGetUserNick(user),reason)
+			end
 		else
 			ircNotice(user,"'"..name.."' no such player")
 		end
@@ -68,23 +76,14 @@ addIRCCommandHandler("!mute",
 		if not name then ircNotice(user,"syntax is !mute <name> [reason] [(time)]") return end
 		local reason = table.concat({...}," ") or ""
 		local t = split(reason,40)
-		if #t > 2 then
-			ircNotice(user,"Don't use '(' more then once in your reason")
-			return
-		end
-		local reason = t[1]
 		local time
-		if t[2] then
-			time = "("..t[2]
+		if #t > 1 then
+			time = "("..t[#t]
 		end
 		local player = getPlayerFromPartialName(name)
 		if player then
-			setPlayerMuted(player,true)
-			if time then
-				muteSerial(getPlayerSerial(player),reason,time)
-				outputChatBox("* "..getPlayerName(player).." was muted by "..ircGetUserNick(user).." ("..reason..")"..time,root,0,0,255)
-				ircSay(channel,"12* "..getPlayerName(player).." was muted by "..ircGetUserNick(user).." ("..reason..")"..time)
-			elseif reason then
+			muteSerial(getPlayerSerial(player),reason,toMs(time))
+			if reason then
 				outputChatBox("* "..getPlayerName(player).." was muted by "..ircGetUserNick(user).." ("..reason..")",root,0,0,255)
 				ircSay(channel,"12* "..getPlayerName(player).." was muted by "..ircGetUserNick(user).." ("..reason..")")
 			else
@@ -129,12 +128,20 @@ addIRCCommandHandler("!freeze",
 	function (server,channel,user,command,name,...)
 		if not name then ircNotice(user,"syntax is !freeze <name> [reason]") return end
 		local reason = table.concat({...}," ") or ""
+		local reason = table.concat({...}," ") or ""
+		local t = split(reason,40)
+		local time
+		if #t > 1 then
+			time = "("..t[#t]
+		end
 		local player = getPlayerFromPartialName(name)
 		if player then
 			if isPedInVehicle(player) then
 				setVehicleFrozen(getPedOccupiedVehicle(player),true)
+				setTimer(setVehicleFrozen,time,1,getPedOccupiedVehicle(player),false)
 			end
 			setPedFrozen(player,true)
+			setTimer(setPedFrozen,time,1,player,false)
 			outputChatBox("* "..getPlayerName(player).." was frozen by "..ircGetUserNick(user).." ("..reason..")",root,0,0,255)
 			ircSay(channel,"12* "..getPlayerName(player).." was frozen by "..ircGetUserNick(user).." ("..reason..")")
 		else
@@ -235,23 +242,53 @@ addIRCCommandHandler("!unbanserial",
 )
 
 addIRCCommandHandler("!banname",
-	function (server,channel,user,command,name)
-		if not name then ircNotice(user,"syntax is !banname <name>") return end
-		addBan(nil,name,nil)
+	function (server,channel,user,command,name,...)
+		if not name then ircNotice(user,"syntax is !banname <name> (<reason>)") return end
+		local reason = table.concat({...}," ") or ""
+		local t = split(reason,40)
+		local time
+		if #t > 1 then
+			time = "("..t[#t]
+		end
+		if time then
+			addBan(nil,name,nil,ircGetUserNick(user),reason,toMs(time)/1000)
+		else
+			addBan(nil,name,nil,ircGetUserNick(user),reason)
+		end
 	end
 )
 
 addIRCCommandHandler("!banserial",
-	function (server,channel,user,command,serial)
-		if not serial then ircNotice(user,"syntax is !banserial <serial>") return end
-		addBan(nil,nil,serial)
+	function (server,channel,user,command,serial,...)
+		if not serial then ircNotice(user,"syntax is !banserial <name> (<reason>)") return end
+		local reason = table.concat({...}," ") or ""
+		local t = split(reason,40)
+		local time
+		if #t > 1 then
+			time = "("..t[#t]
+		end
+		if time then
+			addBan(nil,nil,serial,ircGetUserNick(user),reason,toMs(time)/1000)
+		else
+			addBan(nil,nil,serial,ircGetUserNick(user),reason)
+		end
 	end
 )
 
 addIRCCommandHandler("!banip",
-	function (server,channel,user,command,ip)
-		if not ip then ircNotice(user,"syntax is !banip <ip>") return end
-		addBan(ip,nil,nil)
+	function (server,channel,user,command,ip,...)
+		if not ip then ircNotice(user,"syntax is !banname <name> (<reason>)") return end
+		local reason = table.concat({...}," ") or ""
+		local t = split(reason,40)
+		local time
+		if #t > 1 then
+			time = "("..t[#t]
+		end
+		if time then
+			addBan(ip,nil,nil,ircGetUserNick(user),reason,toMs(time)/1000)
+		else
+			addBan(ip,nil,nil,ircGetUserNick(user),reason)
+		end
 	end
 )
 
