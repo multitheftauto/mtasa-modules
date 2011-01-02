@@ -1,0 +1,6 @@
+<meta>
+    <info author="jyrno42" type="script" name="texturizer" version="1.0" />
+	
+	<script src="texturizer.lua" type="server" />
+	
+</meta>
