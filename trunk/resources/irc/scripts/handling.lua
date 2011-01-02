@@ -184,6 +184,6 @@ addEventHandler("onIRCConnect",root,
 		end
 		servers[source][16] = {}
 		killTimer(servers[source][12])
-		servers[source][12] = setTimer(checkForTimeout,60000,0,source)
+		servers[source][12] = setTimer(connectionTimedOut,300000,0,source)
 	end
 )
