@@ -7,7 +7,8 @@
 ---------------------------------------------------------------------
 
 userlevels = {} -- userlevels[channel] = int level
-local usermodes = {"q","a","o","h","v"}
+usermodes = {}
+local userflags = {"q","a","o","h","v"}
 
 ------------------------------------
 -- Levels
@@ -17,6 +18,7 @@ addEventHandler("onIRCRaw",root,
 	function (raw)
 		local t = split(string.sub(raw,1,-2),32)
 		if t[2] == "MODE" then
+			ircRaw(source,"NAMES "..t[3])
 			local channel = ircGetChannelFromName(t[3])
 			local setter = ircGetUserFromNick(getNickFromRaw(raw))
 			local modes = toletters(t[4])
@@ -71,7 +73,7 @@ function func_ircGetUserLevel (user,channel)
 end
 
 function isChanMode (mode)
-	for i,usermode in ipairs (usermodes) do
+	for i,usermode in ipairs (userflags) do
 		if usermode == mode then
 			return false
 		end

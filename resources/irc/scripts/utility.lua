@@ -58,7 +58,7 @@ function getNickAndLevel (nick)
 			return nick,i
 		end
 	end
-	return nick
+	return nick,0
 end
 
 function toletters (string)
@@ -207,7 +207,7 @@ end
 
 function getNumberFromVersion (version)
 	local p1,p2,p3 = unpack(split(version,46))
-	return (100*p1)+(10*p2)+p1
+	return tonumber((100*tonumber(p1))+(10*tonumber(p2))+(tonumber(p3)))
 end
 
 _addBan = addBan
