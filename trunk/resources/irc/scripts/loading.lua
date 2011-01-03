@@ -48,7 +48,7 @@ addEventHandler("onResourceStart",resourceRoot,
 			if res ~= "ERROR" and version then
 				if getNumberFromVersion(version) > getNumberFromVersion(getResourceInfo(getThisResource(),"version")) then
 					outputServerLog("IRC: resource is outdated, newest version: "..version)
-					outputIRC("The irc resource is outdated, newest version: "..version)
+					setTimer(outputIRC,10000,1,"The irc resource is outdated, newest version: "..version)
 				end
 			end
 		end

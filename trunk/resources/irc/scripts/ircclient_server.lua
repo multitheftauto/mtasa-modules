@@ -80,13 +80,24 @@ addEventHandler("onIRCNotice",root,
 
 addEventHandler("onIRCUserMode",root,
 	function (channel,positive,mode,setter)
-		setTimer(triggerIRCEvent,1000,1,"onClientIRCUserMode",ircGetUserNick(source),ircGetChannelTitle(channel),positive,mode,setter,ircGetUserLevel(source))
+		if setter then
+			triggerIRCEvent("onClientIRCUserMode",ircGetUserNick(source),ircGetChannelTitle(channel),positive,mode,ircGetUserNick(setter))
+		else
+			triggerIRCEvent("onClientIRCUserMode",ircGetUserNick(source),ircGetChannelTitle(channel),positive,mode,"Server")
+		end
 	end
 )
 
 addEventHandler("onIRCChannelMode",root,
 	function (positive,mode,setter)
-		triggerIRCEvent("onClientIRCChannelMode",ircGetChannelTitle(source),positive,mode,setter)
+		triggerIRCEvent("onClientIRCChannelMode",ircGetChannelTitle(source),positive,mode,ircGetUserNick(setter))
+	end
+)
+
+addEvent("onIRCLevelChange")
+addEventHandler("onIRCLevelChange",root,
+	function (channel,oldlevel,newlevel)
+		triggerIRCEvent("onClientIRCLevelChange",ircGetUserNick(source),ircGetChannelTitle(channel),oldlevel,newlevel)
 	end
 )
 
@@ -98,8 +109,9 @@ addEventHandler("onIRCUserChangeNick",root,
 
 function triggerIRCEvent (eventname,...)
 	for i,ircer in ipairs (ircers) do
-		triggerClientEvent(ircer,eventname,root,...)
-
+		if isElement(ircer) then
+			triggerClientEvent(ircer,eventname,root,...)
+		end
 	end
 	return true
 end

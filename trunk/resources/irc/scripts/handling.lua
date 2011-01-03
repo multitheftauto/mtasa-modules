@@ -95,6 +95,9 @@ addEventHandler("onIRCRaw",root,
 					break
 				end
 			end
+			if userlevels[channel][user] then
+				userlevels[channel][user] = nil
+			end
 			triggerEvent("onIRCUserPart",user,channel,reason)
 		end
 		if t[2] == "KICK" then
@@ -129,7 +132,13 @@ addEventHandler("onIRCRaw",root,
 				if not userlevels[channel] then
 					userlevels[channel] = {}
 				end
-				userlevels[channel][user] = level
+				if not userlevels[channel][user] then
+					userlevels[channel][user] = 0
+				end
+				if userlevels[channel][user] ~= level then
+					triggerEvent("onIRCLevelChange",user,channel,userlevels[channel][user],level)
+					userlevels[channel][user] = level
+				end
 			end
 		end
 		if t[2] == "433" then
@@ -168,6 +177,9 @@ addEventHandler("onIRCRaw",root,
 			destroyElement(user)
 			if nick == string.sub(ircGetServerNick(source),1,-2) then
 				ircChangeNick(source,nick)
+			end
+			if userlevels[channel][user] then
+				userlevels[channel][user] = nil
 			end
 		end
 		if t[1] == "ERROR" then

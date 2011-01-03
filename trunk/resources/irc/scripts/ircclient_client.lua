@@ -112,6 +112,10 @@ addEventHandler("onClientIRCUserPart",root,
 				guiGridListRemoveRow(gridlists[chantitle],i)
 				break
 			end
+			if string.sub(guiGridListGetItemText(gridlists[chantitle],i,1),2) == user then
+				guiGridListRemoveRow(gridlists[chantitle],i)
+				break
+			end
 		end
 		memoAddLine(memos[chantitle],"* "..user.." parted ("..(reason or "")..")")
 	end
@@ -121,7 +125,7 @@ addEvent("onClientIRCUserQuit",true)
 addEventHandler("onClientIRCUserQuit",root,
 	function (user,reason)
 		for i,gridlist in pairs (gridlists) do
-			for i=1,guiGridListGetRowCount(gridlists[chantitle]) do
+			for i=1,guiGridListGetRowCount(gridlist) do
 				if guiGridListGetItemText(gridlist,i,1) == user then
 					guiGridListRemoveRow(gridlist,i)
 					break
@@ -144,16 +148,6 @@ addEventHandler("onClientIRCNotice",root,
 addEvent("onClientIRCUserMode",true)
 addEventHandler("onClientIRCUserMode",root,
 	function (user,chantitle,positive,mode,setter,newlevel)
-		for i=1,guiGridListGetRowCount(gridlists[chantitle]) do
-			if guiGridListGetItemText(gridlists[chantitle],i,1) == user then
-				guiGridListSetItemText(gridlists[chantitle],i,getIconFromLevel(newlevel)..user,false,false)
-				break
-			end
-			if string.sub(guiGridListGetItemText(gridlists[chantitle],i,1),1,-2) == user then
-				guiGridListSetItemText(gridlists[chantitle],i,getIconFromLevel(newlevel)..string.sub(user,1,-2),false,false)
-				break
-			end
-		end
 		if positive then
 			memoAddLine(memos[chantitle],"* "..(setter or "Server").." sets mode: +"..mode.." "..user)
 		else
@@ -173,9 +167,37 @@ addEventHandler("onClientIRCChannelMode",root,
 	end
 )
 
+addEvent("onClientIRCLevelChange",true)
+addEventHandler("onClientIRCLevelChange",root,
+	function (user,chantitle,oldlevel,newlevel)
+		for i=1,guiGridListGetRowCount(gridlists[chantitle]) do
+			if guiGridListGetItemText(gridlists[chantitle],i,1) == user then
+				guiGridListSetItemText(gridlists[chantitle],i,1,getIconFromLevel(newlevel)..user,false,false)
+				break
+			end
+			if string.sub(guiGridListGetItemText(gridlists[chantitle],i,1),2) == user then
+				guiGridListSetItemText(gridlists[chantitle],i,1,getIconFromLevel(newlevel)..user,false,false)
+				break
+			end
+		end
+	end
+)
+
 addEvent("onClientIRCUserChangeNick",true)
 addEventHandler("onClientIRCUserChangeNick",root,
 	function (oldnick,newnick)
+		for i,gridlist in pairs (gridlists) do
+			for i=1,guiGridListGetRowCount(gridlist) do
+				if guiGridListGetItemText(gridlist,i,1) == oldnick then
+					guiGridListSetItemText(gridlist,i,1,newnick,false,false)
+					break
+				end
+				if string.sub(guiGridListGetItemText(gridlist,i,1),2) == oldnick then
+					guiGridListSetItemText(gridlist,i,1,string.sub(guiGridListGetItemText(gridlist,i,1),1,1)..newnick,false,false)
+					break
+				end
+			end
+		end
 	end
 )
 
