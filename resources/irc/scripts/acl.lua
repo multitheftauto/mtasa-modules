@@ -48,7 +48,13 @@ addEventHandler("onIRCMessage",root,
 		local cmd = gettok(message,1,32)
 		local args = split(message,32)
 		if commands[cmd] and acl[cmd] and acl[cmd].level and (tonumber(acl[cmd].level) or 0) <= ircGetUserLevel(source,channel) then
-			commands[cmd](ircGetChannelServer(channel),channel,source,unpack(args))
+			if ircIsCommandEchoChannelOnly(cmd) then
+				if ircIsEchoChannel(channel) then
+					commands[cmd](ircGetChannelServer(channel),channel,source,unpack(args))
+				end
+			else
+				commands[cmd](ircGetChannelServer(channel),channel,source,unpack(args))
+			end
 		end
 	end
 )
