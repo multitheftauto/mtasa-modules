@@ -1,7 +1,4 @@
 <meta>
-	<!-- Touch this and you'll burn in hell! -->
-	<info author="MCvarial" version="1.0.0" type="misc" name="irc" description="Echobot to be used on irc" />
-	
 	<settings>
 		<!-- Activate ingame irc client? -->
 		<setting 
@@ -39,6 +36,9 @@
 			desc="How long should these notices stay on the screen?"
 		/>
 	</settings>
+	
+	<!-- Don't touch anything below! -->
+	<info author="MCvarial" version="1.0.0" type="misc" name="irc" description="Echobot to be used on irc" />
 	
 	<export function="ircHop" type="server" http="false" />
 	<export function="ircSay" type="server" http="false" />
