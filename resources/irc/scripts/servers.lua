@@ -135,15 +135,15 @@ function func_outputIRC (message)
 		end
 		return true
 	end
-	for channel,info in pairs (channels) do
-		if info[7] then
+	for i,channel in pairs (ircGetChannels()) do
+		if ircIsEchoChannel(channel) then
 			local server = getElementParent(channel)
 			local localuser = ircGetUserFromNick(ircGetServerNick(server))
 			if server then
 				if localuser then
 					triggerEvent("onIRCMessage",localuser,channel,message)
 				end
-				return ircRaw(server,"PRIVMSG "..info[1].." :"..(message or "<no message>"))
+				return ircRaw(server,"PRIVMSG "..ircGetChannelName(channel).." :"..(message or "<no message>"))
 			end
 		end
 	end
