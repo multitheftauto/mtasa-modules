@@ -69,7 +69,11 @@ addEventHandler("onIRCRaw",root,
 			local channel = ircGetChannelFromName(getMessageFromRaw(data))
 			local vhost = gettok(gettok(data,1,32),2,33)
 			if nick == ircGetServerNick(source) then
-				channels[channel][6] = true
+				if not channel then
+					channel = createElement("irc-channel")
+					channels[channel] = {getMessageFromRaw(data),"+nst","Unknown",{},false,true,false}
+					setElementParent(channel,source)
+				end
 			end
 			if user then
 				users[user][3] = vhost
