@@ -14,7 +14,10 @@ addEventHandler("onSockOpened",root,
 		for server,info in pairs (servers) do
 			if info[1] == socket then
 				servers[server][15] = true
-				ircRaw(server,"USER echobot MCvarial MCv :Echobot by MCvarial");
+				if servers[server][5] then
+					ircRaw(server,"PASS "..servers[server][5])
+				end
+				ircRaw(server,"USER echobot MCvarial MCv :Echobot by MCvarial")
 				ircRaw(server,"NICK "..info[4])
 				return
 			end
