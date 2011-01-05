@@ -44,9 +44,9 @@ addEvent("onIRCRaw")
 addEventHandler("onIRCRaw",root,
 	function (data)
 		local t = split(data,32)
+		resetTimer(servers[source][12])
 		
 		if t[1] == "PING" then
-			resetTimer(servers[source][12])
 			if t[2] then
 				ircRaw(source,"PONG "..string.sub(t[2],2))
 			else
