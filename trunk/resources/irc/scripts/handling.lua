@@ -44,7 +44,7 @@ addEvent("onIRCRaw")
 addEventHandler("onIRCRaw",root,
 	function (data)
 		local t = split(data,32)
-		resetTimer(servers[source][12])
+		--resetTimer(servers[source][12])
 		
 		if t[1] == "PING" then
 			if t[2] then
@@ -203,6 +203,6 @@ addEventHandler("onIRCConnect",root,
 		end
 		servers[source][16] = {}
 		killTimer(servers[source][12])
-		servers[source][12] = setTimer(connectionTimedOut,300000,0,source)
+		--servers[source][12] = setTimer(connectionTimedOut,300000,0,source)
 	end
 )
