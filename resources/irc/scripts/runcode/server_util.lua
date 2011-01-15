@@ -1,27 +1,11 @@
 local rootElement = getRootElement()
 
 function outputConsoleR(message, toElement)
-	if toElement == false then
-		outputServerLog(message)
-	else
-		toElement = toElement or rootElement
-		outputConsole(message, toElement)
-		if toElement == rootElement then
-			outputServerLog(message)
-		end
-	end
+	return outputIRC("10"..tostring(message))
 end
 
 function outputChatBoxR(message, toElement, forceLog)
-	if toElement == false then
-		outputServerLog(message)
-	else
-		toElement = toElement or rootElement
-		outputIRC("10"..message)
-		if toElement == rootElement or forceLog then
-			outputServerLog(message)
-		end
-	end
+	return outputIRC("10"..tostring(message))
 end
 
 -- dump the element tree
@@ -55,6 +39,6 @@ end
 addEvent("outputIRC",true)
 addEventHandler("outputIRC",root,
 	function (message)
-		outputIRC(message)
+		outputIRC(tostring(message))
 	end
 )

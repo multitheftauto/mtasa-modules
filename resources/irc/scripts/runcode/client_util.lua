@@ -1,5 +1,5 @@
 function outputChatBoxR(message)
-	triggerServerEvent("outputIRC",root,"11"..message)
+	triggerServerEvent("outputIRC",root,"11"..tostring(message))
 	return true
 end
 
