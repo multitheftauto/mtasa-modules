@@ -8,7 +8,7 @@
 
 userlevels = {} -- userlevels[channel] = int level
 usermodes = {}
-local userflags = {"q","a","o","h","v"}
+local userflags = {"q","a","o","h","v","b","e"}
 
 ------------------------------------
 -- Levels
@@ -39,12 +39,18 @@ addEventHandler("onIRCRaw",root,
 					table.remove(modes,i)
 					mode = modes[i]
 				end
-				while isChanMode(mode) do
-					triggerEvent("onIRCChannelMode",channel,positive,mode,setter)
-					table.remove(modes,i)
-					mode = modes[i]
+				for i=1,#modes do
+					if isChanMode(mode) then
+						triggerEvent("onIRCChannelMode",channel,positive,mode,setter)
+						table.remove(modes,i)
+						mode = modes[i]
+					end
 				end
-				triggerEvent("onIRCUserMode",ircGetUserFromNick(nick),channel,positive,mode,setter)
+				if mode == "b" then
+					triggerEvent("onIRCBan",channel,positive,nick,setter)
+				else
+					triggerEvent("onIRCUserMode",ircGetUserFromNick(nick),channel,positive,mode,setter)
+				end
 			end
 			if #t == 0 and channel then
 				for i,mode in ipairs (modes) do
