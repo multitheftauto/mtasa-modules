@@ -261,6 +261,13 @@ function connectingTimedOut (server)
 	return ircReconnect(server)
 end
 
-function connectionTimedOut (server)
-	return ircReconnect(server)
-end
+-- check for timeouts
+setTimer(function ()
+	for i,server in ipairs (ircGetServers()) do
+		if servers[server][12] > 120000 then
+			ircRaw(server,"PING")
+		elseif servers[server][12] > 300000 then
+			ircReconnect(server,"Timeout")
+		end
+	end
+end,5000,0)

@@ -82,7 +82,10 @@ addIRCCommandHandler("!mute",
 		end
 		local player = getPlayerFromPartialName(name)
 		if player then
-			muteSerial(getPlayerSerial(player),reason,toMs(time))
+			if time then
+				muteSerial(getPlayerSerial(player),reason,toMs(time))
+			end
+			setPlayerMuted(player,true)
 			if reason then
 				outputChatBox("* "..getPlayerName(player).." was muted by "..ircGetUserNick(user).." ("..reason..")",root,0,0,255)
 				ircSay(channel,"12* "..getPlayerName(player).." was muted by "..ircGetUserNick(user).." ("..reason..")")
@@ -511,12 +514,32 @@ addIRCCommandHandler("!community",
 )
 
 addIRCCommandHandler("!changemap",
-	function (server,channel,user,command,name,...)
-		if not name then ircNotice(user,"syntax is !changemap <name>") return end
+	function (server,channel,user,command,...)
 		local map = table.concat({...}," ")
-		local resource = getResourceFromPartialName(map)
+		if not map then ircNotice(user,"syntax is !changemap <name>") return end
+		local maps = {}
+		local resource = getResourceFromName(map)
 		if resource then
-			exports.mapmanager:changeGameModeMap(resource)
+			exports.mapmanager:changeGamemodeMap(resource)
+		end
+		for i,resource in ipairs (getResources()) do
+			if getResourceInfo(resource,"type") == "map" then
+				if string.find(string.lower(getResourceName(resource)),string.lower(map)) then
+					table.insert(maps,resource)
+				elseif string.find(string.lower(getResourceInfo(resource,"name")),string.lower(map)) then
+					table.insert(maps,resource)
+				end
+			end
+		end
+		if #maps == 0 then
+			ircNotice(user,"No maps found!")
+		elseif #maps == 1 then
+			exports.mapmanager:changeGamemodeMap(maps[1])
+		else
+			for i,resource in ipairs (maps) do
+				maps[i] = getResourceName(resource)
+			end
+			ircNotice(user,"Found "..#maps.." matches: "..table.concat(maps,", "))
 		end
 	end
 )
