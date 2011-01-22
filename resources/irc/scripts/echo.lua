@@ -140,7 +140,9 @@ addEventHandler("onUnban",root,
 	end
 )
 
--- called from the admin resource
+------------------------------------
+-- Admin interaction
+------------------------------------
 addEvent("onPlayerFreeze")
 addEventHandler("onPlayerFreeze",root,
 	function (state)
@@ -152,7 +154,6 @@ addEventHandler("onPlayerFreeze",root,
 	end
 )
 
--- called from the admin resource
 addEvent("onPlayerMute")
 addEventHandler("onPlayerMute",root,
 	function (state)
@@ -161,5 +162,52 @@ addEventHandler("onPlayerMute",root,
 		else
 			outputIRC("12* "..getPlayerName(source).." was unmuted!")
 		end
+	end
+)
+
+------------------------------------
+-- Votemanager interaction
+------------------------------------
+local pollData
+
+addEvent("onPollStarting")
+addEventHandler("onPollStarting",root,
+	function (data)
+		pollData = data
+	end
+)
+
+addEvent("onPollModified")
+addEventHandler("onPollModified",root,
+	function (data)
+		pollData = data
+	end
+)
+
+addEvent("onPollStart")
+addEventHandler("onPollStart",root,
+	function ()
+		outputIRC("14* A vote was started ["..tostring(pollData.title).."]")
+	end
+)
+
+addEvent("onPollStop")
+addEventHandler("onPollStop",root,
+	function ()
+		outputIRC("14* Vote stopped!")
+	end
+)
+
+addEvent("onPollEnd")
+addEventHandler("onPollEnd",root,
+	function ()
+		outputIRC("14* Vote ended!")
+	end
+)
+
+addEvent("onPollDraw")
+addEventHandler("onPollDraw",root,
+	function ()
+		outputIRC("14* A draw was reached!")
 	end
 )

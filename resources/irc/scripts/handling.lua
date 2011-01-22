@@ -44,8 +44,10 @@ addEvent("onIRCRaw")
 addEventHandler("onIRCRaw",root,
 	function (data)
 		local t = split(data,32)
-		resetTimer(servers[source][12])
 		
+		if type(servers[source][12]) == "number" then
+			servers[source][12] = getTickCount()
+		end
 		if t[1] == "PING" then
 			if t[2] then
 				ircRaw(source,"PONG "..string.sub(t[2],2))
@@ -203,6 +205,6 @@ addEventHandler("onIRCConnect",root,
 		end
 		servers[source][16] = {}
 		killTimer(servers[source][12])
-		servers[source][12] = setTimer(connectionTimedOut,600000,0,source)
+		servers[source][12] = getTickCount()
 	end
 )

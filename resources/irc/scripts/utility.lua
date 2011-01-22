@@ -73,6 +73,9 @@ end
 function getPlayerFromPartialName (name)
 	local matches = {}
 	for i,player in ipairs (getElementsByType("player")) do
+		if getPlayerName(player) == name then
+			return player
+		end
 		if string.find(string.lower(getPlayerName(player)),string.lower(name),0,false) then
 			table.insert(matches,player)
 		end
@@ -86,6 +89,9 @@ end
 function getResourceFromPartialName (name)
 	local matches = {}
 	for i,resource in ipairs (getResources()) do
+		if getResourceName(resource) == name then
+			return resource
+		end
 		if string.find(string.lower(getResourceName(resource)),string.lower(name),0,false) then
 			table.insert(matches,resource)
 		end
