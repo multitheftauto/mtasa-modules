@@ -1,4 +1,0 @@
-- test all functions
-- test all events
-- test all commands
-- add ssl to the module
