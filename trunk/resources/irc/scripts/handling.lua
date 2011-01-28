@@ -188,7 +188,7 @@ addEventHandler("onIRCRaw",root,
 			if nick == string.sub(ircGetServerNick(source),1,-2) then
 				ircChangeNick(source,nick)
 			end
-			if userlevels[channel][user] then
+			if userlevels[channel] and userlevels[channel][user] then
 				userlevels[channel][user] = nil
 			end
 		end
