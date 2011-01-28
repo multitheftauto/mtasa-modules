@@ -114,6 +114,14 @@ addEventHandler("onResourceStart",resourceRoot,
 			outputServerLog("IRC: restart the resource to retry")
 			return
 		end
+		
+		-- start irc addons
+		for i,resource in ipairs (getResources()) do
+			local info = getResourceInfo(resource,"addon")
+			if info and info == "irc" then
+				startResource(resource)
+			end
+		end
 
 		addIRCCommands()
 		internalConnect()
