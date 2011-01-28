@@ -98,22 +98,6 @@ addEventHandler("onResourceStart",resourceRoot,
 			return
 		end
 		
-		--[[ parse events file
-		local eventsFile = fileOpen("scripts/events.txt",true)
-		if eventsFile then
-			for i,line in ipairs (split(fileRead(eventsFile,fileGetSize(eventsFile)),44)) do
-				if gettok(line,1,32) ~= "--" then
-					addEvent(tostring(gettok(line,1,32)))
-				end
-			end
-			fileClose(eventsFile)
-		else
-			outputServerLog("IRC: could not start resource, the events file can't be loaded!")
-			outputServerLog("IRC: restart the resource to retry")
-			return
-		end
-		]]
-		
 		local aclFile = xmlLoadFile("acl.xml")
 		if  aclFile then
 			local i = 0

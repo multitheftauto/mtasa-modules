@@ -161,7 +161,7 @@ end
 function func_ircConnect (host,nick,port,password,secure)
 	local server = createElement("irc-server")
 	local socket = sockOpen(host,(port or 6667),secure)
-	local timer = setTimer(connectingTimedOut,10000,0,server)
+	local timer = setTimer(connectingTimedOut,10000,1,server)
 	if server and socket then
 		servers[server] = {socket,host,host,nick,password,port,secure,false,false,false,getTickCount(),timer,0,{},false,{}}
 		triggerEvent("onIRCConnecting",server)
@@ -258,16 +258,6 @@ end
 
 function connectingTimedOut (server)
 	triggerEvent("onIRCFailConnect",server,"Connection timed out")
-	return ircReconnect(server)
+	setTimer(ircReconnect,120000,1,server)
+	return true
 end
-
--- check for timeouts
-setTimer(function ()
-	for i,server in ipairs (ircGetServers()) do
-		if servers[server][12] > 120000 then
-			ircRaw(server,"PING")
-		elseif servers[server][12] > 300000 then
-			ircReconnect(server,"Timeout")
-		end
-	end
-end,5000,0)

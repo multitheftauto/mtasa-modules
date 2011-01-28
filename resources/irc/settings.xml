@@ -14,7 +14,7 @@
 	-->
 	
 		<server
-			host="irc.gtanet.com"
+			host="94.75.198.6"
 			nick="SocketsBot"
 			channels="#MCvarial"
 		/>
