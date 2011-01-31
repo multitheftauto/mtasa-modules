@@ -27,7 +27,7 @@
 
 #define MODULE_NAME         "Curl module"
 #define MODULE_AUTHOR       "Alexander de Jong (AKA mrdejong)"
-#define MODULE_VERSION      1.0
+#define MODULE_VERSION      1.01
 
 #ifdef WIN32
     #define WIN32_MEAN_AND_LEAN

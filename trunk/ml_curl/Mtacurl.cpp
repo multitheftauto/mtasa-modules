@@ -135,6 +135,10 @@ int Mtacurl::setup_readfunction( lua_State *L )
 
 int Mtacurl::setup_headerfunction( lua_State *L )
 {
+	CURLcode iDataSetup = curl_easy_setopt(m_pCurl, CURLOPT_WRITEHEADER, L);
+	if(iDataSetup != CURLE_OK)
+		luaL_error(L, "%s", strerror( iDataSetup ));
+
 	CURLcode iFuncSetup = curl_easy_setopt(m_pCurl, CURLOPT_HEADERFUNCTION, l_easy_headerhandler);
 	if(iFuncSetup != CURLE_OK)
 		luaL_error(L, "%s", strerror( iFuncSetup ));
