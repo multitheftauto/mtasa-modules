@@ -4,7 +4,7 @@
 
 CC = gcc
 LD = gcc
-PROG = ml_system.so
+PROG = ml_curl.so
 CXX = gcc
 CPP = gcc
 
@@ -12,7 +12,7 @@ CPP = gcc
 # NOTE: add -g for debug, remove for release!
 CPPFLAGS = -MD -Wall -I./
 LDFLAGS = -fPIC -shared -Wl,-soname,$(PROG).1,-R./
-LIBS = -lpthread -lstdc++ -L./lib/lua51/src/.libs -llua
+LIBS = -lpthread -lstdc++ -L./lib -llua
 
 #### End of system configuration section ####
 
@@ -28,7 +28,7 @@ DEPS	  =     $(patsubst %.o,%.d,$(OBJS))
 
 all : ml_base
 
-ml_system : $(OBJS)
+ml_curl : $(OBJS)
 	$(CC) $(CPPFLAGS) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
 
 clean :

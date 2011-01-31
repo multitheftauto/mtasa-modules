@@ -15,7 +15,13 @@ Mtacurls::~Mtacurls( void )
 Mtacurl* Mtacurls::Create( lua_State* luaVM, const char* url )
 {
 	Mtacurl* pMtacurl;
-	pMtacurl = new Mtacurl(luaVM, url);
+
+	if(url == NULL) {
+		pMtacurl = new Mtacurl(luaVM);
+	}
+	else {
+		pMtacurl = new Mtacurl(luaVM, url);
+	}
 
 	if(pMtacurl)
 	{

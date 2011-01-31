@@ -112,6 +112,9 @@
     <ClInclude Include="CFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\lua.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile">
@@ -131,5 +134,14 @@
     </None>
     <None Include="ml_system.vcproj" />
     <None Include="UpgradeLog.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\lua5.1sd.lib" />
+    <Library Include="lib\curllib.lib" />
+    <Library Include="lib\libcurld.lib" />
+    <Library Include="lib\libcurl.lib" />
+    <Library Include="lib\lua5.1.lib" />
+    <Library Include="lib\lua5.1d.lib" />
+    <Library Include="lib\lua5.1s.lib" />
   </ItemGroup>
 </Project>
