@@ -24,6 +24,8 @@ extern ILuaModuleManager10 *pModuleManager;
 
 #include "curl/curl.h"
 
+#define luaL_checktable(L, n) luaL_checktype(L, n, LUA_TTABLE)
+
 #define LUACURL_OPTIONP_UPVALUE(L, INDEX) ((CURLoption *) lua_touserdata(L, lua_upvalueindex(INDEX)))
 #define LUACURL_CODEP_UPVALUE(L, INDEX) ((CURLcode *) lua_touserdata(L, lua_upvalueindex(INDEX)))
 
