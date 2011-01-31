@@ -42,6 +42,14 @@ int CFunctions::curl_init( lua_State *luaVM )
 				return 1;
 			}
 		}
+		else {
+			Mtacurl* pMtacurl = mtacurls->Create( luaVM, NULL );
+			if( pMtacurl )
+			{
+				lua_pushlightuserdata(luaVM, pMtacurl->GetUserData());
+				return 1;
+			}
+		}
 	}
 
 	lua_pushboolean( luaVM, false );
@@ -74,36 +82,38 @@ int CFunctions::curl_setopt( lua_State* luaVM )
 	if(luaVM)
 	{
 		if( lua_type( luaVM, 1 ) == LUA_TLIGHTUSERDATA &&
-			lua_type( luaVM, 2 ) == LUA_TNUMBER )
+			lua_type( luaVM, 2 ) == LUA_TLIGHTUSERDATA )
 		{
 			Mtacurl* pMtacurl = mtacurls->Get( lua_touserdata( luaVM, 1 ) );
 
 			if( pMtacurl != NULL )
 			{				
-				CURLoption option = options_opt[(int)lua_tonumber( luaVM, 2 )];
+				CURLoption* option = (CURLoption*)lua_touserdata( luaVM, 2); // options_opt[(int)lua_tonumber( luaVM, 2 )];
 				CURLcode code;
 
 				switch(lua_type( luaVM, 3))
 				{
 					case LUA_TBOOLEAN:
 						// call boolean setopt
-						code = pMtacurl->setopt_boolean(option, lua_toboolean(luaVM, 3));
+						code = pMtacurl->setopt_boolean((CURLoption&)option, lua_toboolean(luaVM, 3));
 					break;
 
 					case LUA_TNUMBER:
 						// call number setopt
-						code = pMtacurl->setopt_number(option, lua_tonumber(luaVM, 3));
+						code = pMtacurl->setopt_number((CURLoption&)option, lua_tonumber(luaVM, 3));
 					break;
 
 					case LUA_TSTRING:
 						// call string setopt
-						code = pMtacurl->setopt_string(option, lua_tostring(luaVM, 3));
+						code = pMtacurl->setopt_string((CURLoption&)option, lua_tostring(luaVM, 3));
 					break;
+
 				}
 
 				if( code )
 				{
-					lua_pushnumber( luaVM, code_str[code] );
+					// lua_pushnumber( luaVM, code_str[code] );
+					lua_pushlightuserdata( luaVM, (void*)code);
 					return 1;
 				}
 			}
@@ -170,7 +180,8 @@ int CFunctions::curl_perform( lua_State* luaVM )
 			{
 				CURLcode code = pMtacurl->perform();
 
-				lua_pushnumber( luaVM, code_str[code] );
+				// lua_pushlightuserdata(luaVM, (void*)code);
+				lua_pushstring(luaVM, (const char*)pMtacurl->getResult());
 				return 1;
 			}
 		}
@@ -192,7 +203,7 @@ int CFunctions::curl_send( lua_State* luaVM )
 			{
 				CURLcode code = pMtacurl->send();
 
-				lua_pushnumber( luaVM, code_str[code] );
+				lua_pushlightuserdata(luaVM, (void*)code);
 				return 1;
 			}
 		}
@@ -207,13 +218,14 @@ int CFunctions::curl_strerror( lua_State* luaVM )
 	if( luaVM )
 	{
 		if( lua_type( luaVM, 1 ) == LUA_TLIGHTUSERDATA &&
-			lua_type( luaVM, 2 ) == LUA_TSTRING )
+			lua_type( luaVM, 2 ) == LUA_TLIGHTUSERDATA )
 		{
 			Mtacurl* pMtacurl = mtacurls->Get( lua_touserdata( luaVM, 1 ) );
 
 			if( pMtacurl != NULL )
 			{
-				lua_pushstring(luaVM, pMtacurl->strerror( code_opt[(int)lua_tonumber( luaVM, 2 )] ) );
+				CURLcode* code = (CURLcode*)lua_touserdata(luaVM, 2);
+				lua_pushstring(luaVM, pMtacurl->strerror( (CURLcode&)code ) );
 				return 1;
 			}
 		}
@@ -223,45 +235,9 @@ int CFunctions::curl_strerror( lua_State* luaVM )
 	return 1;
 }
 
-int num_options = 0;
-void CFunctions::registerCurlOption( lua_State* luaVM, const char* name, CURLoption* value )
+void CFunctions::registerLuaGlobal( lua_State* luaVM, const char* name, void* value )
 {
-	++ num_options;
-	// lua_pushnumber(luaVM, value);
-	options_str[*value] = num_options;
-	options_opt[num_options] = *value;
-
-	lua_pushnumber(luaVM, num_options);
-	lua_setglobal(luaVM, name);
-}
-
-int num_code = 0;
-void CFunctions::registerCurlCode( lua_State* luaVM, const char* name, CURLcode* value )
-{
-	++ num_code;
-
-	code_str[*value] = num_code;
-	code_opt[num_code] = *value;
-
-	lua_pushnumber(luaVM, num_code);
-	lua_setglobal(luaVM, name);
-}
-
-int num_info = 0;
-void CFunctions::registerCurlInfo( lua_State* luaVM, const char* name, CURLINFO* value )
-{
-	++ num_info;
-
-	info_str[*value] = num_info;
-	info_opt[num_info] = *value;
-
-	lua_pushnumber(luaVM, num_info);
-	lua_setglobal(luaVM, name);
-}
-
-void CFunctions::registerCurlGlobal( lua_State* luaVM, const char* name, int value )
-{
-	lua_pushnumber(luaVM, value);
+	lua_pushlightuserdata(luaVM, value);
 	lua_setglobal(luaVM, name);
 }
 

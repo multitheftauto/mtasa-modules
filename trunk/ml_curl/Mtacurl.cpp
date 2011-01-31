@@ -18,10 +18,11 @@ Mtacurl::Mtacurl( lua_State *luaVM, const char* url )
 {
 	m_pUserData				= lua_newuserdata(luaVM, 128);
 	m_pCurl					= curl_easy_init();
-	char* host				= curl_easy_escape(m_pCurl, url, strlen(url));
-	curl_easy_setopt(m_pCurl, CURLOPT_URL, host);
+	// char* host				= curl_easy_escape(m_pCurl, url, strlen(url));
 	m_pConnected			= true;
 	m_bAwaitingDestruction	= false;
+
+	curl_easy_setopt(m_pCurl, CURLOPT_URL, url);
 }
 
 Mtacurl::~Mtacurl( )
@@ -30,6 +31,12 @@ Mtacurl::~Mtacurl( )
 	m_pCurl					= NULL;
 	m_pUserData				= NULL;
 	m_pConnected			= false;
+}
+
+static size_t writeData			( char *data, size_t size, size_t nmemb, void *ctx )
+{
+	size_t          length = size * nmemb;
+	
 }
 
 CURLcode Mtacurl::setopt_boolean( CURLoption option, bool val)
@@ -50,6 +57,11 @@ CURLcode Mtacurl::setopt_string( CURLoption option, const char* val)
 CURLcode Mtacurl::perform( void )
 {
 	return curl_easy_perform( m_pCurl );
+}
+
+const void* Mtacurl::getResult( void )
+{
+	return m_pBuffer;
 }
 
 CURLcode Mtacurl::send( void )

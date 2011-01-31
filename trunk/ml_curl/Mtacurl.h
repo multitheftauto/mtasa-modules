@@ -32,6 +32,8 @@ public:
 	void cleanup					( void );
 	char *escape					( const char* url );
 	const char* strerror			( CURLcode error );
+	const void*	getResult			( void );
+	static size_t writeData			( char *data, size_t size, size_t nmemb, void *ctx );
 
 	bool	IsAwaitingDestruction	( void ) { return m_bAwaitingDestruction; };
 	void	MakeAwaitDestruction	( void ) { m_bAwaitingDestruction = true; };
@@ -46,6 +48,7 @@ private:
 	const void*		m_pBuffer[1024];
 	size_t			m_pBuflen;
 	size_t*			m_pBufsize;
+	CURLcode		m_pLatestCode;
 };
 
 #endif

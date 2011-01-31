@@ -117,7 +117,7 @@
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -149,6 +149,7 @@
     <ClInclude Include="include\curl\stdcheaders.h" />
     <ClInclude Include="include\curl\typecheck-gcc.h" />
     <ClInclude Include="include\curl\types.h" />
+    <ClInclude Include="include\lua.hpp" />
     <ClInclude Include="ml_system.h" />
     <ClInclude Include="extra\CLuaArgument.h" />
     <ClInclude Include="extra\CLuaArguments.h" />
@@ -168,6 +169,15 @@
     <None Include="Makefile" />
     <None Include="ml_system.vcproj" />
     <None Include="UpgradeLog.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\curllib.lib" />
+    <Library Include="lib\libcurl.lib" />
+    <Library Include="lib\libcurld.lib" />
+    <Library Include="lib\lua5.1.lib" />
+    <Library Include="lib\lua5.1d.lib" />
+    <Library Include="lib\lua5.1s.lib" />
+    <Library Include="lib\lua5.1sd.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
