@@ -18,7 +18,7 @@ friend class Mtacurls;
 public:
 			Mtacurl					( lua_State *luaVM );
 private:
-			Mtacurl					( lua_State *luaVM, const char* url );
+			Mtacurl					( lua_State *luaVM, const char* url, size_t length );
 protected:
 			~Mtacurl				( void );
 	void	DoPulse					( void );
@@ -29,8 +29,16 @@ public:
 	CURLcode setopt_string			( CURLoption option, const char* val );
 	CURLcode perform				( void );
 	CURLcode send					( void );
+
+	int setup_writefunction			( lua_State *L );
+	int setup_readfunction			( lua_State *L );
+	int setup_headerfunction		( lua_State *L );
+	int clear_writefunction			( lua_State *L );
+	int clear_readfunction			( lua_State *L );
+	int clear_headerfunction		( lua_State *L );
+
 	void cleanup					( void );
-	char *escape					( const char* url );
+	char *escape					( const char* url, size_t length );
 	const char* strerror			( CURLcode error );
 	const void*	getResult			( void );
 	static size_t writeData			( char *data, size_t size, size_t nmemb, void *ctx );

@@ -42,12 +42,12 @@ MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
 		pModuleManager->RegisterFunction ( luaVM, "curl_cleanup", CFunctions::curl_cleanup );
 		pModuleManager->RegisterFunction ( luaVM, "curl_escape", CFunctions::curl_escape );
 		pModuleManager->RegisterFunction ( luaVM, "curl_perform", CFunctions::curl_perform );
-		pModuleManager->RegisterFunction ( luaVM, "curl_send", CFunctions::curl_send );
+		// pModuleManager->RegisterFunction ( luaVM, "curl_send", CFunctions::curl_send );
 		pModuleManager->RegisterFunction ( luaVM, "curl_strerror", CFunctions::curl_strerror );
 
-		CFunctions::addEvent(luaVM, "onCurlDataRecieve");
-		CFunctions::addEvent(luaVM, "onCurlConnect"); // not yet working
-		CFunctions::addEvent(luaVM, "onCurlFileCreated"); // not yet working
+		// CFunctions::addEvent(luaVM, "onCurlDataRecieve");
+		// CFunctions::addEvent(luaVM, "onCurlConnect"); // not yet working
+		// CFunctions::addEvent(luaVM, "onCurlFileCreated"); // not yet working
 
 		// Global variables for curl.
 		CFunctions::registerLuaGlobal(luaVM, "CURLOPT_AUTOREFERER", (void*)CURLOPT_AUTOREFERER);

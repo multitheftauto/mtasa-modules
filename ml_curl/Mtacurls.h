@@ -11,7 +11,7 @@ public:
 					Mtacurls( void );
 					~Mtacurls( void );
 
-	Mtacurl*		Create( lua_State* luaVM, const char* url );
+	Mtacurl*		Create( lua_State* luaVM, const char* url, size_t length );
 	Mtacurl*		Get( void* pUserData );
 	bool			Delete( Mtacurl* pMtacurl );
 	

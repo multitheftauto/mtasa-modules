@@ -12,7 +12,7 @@ Mtacurls::~Mtacurls( void )
 	curl_global_cleanup();
 }
 
-Mtacurl* Mtacurls::Create( lua_State* luaVM, const char* url )
+Mtacurl* Mtacurls::Create( lua_State* luaVM, const char* url, size_t length )
 {
 	Mtacurl* pMtacurl;
 
@@ -20,7 +20,7 @@ Mtacurl* Mtacurls::Create( lua_State* luaVM, const char* url )
 		pMtacurl = new Mtacurl(luaVM);
 	}
 	else {
-		pMtacurl = new Mtacurl(luaVM, url);
+		pMtacurl = new Mtacurl(luaVM, url, length);
 	}
 
 	if(pMtacurl)
