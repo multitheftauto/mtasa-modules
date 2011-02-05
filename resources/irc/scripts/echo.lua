@@ -168,46 +168,57 @@ addEventHandler("onPlayerMute",root,
 ------------------------------------
 -- Votemanager interaction
 ------------------------------------
-local pollData
+local pollTitle
 
 addEvent("onPollStarting")
 addEventHandler("onPollStarting",root,
 	function (data)
-		pollData = data
+		pollTitle = tostring(data.title)
 	end
 )
 
 addEvent("onPollModified")
 addEventHandler("onPollModified",root,
 	function (data)
-		pollData = data
+		pollTitle = tostring(data.title)
 	end
 )
 
 addEvent("onPollStart")
 addEventHandler("onPollStart",root,
 	function ()
-		outputIRC("14* A vote was started ["..tostring(pollData.title).."]")
+		if pollTitle then
+			outputIRC("14* A vote was started ["..pollTitle.."]")
+		end
 	end
 )
 
 addEvent("onPollStop")
 addEventHandler("onPollStop",root,
 	function ()
-		outputIRC("14* Vote stopped!")
+		if pollTitle then
+			pollTitle = nil
+			outputIRC("14* Vote stopped!")
+		end
 	end
 )
 
 addEvent("onPollEnd")
 addEventHandler("onPollEnd",root,
 	function ()
-		outputIRC("14* Vote ended!")
+		if pollTitle then
+			pollTitle = nil
+			outputIRC("14* Vote ended!")
+		end
 	end
 )
 
 addEvent("onPollDraw")
 addEventHandler("onPollDraw",root,
 	function ()
-		outputIRC("14* A draw was reached!")
+		if pollTitle then
+			pollTitle = nil
+			outputIRC("14* A draw was reached!")
+		end
 	end
 )
