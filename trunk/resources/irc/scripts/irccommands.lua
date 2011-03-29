@@ -409,7 +409,7 @@ function outputCommands (server,channel,user,command)
 	for i,cmd in ipairs (ircGetCommands()) do
 		if ircIsCommandEchoChannelOnly(cmd) then
 			if ircIsEchoChannel(channel) then
-				if ircGetCommandLevel(cmd) <= ircGetUserLevel(user,channel) then
+				if (tonumber(ircGetCommandLevel(cmd) or 6)) <= (tonumber(ircGetUserLevel(user,channel)) or 0) then
 					table.insert(cmds,cmd)
 				end
 			end
