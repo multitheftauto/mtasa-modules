@@ -26,6 +26,13 @@ int CFunctions::sockOpen(lua_State* luaVM)
         // Make sure host is a string, and port is a number
         if ( lua_type ( luaVM, 1 ) == LUA_TSTRING && lua_type ( luaVM, 2 ) == LUA_TNUMBER )
         {
+            // Socket limit exceeded ?
+            if ( CSocketManager::SocketLimitExceeded ( ) )
+            {
+                lua_pushboolean(luaVM, false);
+                return 1;
+            }
+
             // Put the host in a string, and the port in an unsigned short
             string strHost        = lua_tostring ( luaVM, 1 );
             unsigned short usPort = static_cast < unsigned short > ( lua_tonumber ( luaVM, 2 ) );
