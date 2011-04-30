@@ -163,16 +163,16 @@ bool CSocket::ProcessTargetLocation(const string& strHost, const unsigned short&
     else
     {
         Hostent = gethostbyname(strHost.c_str());
-        if (Hostent == NULL)
-        {
-            return false;
-        }
-        else
+        if (Hostent != NULL)
         {
             memcpy(&(m_sSockAddr.sin_addr), Hostent->h_addr_list[0], 4);
             return true;
         }
+
+        Hostent = NULL;
     }
+
+    return false;
 }
 
 void CSocket::SetNonBlocking()

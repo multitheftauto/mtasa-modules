@@ -9,7 +9,7 @@
 #include "CSocketManager.h"
 
 // Vector for holding all sockets
-vector <CSocket*> vecSockets;
+vector <sSocketsStorage*> vecSockets;
 
 void CSocketManager::DoPulse()
 {
@@ -17,7 +17,7 @@ void CSocketManager::DoPulse()
     for (unsigned int i = 0; i < vecSockets.size(); ++i)
     {
         // Get the socket by the ID
-        CSocket* pSocket = vecSockets[i];
+        CSocket* pSocket = (CSocket *)vecSockets[i]->m_pSocket;
 
         // Do a pulse at the socket
         if (!pSocket->DoPulse())
@@ -28,23 +28,24 @@ void CSocketManager::DoPulse()
     }
 }
 
-void CSocketManager::SocketAdd(CSocket*& pSocket)
+void CSocketManager::SocketAdd(CSocket*& pSocket, bool bListen )
 {
     // Add the socket to the loop stuff
-    vecSockets.push_back(pSocket);
+    sSocketsStorage* pSocketStorage = new sSocketsStorage ( pSocket, bListen );
+    vecSockets.push_back ( pSocketStorage );
 }
 
 bool CSocketManager::SocketRemove(CSocket*& pSocket)
 {
     // Check if an socket was actually specified
-    if (pSocket == NULL)
+    if ( pSocket == NULL )
         return false;
 
     // Loop through all sockets
     for (unsigned int i = 0; i < vecSockets.size(); ++i)
     {
         // If the current is the one we're looking for...
-        if (vecSockets[i] == pSocket)
+        if ((CSocket *)vecSockets[i]->m_pSocket == pSocket)
         {
             // Remove it from the vector and delete it, then return true
             vecSockets.erase(vecSockets.begin() + i);
@@ -66,10 +67,10 @@ bool CSocketManager::GetSocket(CSocket*& pSocket, void* pUserdata)
     for (unsigned int i = 0; i < vecSockets.size(); ++i)
     {
         // Compare the current socket's userdata with the one we're looking for
-        if (vecSockets[i]->GetUserdata() == pUserdata)
+        if ( (CSocket *)vecSockets[i]->m_pSocket->GetUserdata() == pUserdata )
         {
             // If it's the one we want, assign pSocket to it and return true
-            pSocket = vecSockets[i];
+            pSocket = (CSocket *)vecSockets[i]->m_pSocket;
             return true;
         }
     }
@@ -81,5 +82,5 @@ void CSocketManager::HandleStop()
 {
     // Triggered at module stop. Simply destroys all sockets
     for (unsigned int i = 0; i < vecSockets.size(); ++i)
-        SAFE_DELETE(vecSockets[i]);
+        SAFE_DELETE((CSocket *)vecSockets[i]->m_pSocket);
 }
