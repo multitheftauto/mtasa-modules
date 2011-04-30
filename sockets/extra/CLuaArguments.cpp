@@ -102,7 +102,7 @@ bool CLuaArguments::Call ( lua_State* luaVM, const char* szFunction ) const
     int iret = lua_pcall ( luaVM, m_Arguments.size (), 0, 0 ) ;
     if ( iret == LUA_ERRRUN || iret == LUA_ERRMEM )
     {
-        const char* szRes = lua_tostring( luaVM, -1 );
+        //const char* szRes = lua_tostring( luaVM, -1 );
         return false; // the function call failed
     }
         

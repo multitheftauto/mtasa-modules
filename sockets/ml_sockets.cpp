@@ -31,10 +31,17 @@ MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, c
 	(*fVersion) = MODULE_VERSION;
 
 #ifdef WIN32
+
+#ifndef _DEBUG
+    #undef assert
+    #define assert(x) __noop(x)
+#endif
+
     WSADATA wsaData;
-    memset(&wsaData, 0, sizeof(WSADATA)); // Same as ZeroMemory.
-    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
+
+    if ( WSAStartup ( MAKEWORD ( 2, 2 ), &wsaData ) != 0 )
     {
+        assert ( false );
         pModuleManager->ErrorPrintf("[Sockets] Can't start Winsock, aborting...");
         return false;
     }
@@ -54,27 +61,28 @@ MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
         pModuleManager->RegisterFunction ( luaVM, "sockClose", CFunctions::sockClose );
 
         // Add events
-        CFunctions::AddEvent(luaVM, "onSockOpened");
-        CFunctions::AddEvent(luaVM, "onSockData");
-        CFunctions::AddEvent(luaVM, "onSockClosed");
+        CFunctions::AddEvent ( luaVM, "onSockOpened" );
+        CFunctions::AddEvent ( luaVM, "onSockData" );
+        CFunctions::AddEvent ( luaVM, "onSockClosed" );
 	}
 }
 
 
 MTAEXPORT bool DoPulse ( void )
 {
-    CSocketManager::DoPulse();
+    CSocketManager::DoPulse ( );
 	return true;
 }
+
 
 MTAEXPORT bool ShutdownModule ( void )
 {
     // Stop all sockets before shutting down the module
-    CSocketManager::HandleStop();
+    CSocketManager::HandleStop ( );
 
 #ifdef WIN32
     // Cleanup Winsock stuff
-    WSACleanup();
+    WSACleanup ( );
 #endif
 
 	return true;
