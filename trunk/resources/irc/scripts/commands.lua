@@ -59,7 +59,7 @@ addCommandHandler("levels",
 		if source ~= getElementsByType("console")[1] then return end
 		local users = ircGetUsers()
 		for i,user in ipairs (users) do
-			users[i] = ircGetUserNick(user).." ("..(ircGetUserLevel(user) or "?")..")"
+			users[i] = ircGetUserNick(user).." ("..(ircGetUserLevel(user,ircGetEchoChannel()) or "?")..")"
 		end
 		outputServerLog("IRC: users: "..table.concat(users,", "))
 	end

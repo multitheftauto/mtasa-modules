@@ -21,6 +21,15 @@ function func_ircGetChannelFromName (channel)
 	return false
 end
 
+function func_ircGetEchoChannel ()
+	for i,channel in ipairs (ircGetChannels()) do
+		if ircIsEchoChannel(channel) then
+			return channel
+		end
+	end
+	return false
+end
+
 function func_ircGetChannelServer (channel)
 	if channels[channel] then
 		return getElementParent(channel)

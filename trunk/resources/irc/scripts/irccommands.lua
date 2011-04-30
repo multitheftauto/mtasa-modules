@@ -518,10 +518,6 @@ addIRCCommandHandler("!changemap",
 		local map = table.concat({...}," ")
 		if not map then ircNotice(user,"syntax is !changemap <name>") return end
 		local maps = {}
-		local resource = getResourceFromName(map)
-		if resource then
-			exports.mapmanager:changeGamemodeMap(resource)
-		end
 		for i,resource in ipairs (getResources()) do
 			if getResourceInfo(resource,"type") == "map" then
 				if string.find(string.lower(getResourceName(resource)),string.lower(map)) then

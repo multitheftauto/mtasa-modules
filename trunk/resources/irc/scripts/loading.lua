@@ -77,7 +77,7 @@ addEventHandler("onResourceStart",resourceRoot,
 						local args = {...}
 						for i,arg in ipairs (args) do
 							local expectedArgType = gettok(line,(2+i),32)
-							if type(arg) ~= expectedArgType and not string.find(expectedArgType,")") then
+							if type(arg) ~= expectedArgType and not (expectedArgType or string.find(expectedArgType,")")) then
 								outputServerLog("IRC: Bad argument #"..i.." @ '"..gettok(line,2,32).."' "..expectedArgType.." expected, got "..type(arg))
 								return
 							end
@@ -159,11 +159,15 @@ function internalConnect ()
 				outputServerLog("IRC: problem with server #"..i..", no channels given!")
 			else
 				local server = ircConnect(host,nick,port,password,secure)
-				if nspass then
-					ircIdentify(server,nspass)
-				end
-				for i,channel in ipairs (split(channels,44)) do
-					ircJoin(server,gettok(channel,1,32),gettok(channel,2,32))
+				if server then
+					if nspass then
+						ircIdentify(server,nspass)
+					end
+					for i,channel in ipairs (split(channels,44)) do
+						ircJoin(server,gettok(channel,1,32),gettok(channel,2,32))
+					end
+				else
+					outputServerLog("IRC: problem with server #"..i..", could not connect ("..tostring(getSocketErrorString(sockError)..")"))
 				end
 			end
 		end

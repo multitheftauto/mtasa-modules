@@ -173,14 +173,18 @@ local pollTitle
 addEvent("onPollStarting")
 addEventHandler("onPollStarting",root,
 	function (data)
-		pollTitle = tostring(data.title)
+		if data.title then
+			pollTitle = tostring(data.title)
+		end
 	end
 )
 
 addEvent("onPollModified")
 addEventHandler("onPollModified",root,
 	function (data)
-		pollTitle = tostring(data.title)
+		if data.title then
+			pollTitle = tostring(data.title)
+		end
 	end
 )
 
@@ -188,7 +192,7 @@ addEvent("onPollStart")
 addEventHandler("onPollStart",root,
 	function ()
 		if pollTitle then
-			outputIRC("14* A vote was started ["..pollTitle.."]")
+			outputIRC("14* A vote was started ["..tostring(pollTitle).."]")
 		end
 	end
 )

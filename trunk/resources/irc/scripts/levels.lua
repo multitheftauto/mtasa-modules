@@ -75,7 +75,7 @@ function func_ircGetUserLevel (user,channel)
 	if userlevels[channel] then
 		return userlevels[channel][user]
 	end
-	return false
+	return 0
 end
 
 function isChanMode (mode)
