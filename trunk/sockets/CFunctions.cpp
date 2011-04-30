@@ -18,31 +18,36 @@
 
 #include "CFunctions.h"
 
+// bool sockOpen ( string strHost, int usPort [, bool bListen = false ] )
 int CFunctions::sockOpen(lua_State* luaVM)
 {
     if ( luaVM )
     {
         // Make sure host is a string, and port is a number
-        if (lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TNUMBER)
+        if ( lua_type ( luaVM, 1 ) == LUA_TSTRING && lua_type ( luaVM, 2 ) == LUA_TNUMBER )
         {
             // Put the host in a string, and the port in an unsigned short
-            string strHost        = lua_tostring(luaVM, 1);
+            string strHost        = lua_tostring ( luaVM, 1 );
             unsigned short usPort = static_cast < unsigned short > ( lua_tonumber ( luaVM, 2 ) );
+            //bool bListen          = ( ( lua_type ( luaVM, 3 ) == LUA_TBOOLEAN ) ? lua_toboolean ( luaVM, 3 ) : false );
 
             // Create the socket
             CSocket* pSocket = new CSocket(luaVM, strHost, usPort);
             void* pUserdata  = pSocket->GetUserdata();
 
             // The socket has got a userdata value if successfully created. It doesn't otherwise
-            if (pUserdata == NULL)
+            if ( pUserdata == NULL || pSocket->IsConnected () == false )
             {
-                SAFE_DELETE(pSocket);
-                lua_pushboolean(luaVM, false);
+                lua_pushboolean ( luaVM, false );
+                lua_pushnumber  ( luaVM, pSocket->GetLastSocketError ( ) );
+
+                // Delete the socket now.
+                SAFE_DELETE ( pSocket );
                 return 1;
             }
 
             // Add the socket to the Pulse list
-            CSocketManager::SocketAdd(pSocket);
+            CSocketManager::SocketAdd ( pSocket/*, bListen*/ );
 
             // Return the userdata
             lua_pushlightuserdata(luaVM, pUserdata);
@@ -54,6 +59,7 @@ int CFunctions::sockOpen(lua_State* luaVM)
     return 1;
 }
 
+// bool sockWrite ( userdata usSocket, string strData )
 int CFunctions::sockWrite(lua_State *luaVM)
 {
     if ( luaVM )
@@ -83,6 +89,7 @@ int CFunctions::sockWrite(lua_State *luaVM)
     return 1;
 }
 
+// bool sockClose ( userdata usSocket )
 int CFunctions::sockClose(lua_State *luaVM)
 {
     if ( luaVM )
