@@ -26,6 +26,8 @@
     #pragma warning (disable : 4244) // DISABLE: conversion from 'SOCKET' to 'int', possible loss of data
 #endif
 
+#include <assert.h>
+
 /** MODULE SPECIFIC INFORMATION **/
 #define MODULE_NAME			"Sockets Module"
 #define	MODULE_AUTHOR		"Gamesnert, MCvarial & x86"
