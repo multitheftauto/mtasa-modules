@@ -140,45 +140,6 @@ addEventHandler("onSockClosed",root,
 	end
 )
 
-local ignoreraws = {}
-ignoreraws["003"] = true
-ignoreraws["004"] = true
-ignoreraws["005"] = true
-ignoreraws["006"] = true
-ignoreraws["007"] = true
-ignoreraws["008"] = true
-
-ignoreraws["211"] = true
-ignoreraws["212"] = true
-ignoreraws["213"] = true
-ignoreraws["214"] = true
-ignoreraws["215"] = true
-ignoreraws["216"] = true
-ignoreraws["217"] = true -- might be used for ping freq
-
-addEvent("onIRCRaw")
-addEventHandler("onIRCRaw",root,
-	function (data)
-		local t = split(data,32)
-		if t[1] == "PING" then
-			resetTimer(servers[source][12])
-			if t[2] then
-				ircRaw(source,"PONG "..string.sub(t[2],2))
-			else
-				ircRaw(source,"PONG :REPLY")
-			end
-		elseif t[2] == "376" then
-			triggerEvent("onIRCConnect",source)
-		elseif t[2] == "001" then
-			servers[source][2] = t[7]
-		elseif t[2] == "002" then
-			servers[source][3] = t[7]
-		else
-			outputServerLog("IRC: UKNOWN RAW: '"..data.."'")
-		end
-	end
-)
-
 addEvent("onIRCConnect")
 addEventHandler("onIRCConnect",root,
 	function ()

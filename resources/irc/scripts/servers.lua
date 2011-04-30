@@ -89,6 +89,7 @@ function func_ircJoin (server,channel,password)
 		else
 			ircRaw(server,"JOIN "..channel)
 		end
+		ircRaw(server,"NAMES "..channel)
 		return chan
 	else
 		return false
@@ -160,14 +161,14 @@ end
 
 function func_ircConnect (host,nick,port,password,secure)
 	local server = createElement("irc-server")
-	local socket = sockOpen(host,(port or 6667),secure)
+	local socket,sockError = sockOpen(host,(port or 6667),secure)
 	local timer = setTimer(connectingTimedOut,10000,1,server)
 	if server and socket then
 		servers[server] = {socket,host,host,nick,password,port,secure,false,false,false,getTickCount(),timer,0,{},false,{}}
 		triggerEvent("onIRCConnecting",server)
 		return server
 	end
-	return false
+	return false,sockError
 end
 
 function func_ircReconnect (server)

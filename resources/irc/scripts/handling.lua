@@ -90,7 +90,7 @@ addEventHandler("onIRCRaw",root,
 		end
 		if t[2] == "NICK" then
 			local oldnick = getNickFromRaw(data)
-			local newnick = getMessageFromRaw(data)
+			local newnick = string.sub(t[3],1,-2)
 			local user = ircGetUserFromNick(oldnick)
 			users[user][1] = newnick
 			triggerEvent("onIRCUserChangeNick",user,oldnick,newnick)
