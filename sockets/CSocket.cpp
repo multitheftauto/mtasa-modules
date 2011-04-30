@@ -189,13 +189,8 @@ void CSocket::SetNonBlocking()
 
 int CSocket::GetLastSocketError()
 {
-    // Multi-platform function for getting the last socket error
-
-#ifdef WIN32
-    return WSAGetLastError();
-#else
+    // Multi-platform function for getting the last socket error (See CSocket.h)
     return errno;
-#endif
 }
 
 void CSocket::CloseSocket()
@@ -210,7 +205,8 @@ void CSocket::CloseSocket()
 #endif
     
     // Unset the socket variable, so there's no mistaking there
-    m_pSocket = NULL;
+    m_pSocket    = NULL;
+    m_bConnected = false;
 }
 
 int CSocket::HandleConnection(const int& iError)
@@ -227,8 +223,10 @@ int CSocket::HandleConnection(const int& iError)
     }
     else
     {
-        printf("Could not connect due to error: %i",iError); // TEMP DEBUG
-        return -1;
+#ifdef _DEBUG
+        printf ( "Could not connect due to error: %i\n", iError ); // TEMP DEBUG
+#endif
+        return ERR_CONNECT_FAILURE;
     }
 }
 

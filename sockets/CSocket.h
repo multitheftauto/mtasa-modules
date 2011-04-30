@@ -17,6 +17,9 @@
 
 #ifdef WIN32
     #include <winsock2.h>
+
+    #undef errno
+    #define errno WSAGetLastError()
 #else
     #include <unistd.h>
     #include <sys/types.h>
@@ -35,19 +38,19 @@
 class CSocket
 {
 public:
-    CSocket           (lua_State *luaVM, const string& strHost, const unsigned short& usPort);
-    ~CSocket          ();
+    CSocket                     (lua_State *luaVM, const string& strHost, const unsigned short& usPort);
+    ~CSocket                    ();
 
-    bool Send         (const string& data);
-    bool DoPulse      ();
-    bool IsConnected  ();
+    bool Send                   (const string& data);
+    bool DoPulse                ();
+    bool IsConnected            ();
+    int  GetLastSocketError     ();
 
-    void* GetUserdata ();
+    void* GetUserdata           ();
 
 private:
     bool ProcessTargetLocation (const string& strHost, const unsigned short& usPort);
     void SetNonBlocking        ();
-    int  GetLastSocketError    ();
     void CloseSocket           ();
     int  HandleConnection      (const int& iError);
     void TriggerEvent          (const string eventName, const string arg1 = "");
