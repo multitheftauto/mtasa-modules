@@ -22,10 +22,7 @@ class CFunctions;
 #define __CFUNCTIONS_H
 
 #include <stdio.h>
-
 #include "ml_sockets.h"
-#include "include/ILuaModuleManager.h"
-extern ILuaModuleManager10 *pModuleManager;
 
 class CFunctions
 {

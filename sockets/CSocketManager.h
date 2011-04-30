@@ -13,6 +13,10 @@ class CSocket;
 
 #include <vector>
 #include "ml_sockets.h"
+#include "include/ILuaModuleManager.h"
+extern ILuaModuleManager10 *pModuleManager;
+
+#define MAX_SOCKETS 255
 
 struct sSocketsStorage
 {
@@ -31,7 +35,8 @@ class CSocketManager
 public:
     static void DoPulse     ();
     
-    static void SocketAdd   ( CSocket*& pSocket, bool bListen = false );
+    static bool SocketLimitExceeded   ( void );
+    static bool SocketAdd   ( CSocket*& pSocket, bool bListen = false );
     static bool SocketRemove( CSocket*& pSocket );
     static bool GetSocket   ( CSocket*& pSocket, void* pUserdata );
 

@@ -28,11 +28,25 @@ void CSocketManager::DoPulse()
     }
 }
 
-void CSocketManager::SocketAdd(CSocket*& pSocket, bool bListen )
+bool CSocketManager::SocketLimitExceeded ( void )
+{
+    unsigned int uiSockets = vecSockets.size();
+    if ( uiSockets > MAX_SOCKETS )
+    {
+        pModuleManager->ErrorPrintf ( "[Sockets] Sockets limit reached! (Max: %i)\n", MAX_SOCKETS );
+        return true;
+    }
+
+    return false;
+}
+
+bool CSocketManager::SocketAdd(CSocket*& pSocket, bool bListen )
 {
     // Add the socket to the loop stuff
     sSocketsStorage* pSocketStorage = new sSocketsStorage ( pSocket, bListen );
     vecSockets.push_back ( pSocketStorage );
+
+    return true;
 }
 
 bool CSocketManager::SocketRemove(CSocket*& pSocket)
