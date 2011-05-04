@@ -26,8 +26,8 @@ MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, c
 	pModuleManager = pManager;
 
 	// Set the module info
-	strncpy ( szModuleName, MODULE_NAME, MAX_INFO_LENGTH );
-	strncpy ( szAuthor, MODULE_AUTHOR, MAX_INFO_LENGTH );
+	strncpy_s ( szModuleName, _countof ( MODULE_NAME ), MODULE_NAME, MAX_INFO_LENGTH );
+	strncpy_s ( szAuthor, _countof ( MODULE_AUTHOR ), MODULE_AUTHOR, MAX_INFO_LENGTH );
 	(*fVersion) = MODULE_VERSION;
 
 #ifdef WIN32
@@ -38,11 +38,12 @@ MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, c
 #endif
 
     WSADATA wsaData;
+    int iError = WSAStartup ( MAKEWORD ( 2, 2 ), &wsaData );
 
-    if ( WSAStartup ( MAKEWORD ( 2, 2 ), &wsaData ) != 0 )
+    if ( iError != 0 )
     {
         assert ( false );
-        pModuleManager->ErrorPrintf("[Sockets] Can't start Winsock, aborting...");
+        pModuleManager->ErrorPrintf ( "[Sockets] Can't start Winsock (Error: %d), aborting...", iError );
         return false;
     }
 #endif

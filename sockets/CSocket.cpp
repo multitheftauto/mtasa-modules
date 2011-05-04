@@ -84,6 +84,8 @@ bool CSocket::DoPulse()
             FD_SET(m_pSocket, &wfds);
             // See if socket it writable
             int ret = select(m_pSocket+1, NULL, &wfds, NULL, &tv);
+            //printf ( "select(...) returned: %d\n", ret );
+
             if (ret == 0)
                return true;     // Not writable yet
             if (ret == -1)
@@ -96,6 +98,7 @@ bool CSocket::DoPulse()
 
         // Receive the data
         int iLength = recv(m_pSocket, chBuffer, SOCK_RECV_LIMIT, 0);
+        // printf ( "Bytes received: %d\n", iLenght );
 
         // Check if there were any errors
         int iError = GetLastSocketError();
@@ -123,12 +126,8 @@ bool CSocket::DoPulse()
             }
         }
     }
-    else
-        // If the socket doesn't exist, well, error?
-        return false;
 
-    // If the call makes it up till here, it has been a huge success! Cake and true as a reward!
-    return true;
+    return false;
 }
 
 bool CSocket::IsConnected()
@@ -221,13 +220,11 @@ int CSocket::HandleConnection(const int& iError)
     {
         return 0;
     }
-    else
-    {
+
 #ifdef _DEBUG
-        printf ( "Could not connect due to error: %i\n", iError ); // TEMP DEBUG
+    printf ( "Could not connect due to error: %i\n", iError ); // TEMP DEBUG
 #endif
-        return ERR_CONNECT_FAILURE;
-    }
+    return ERR_CONNECT_FAILURE;
 }
 
 void CSocket::TriggerEvent(const string eventName, const string arg1)

@@ -33,14 +33,12 @@ struct sSocketsStorage
 class CSocketManager
 {
 public:
-    static void DoPulse     ();
-    
-    static bool SocketLimitExceeded   ( void );
-    static bool SocketAdd   ( CSocket*& pSocket, bool bListen = false );
-    static bool SocketRemove( CSocket*& pSocket );
-    static bool GetSocket   ( CSocket*& pSocket, void* pUserdata );
-
-    static void HandleStop  ();
+    static void DoPulse                 ( void );
+    static bool SocketLimitExceeded     ( void );
+    static bool SocketAdd               ( CSocket*& pSocket, bool bListen = false );
+    static bool SocketRemove            ( CSocket*& pSocket );
+    static bool GetSocket               ( CSocket*& pSocket, void* pUserdata );
+    static void HandleStop              ( void );
 };
 
 #endif

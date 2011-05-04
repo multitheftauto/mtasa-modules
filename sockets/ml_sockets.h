@@ -19,14 +19,6 @@
 #ifndef _MLSOCK_H
 #define _MLSOCK_H
 
-// Disable Visual Studio warnings
-#ifdef WIN32
-    #pragma warning (disable : 4267) // DISABLE: conversion from 'size_t' to 'int', possible loss of data.
-    #pragma warning (disable : 4996) // DISABLE: 'strcpy': This function or variable may be unsafe.
-    #pragma warning (disable : 4244) // DISABLE: conversion from 'SOCKET' to 'int', possible loss of data.
-    #pragma warning (disable : 4800) // DISABLE: 'int' : forcing value to bool 'true' or 'false' (performance warning).
-#endif
-
 #include <assert.h>
 
 /** MODULE SPECIFIC INFORMATION **/

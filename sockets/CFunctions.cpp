@@ -36,12 +36,14 @@ int CFunctions::sockOpen(lua_State* luaVM)
             // Put the host in a string, and the port in an unsigned short
             string strHost        = lua_tostring ( luaVM, 1 );
             unsigned short usPort = static_cast < unsigned short > ( lua_tonumber ( luaVM, 2 ) );
-            //bool bListen          = ( ( lua_type ( luaVM, 3 ) == LUA_TBOOLEAN ) ? lua_toboolean ( luaVM, 3 ) : false );
+            //bool bListen          = ( ( lua_type ( luaVM, 3 ) == LUA_TBOOLEAN ) ? lua_toboolean ( luaVM, 3 ) == 1 : false );
 
             // Create the socket
             CSocket* pSocket = new CSocket(luaVM, strHost, usPort);
             void* pUserdata  = pSocket->GetUserdata();
             int iError       = pSocket->GetLastSocketError ( );
+
+            //printf ( "Socket returned (error) code: %d\n", iError );
 
             // The socket has got a userdata value if successfully created. It doesn't otherwise
             if ( pUserdata == NULL /*|| pSocket->IsConnected () == false*/ )
