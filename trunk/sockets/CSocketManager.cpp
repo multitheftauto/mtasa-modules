@@ -40,7 +40,7 @@ bool CSocketManager::SocketLimitExceeded ( void )
     return false;
 }
 
-bool CSocketManager::SocketAdd(CSocket*& pSocket, bool bListen )
+bool CSocketManager::SocketAdd ( CSocket*& pSocket, bool bListen )
 {
     // Add the socket to the loop stuff
     sSocketsStorage* pSocketStorage = new sSocketsStorage ( pSocket, bListen );
@@ -49,7 +49,7 @@ bool CSocketManager::SocketAdd(CSocket*& pSocket, bool bListen )
     return true;
 }
 
-bool CSocketManager::SocketRemove(CSocket*& pSocket)
+bool CSocketManager::SocketRemove ( CSocket*& pSocket )
 {
     // Check if an socket was actually specified
     if ( pSocket == NULL )
@@ -71,7 +71,7 @@ bool CSocketManager::SocketRemove(CSocket*& pSocket)
     return false;
 }
 
-bool CSocketManager::GetSocket(CSocket*& pSocket, void* pUserdata)
+bool CSocketManager::GetSocket ( CSocket*& pSocket, void* pUserdata )
 {
     // Make sure a value has been passed. Don't bother if there hasn't been
     if (pUserdata == NULL)
@@ -92,7 +92,7 @@ bool CSocketManager::GetSocket(CSocket*& pSocket, void* pUserdata)
     return false;
 }
 
-void CSocketManager::HandleStop()
+void CSocketManager::HandleStop ( void )
 {
     // Triggered at module stop. Simply destroys all sockets
     for (unsigned int i = 0; i < vecSockets.size(); ++i)
