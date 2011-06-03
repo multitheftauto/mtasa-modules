@@ -113,8 +113,8 @@ addEventHandler("onGamemodeMapStart",root,
 	function (res)
 		outputIRC("12* Map started: "..(getResourceInfo(res, "name") or getResourceName(res)))
 		local resource = getResourceFromName("mapratings")
-		if resource and getResourceState(resource) == "running" then
-			outputIRC("07* Rating: "..exports.mapratings:getMapRating(getResourceName(res)).average or "none")
+		if resource and getResourceState(resource) == "running" and exports.mapratings:getMapRating(getResourceName(res)) and exports.mapratings:getMapRating(getResourceName(res)).average then
+			outputIRC("07* Rating: "..exports.mapratings:getMapRating(getResourceName(res)).average)
 		end
 	end
 )
