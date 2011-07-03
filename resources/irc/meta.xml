@@ -38,7 +38,7 @@
 	</settings>
 	
 	<!-- Don't touch anything below! -->
-	<info author="MCvarial" version="1.0.0" type="misc" name="irc" description="Echobot to be used on irc" />
+	<info author="MCvarial" version="1.0.1" type="misc" name="irc" description="Echobot to be used on irc" />
 	
 	<export function="ircHop" type="server" http="false" />
 	<export function="ircSay" type="server" http="false" />
