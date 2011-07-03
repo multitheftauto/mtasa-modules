@@ -540,6 +540,12 @@ addIRCCommandHandler("!changemap",
 	end
 )
 
+addIRCCommandHandler("!map",
+	function (server,channel,user,command,...)
+		ircSay(channel,"12* Current Map: 01"..tostring(getMapName()))
+	end
+)
+
 addIRCCommandHandler("!modules",
 	function (server,channel,user,command)
 		ircSay(channel,"07Loaded modules: "..table.concat(getLoadedModules(),", "))

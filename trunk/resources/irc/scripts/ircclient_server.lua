@@ -117,5 +117,5 @@ function triggerIRCEvent (eventname,...)
 end
 
 function ircGetChannelTitle (channel)
-	return ircGetChannelName(channel).." - "..ircGetServerName(ircGetChannelServer(channel))
+	return tostring(ircGetChannelName(channel)).." - "..tostring(ircGetServerName(ircGetChannelServer(channel)))
 end

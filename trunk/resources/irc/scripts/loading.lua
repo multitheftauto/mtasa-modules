@@ -77,7 +77,7 @@ addEventHandler("onResourceStart",resourceRoot,
 						local args = {...}
 						for i,arg in ipairs (args) do
 							local expectedArgType = gettok(line,(2+i),32)
-							if type(arg) ~= expectedArgType and not (expectedArgType or string.find(expectedArgType,")")) then
+							if expectedArgType and type(arg) ~= expectedArgType and not (expectedArgType or string.find(expectedArgType,")")) then
 								outputServerLog("IRC: Bad argument #"..i.." @ '"..gettok(line,2,32).."' "..expectedArgType.." expected, got "..type(arg))
 								return
 							end

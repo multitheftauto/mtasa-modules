@@ -140,6 +140,15 @@ addEventHandler("onUnban",root,
 	end
 )
 
+addEvent("onPlayerRaceWasted")
+addEventHandler("onPlayerRaceWasted",root,
+	function (vehicle)
+		if #getAlivePlayers() == 1 and currentmode ~= "Sprint" then
+			outputIRC("12* "..getPlayerName(getAlivePlayers()[1]).." won the deathmatch!")
+		end
+	end
+)
+
 ------------------------------------
 -- Admin interaction
 ------------------------------------
@@ -162,6 +171,17 @@ addEventHandler("onPlayerMute",root,
 		else
 			outputIRC("12* "..getPlayerName(source).." was unmuted!")
 		end
+	end
+)
+
+addEvent("aMessage",true)
+addEventHandler("aMessage",root,
+	function (_,t)
+		local channel = ircGetEchoChannel()
+		ircRaw(ircGetChannelServer(channel),"NOTICE %"..tostring(ircGetChannelName(channel)).." :New admin message by "..tostring(getPlayerName(source)))
+		ircRaw(ircGetChannelServer(channel),"NOTICE %"..tostring(ircGetChannelName(channel)).." :Category: "..tostring(t.category))
+		ircRaw(ircGetChannelServer(channel),"NOTICE %"..tostring(ircGetChannelName(channel)).." :Subject: "..tostring(t.subject))
+		ircRaw(ircGetChannelServer(channel),"NOTICE %"..tostring(ircGetChannelName(channel)).." :Message: "..tostring(t.message))
 	end
 )
 
