@@ -29,7 +29,7 @@ addEventHandler("onSockData",root,
 	function (socket,data)
 		for server,info in pairs (servers) do
 			if info[1] == socket then
-				for i,line in ipairs (Split(data,"\n")) do
+				for i,line in ipairs (split(data,10)) do
 					if line ~= "" then
 						triggerEvent("onIRCRaw",server,line)
 					end
