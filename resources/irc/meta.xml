@@ -3,7 +3,7 @@
 		<!-- Activate ingame irc client? -->
 		<setting 
 			name="*irc-client" 
-			value="true"
+			value="false"
 			friendlyname="Ungame irc client"
 			examples="true,false"
 			desc="Activate ingame irc client?"
@@ -34,6 +34,24 @@
 			friendlyname="IRC info popup duration"
 			examples="1-inf"
 			desc="How long should these notices stay on the screen?"
+		/>
+		
+		<!-- What's the maximum irc logsize? (in MB) (0 = no logging) -->
+		<setting 
+			name="*irc-log-maxsize" 
+			value="10"
+			friendlyname="Maximum IRC log size"
+			examples="0-inf"
+			desc="What's the maximum irc logsize? (in MB) (0 = no logging)"
+		/>
+		
+		<!-- Should irc stuff be outputted to the console (server log)? -->
+		<setting 
+			name="*irc-logconsole" 
+			value="true"
+			friendlyname="Log to console"
+			examples="true,false"
+			desc="Should irc stuff be outputted to the console (server log)?"
 		/>
 	</settings>
 	
@@ -112,4 +130,6 @@
 	<script src="scripts/runcode/server_util.lua" type="server" />
 	<script src="scripts/runcode/client.lua" type="client" />
 	<script src="scripts/runcode/client_util.lua" type="client" />
+	
+	<html src="logs.html" />
 </meta>

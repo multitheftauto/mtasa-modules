@@ -15,18 +15,20 @@ local chantitles = {}
 addEvent("startIRCClient",true)
 addEventHandler("startIRCClient",root,
 	function ()
-		local info = {} -- {channeltitle,{users}}
-		for i,channel in ipairs (ircGetChannels()) do
-			local users = {}
-			for i,user in ipairs (ircGetUsers()) do
-				users[i] = {ircGetUserNick(user),ircGetUserLevel(user,channel)}
+		if get("irc-client") == "true" then
+			local info = {} -- {channeltitle,{users}}
+			for i,channel in ipairs (ircGetChannels()) do
+				local users = {}
+				for i,user in ipairs (ircGetUsers()) do
+					users[i] = {ircGetUserNick(user),ircGetUserLevel(user,channel)}
+				end
+				local chantitle = ircGetChannelName(channel).." - "..ircGetServerName(ircGetChannelServer(channel))
+				table.insert(info,{chantitle,users})
+				chantitles[chantitle] = channel
 			end
-			local chantitle = ircGetChannelName(channel).." - "..ircGetServerName(ircGetChannelServer(channel))
-			table.insert(info,{chantitle,users})
-			chantitles[chantitle] = channel
+			triggerClientEvent(source,"showIrcClient",root,info)
+			table.insert(ircers,source)
 		end
-		triggerClientEvent(source,"showIrcClient",root,info)
-		table.insert(ircers,source)
 	end
 )
 

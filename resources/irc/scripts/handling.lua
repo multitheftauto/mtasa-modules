@@ -43,9 +43,7 @@ addEventHandler("onSockData",root,
 addEvent("onIRCRaw")
 addEventHandler("onIRCRaw",root,
 	function (data)
-		if isTimer(servers[source][12]) then
-			resetTimer(servers[source][12])
-		end
+		-- resetTimer(servers[source][12])
 		local t = split(data,32)
 		
 		if type(servers[source][12]) == "number" then
@@ -207,9 +205,7 @@ addEventHandler("onIRCConnect",root,
 			ircRaw(source,raw)
 		end
 		servers[source][16] = {}
-		if isTimer(servers[source][12]) then
-			killTimer(servers[source][12])
-		end
-		servers[source][12] = setTimer(ircReconnect,600000,0,source,"Connection timed out!")
+		-- killTimer(servers[source][12])
+		-- servers[source][12] = setTimer(ircReconnect,600000,0,source,"Connection timed out!")
 	end
 )
