@@ -258,7 +258,7 @@ function func_ircGetServerChannels (server)
 end
 
 function connectingTimedOut (server)
-	triggerEvent("onIRCFailConnect",server,"Connection timed out")
-	setTimer(ircReconnect,120000,1,server)
+	-- triggerEvent("onIRCFailConnect",server,"Connection timed out")
+	-- setTimer(ircReconnect,120000,1,server)
 	return true
 end

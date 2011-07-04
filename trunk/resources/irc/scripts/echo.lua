@@ -176,7 +176,9 @@ addEventHandler("onPlayerMute",root,
 
 addEvent("aMessage",true)
 addEventHandler("aMessage",root,
-	function (_,t)
+	function (Type,t)
+		if Type ~= "new" then return end
+		
 		local channel = ircGetEchoChannel()
 		ircRaw(ircGetChannelServer(channel),"NOTICE %"..tostring(ircGetChannelName(channel)).." :New admin message by "..tostring(getPlayerName(source)))
 		ircRaw(ircGetChannelServer(channel),"NOTICE %"..tostring(ircGetChannelName(channel)).." :Category: "..tostring(t.category))

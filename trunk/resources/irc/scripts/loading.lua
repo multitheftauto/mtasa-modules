@@ -136,6 +136,14 @@ addEventHandler("onResourceStop",resourceRoot,
 		servers = {}
 		channels = {}
 		users = {}
+		
+		-- stop irc addons
+		for i,resource in ipairs (getResources()) do
+			local info = getResourceInfo(resource,"addon")
+			if info and info == "irc" then
+				stopResource(resource)
+			end
+		end
 	end
 )
 
