@@ -26,24 +26,16 @@ MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, c
 	pModuleManager = pManager;
 
 	// Set the module info
-	strncpy_s ( szModuleName, _countof ( MODULE_NAME ), MODULE_NAME, MAX_INFO_LENGTH );
-	strncpy_s ( szAuthor, _countof ( MODULE_AUTHOR ), MODULE_AUTHOR, MAX_INFO_LENGTH );
+	strncpy ( szModuleName, MODULE_NAME, MAX_INFO_LENGTH );
+	strncpy ( szAuthor, MODULE_AUTHOR, MAX_INFO_LENGTH );
 	(*fVersion) = MODULE_VERSION;
 
 #ifdef WIN32
-
-#ifndef _DEBUG
-    #undef assert
-    #define assert(x) __noop(x)
-#endif
-
     WSADATA wsaData;
-    int iError = WSAStartup ( MAKEWORD ( 2, 2 ), &wsaData );
-
-    if ( iError != 0 )
+    memset(&wsaData, 0, sizeof(WSADATA)); // Same as ZeroMemory.
+    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
     {
-        assert ( false );
-        pModuleManager->ErrorPrintf ( "[Sockets] Can't start Winsock (Error: %d), aborting...", iError );
+        pModuleManager->ErrorPrintf("[Sockets] Can't start Winsock, aborting...");
         return false;
     }
 #endif
@@ -59,32 +51,30 @@ MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
         // Register functions
         pModuleManager->RegisterFunction ( luaVM, "sockOpen",  CFunctions::sockOpen );
         pModuleManager->RegisterFunction ( luaVM, "sockWrite", CFunctions::sockWrite );
-        pModuleManager->RegisterFunction ( luaVM, "sockIsConnected", CFunctions::sockIsConnected );
         pModuleManager->RegisterFunction ( luaVM, "sockClose", CFunctions::sockClose );
 
         // Add events
-        CFunctions::AddEvent ( luaVM, "onSockOpened" );
-        CFunctions::AddEvent ( luaVM, "onSockData" );
-        CFunctions::AddEvent ( luaVM, "onSockClosed" );
+        CFunctions::AddEvent(luaVM, "onSockOpened");
+        CFunctions::AddEvent(luaVM, "onSockData");
+        CFunctions::AddEvent(luaVM, "onSockClosed");
 	}
 }
 
 
 MTAEXPORT bool DoPulse ( void )
 {
-    CSocketManager::DoPulse ( );
+    CSocketManager::DoPulse();
 	return true;
 }
-
 
 MTAEXPORT bool ShutdownModule ( void )
 {
     // Stop all sockets before shutting down the module
-    CSocketManager::HandleStop ( );
+    CSocketManager::HandleStop();
 
 #ifdef WIN32
     // Cleanup Winsock stuff
-    WSACleanup ( );
+    WSACleanup();
 #endif
 
 	return true;

@@ -22,15 +22,17 @@ class CFunctions;
 #define __CFUNCTIONS_H
 
 #include <stdio.h>
+
 #include "ml_sockets.h"
+#include "include/ILuaModuleManager.h"
+extern ILuaModuleManager10 *pModuleManager;
 
 class CFunctions
 {
 public:
-    static int sockOpen         (lua_State* luaVM);
-    static int sockWrite        (lua_State* luaVM);
-    static int sockIsConnected  (lua_State* luaVM);
-    static int sockClose        (lua_State* luaVM);
+    static int sockOpen  (lua_State* luaVM);
+    static int sockWrite (lua_State* luaVM);
+    static int sockClose (lua_State* luaVM);
 
     static void AddEvent (lua_State* luaVM, const string& strEventName);
 };
