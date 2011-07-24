@@ -84,8 +84,6 @@ bool CSocket::DoPulse()
             FD_SET(m_pSocket, &wfds);
             // See if socket it writable
             int ret = select(m_pSocket+1, NULL, &wfds, NULL, &tv);
-            //printf ( "select(...) returned: %d\n", ret );
-
             if (ret == 0)
                return true;     // Not writable yet
             if (ret == -1)
@@ -98,7 +96,6 @@ bool CSocket::DoPulse()
 
         // Receive the data
         int iLength = recv(m_pSocket, chBuffer, SOCK_RECV_LIMIT, 0);
-        // printf ( "Bytes received: %d\n", iLenght );
 
         // Check if there were any errors
         int iError = GetLastSocketError();
@@ -126,8 +123,12 @@ bool CSocket::DoPulse()
             }
         }
     }
+    else
+        // If the socket doesn't exist, well, error?
+        return false;
 
-    return false;
+    // If the call makes it up till here, it has been a huge success! Cake and true as a reward!
+    return true;
 }
 
 bool CSocket::IsConnected()
@@ -162,16 +163,16 @@ bool CSocket::ProcessTargetLocation(const string& strHost, const unsigned short&
     else
     {
         Hostent = gethostbyname(strHost.c_str());
-        if (Hostent != NULL)
+        if (Hostent == NULL)
+        {
+            return false;
+        }
+        else
         {
             memcpy(&(m_sSockAddr.sin_addr), Hostent->h_addr_list[0], 4);
             return true;
         }
-
-        Hostent = NULL;
     }
-
-    return false;
 }
 
 void CSocket::SetNonBlocking()
@@ -188,8 +189,13 @@ void CSocket::SetNonBlocking()
 
 int CSocket::GetLastSocketError()
 {
-    // Multi-platform function for getting the last socket error (See CSocket.h)
+    // Multi-platform function for getting the last socket error
+
+#ifdef WIN32
+    return WSAGetLastError();
+#else
     return errno;
+#endif
 }
 
 void CSocket::CloseSocket()
@@ -204,8 +210,7 @@ void CSocket::CloseSocket()
 #endif
     
     // Unset the socket variable, so there's no mistaking there
-    m_pSocket    = NULL;
-    m_bConnected = false;
+    m_pSocket = NULL;
 }
 
 int CSocket::HandleConnection(const int& iError)
@@ -220,11 +225,11 @@ int CSocket::HandleConnection(const int& iError)
     {
         return 0;
     }
-
-#ifdef _DEBUG
-    printf ( "Could not connect due to error: %i\n", iError ); // TEMP DEBUG
-#endif
-    return ERR_CONNECT_FAILURE;
+    else
+    {
+        printf("Could not connect due to error: %i",iError); // TEMP DEBUG
+        return -1;
+    }
 }
 
 void CSocket::TriggerEvent(const string eventName, const string arg1)

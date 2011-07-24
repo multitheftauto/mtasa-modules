@@ -18,52 +18,31 @@
 
 #include "CFunctions.h"
 
-// bool sockOpen ( string strHost, int usPort [, bool bListen = false ] )
 int CFunctions::sockOpen(lua_State* luaVM)
 {
     if ( luaVM )
     {
         // Make sure host is a string, and port is a number
-        if ( lua_type ( luaVM, 1 ) == LUA_TSTRING && lua_type ( luaVM, 2 ) == LUA_TNUMBER )
+        if (lua_type(luaVM, 1) == LUA_TSTRING && lua_type(luaVM, 2) == LUA_TNUMBER)
         {
-            // Socket limit exceeded ?
-            if ( CSocketManager::SocketLimitExceeded ( ) )
-            {
-                lua_pushboolean(luaVM, false);
-                return 1;
-            }
-
             // Put the host in a string, and the port in an unsigned short
-            string strHost        = lua_tostring ( luaVM, 1 );
+            string strHost        = lua_tostring(luaVM, 1);
             unsigned short usPort = static_cast < unsigned short > ( lua_tonumber ( luaVM, 2 ) );
-            //bool bListen          = ( ( lua_type ( luaVM, 3 ) == LUA_TBOOLEAN ) ? lua_toboolean ( luaVM, 3 ) == 1 : false );
 
             // Create the socket
             CSocket* pSocket = new CSocket(luaVM, strHost, usPort);
             void* pUserdata  = pSocket->GetUserdata();
-            int iError       = pSocket->GetLastSocketError ( );
-
-            //printf ( "Socket returned (error) code: %d\n", iError );
 
             // The socket has got a userdata value if successfully created. It doesn't otherwise
-            if ( pUserdata == NULL /*|| pSocket->IsConnected () == false*/ )
+            if (pUserdata == NULL)
             {
-                SAFE_DELETE ( pSocket );
-
-                /*
-                 * (x86) TODO: Make static error codes, because error
-                 *             codes between Win and Linux are different.
-                 *             Put it in an array inside SocketErrors.h
-                 * --
-                 */
-                lua_pushboolean ( luaVM, false );
-                lua_pushnumber  ( luaVM, iError );
-
-                return 2;
+                SAFE_DELETE(pSocket);
+                lua_pushboolean(luaVM, false);
+                return 1;
             }
 
             // Add the socket to the Pulse list
-            CSocketManager::SocketAdd ( pSocket/*, bListen*/ );
+            CSocketManager::SocketAdd(pSocket);
 
             // Return the userdata
             lua_pushlightuserdata(luaVM, pUserdata);
@@ -75,7 +54,6 @@ int CFunctions::sockOpen(lua_State* luaVM)
     return 1;
 }
 
-// bool sockWrite ( userdata usSocket, string strData )
 int CFunctions::sockWrite(lua_State *luaVM)
 {
     if ( luaVM )
@@ -105,36 +83,6 @@ int CFunctions::sockWrite(lua_State *luaVM)
     return 1;
 }
 
-// bool sockIsConnected ( userdata usSocket )
-int CFunctions::sockIsConnected ( lua_State *luaVM )
-{
-    if ( luaVM )
-    {
-        // Make sure the socket is an userdata value
-        if ( lua_type ( luaVM, 1 ) == LUA_TLIGHTUSERDATA )
-        {
-            // Prepare vars
-            void* pUserdata  = lua_touserdata ( luaVM, 1 );
-            CSocket* pSocket = NULL;
-
-            // Get the socket
-            if ( CSocketManager::GetSocket ( pSocket, pUserdata ) )
-            {
-                // Remove it
-                if ( pSocket )
-                {
-                    lua_pushboolean ( luaVM, pSocket->IsConnected ( ) );
-                    return 1;
-                }
-            }
-        }
-    }
-
-    lua_pushboolean ( luaVM, false );
-    return 1;
-}
-
-// bool sockClose ( userdata usSocket )
 int CFunctions::sockClose(lua_State *luaVM)
 {
     if ( luaVM )
@@ -150,11 +98,10 @@ int CFunctions::sockClose(lua_State *luaVM)
             if (CSocketManager::GetSocket(pSocket, pUserdata))
             {
                 // Remove it
-                if ( CSocketManager::SocketRemove(pSocket) )
-                {
-                    lua_pushboolean(luaVM, true);
-                    return 1;
-                }
+                CSocketManager::SocketRemove(pSocket);
+
+                lua_pushboolean(luaVM, true);
+                return 1;
             }
         }
     }

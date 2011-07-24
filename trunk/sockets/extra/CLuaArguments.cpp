@@ -99,43 +99,13 @@ bool CLuaArguments::Call ( lua_State* luaVM, const char* szFunction ) const
     // Push our arguments onto the stack
     PushArguments ( luaVM );
 
-    // Call the function.
-    int iret = lua_pcall ( luaVM, m_Arguments.size (), LUA_MULTRET, 0 );
+    int iret = lua_pcall ( luaVM, m_Arguments.size (), 0, 0 ) ;
     if ( iret == LUA_ERRRUN || iret == LUA_ERRMEM )
     {
-        //const char* szRes = lua_tostring ( luaVM, -1 );
-        return false; // The function call failed.
+        const char* szRes = lua_tostring( luaVM, -1 );
+        return false; // the function call failed
     }
-    
-    // Get the function return values.
-    while ( lua_gettop ( luaVM ) )
-    {
-        switch ( lua_type ( luaVM, lua_gettop ( luaVM ) ) )
-        {
-            case LUA_TNUMBER:
-                //lua_tonumber ( luaVM, lua_gettop ( luaVM ) );
-                break;
-
-            case LUA_TTABLE:
-                // TODO
-                break;
-
-            case LUA_TSTRING:
-                //lua_tostring ( luaVM, lua_gettop ( luaVM ) );
-                break;
-
-            case LUA_TBOOLEAN:
-                //lua_toboolean ( luaVM, lua_gettop ( luaVM ) );
-                break;
-
-            default:
-                // TODO
-                break;
-        }
-
-        lua_pop ( luaVM, 1 );
-    }
-
+        
     return true;
 }
 
