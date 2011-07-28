@@ -11,7 +11,7 @@ function addIRCCommands ()
 
 function say (server,channel,user,command,...)
 	local message = table.concat({...}," ")
-	if not message then ircNotice(user,"syntax is !s <message>") return end
+	if message == "" then ircNotice(user,"syntax is !s <message>") return end
 	outputChatBox("* "..ircGetUserNick(user).." on irc: "..message,root,255,168,0)
 	outputIRC("07* "..ircGetUserNick(user).." on irc: "..message)
 end
@@ -23,7 +23,7 @@ addIRCCommandHandler("!pm",
 	function (server,channel,user,command,name,...)
 		local message = table.concat({...}," ")
 		if not name then ircNotice(user,"syntax is !pm <name> <message>") return end
-		if not message then ircNotice(user,"syntax is !pm <name> <message>") return end
+		if message == "" then ircNotice(user,"syntax is !pm <name> <message>") return end
 		local player = getPlayerFromPartialName(name)
 		if player then
 			outputChatBox("* PM from "..ircGetUserNick(user).." on irc: "..message,player,255,168,0)
@@ -130,8 +130,8 @@ addIRCCommandHandler("!unmute",
 addIRCCommandHandler("!freeze",
 	function (server,channel,user,command,name,...)
 		if not name then ircNotice(user,"syntax is !freeze <name> [reason]") return end
-		local reason = table.concat({...}," ") or ""
-		local reason = table.concat({...}," ") or ""
+		local reason = table.concat({...}," ")
+		local reason = table.concat({...}," ")
 		local t = split(reason,40)
 		local time
 		if #t > 1 then
@@ -172,8 +172,8 @@ addIRCCommandHandler("!unfreeze",
 
 addIRCCommandHandler("!slap",
 	function (server,channel,user,command,name,hp,...)
-		if not name then ircNotice(user,"syntax is !slap <name> <hp> [reason]") return end
-		if not hp then ircNotice(user,"syntax is !slap <name> <hp> [reason]") return end
+		if not name then ircNotice(user,"syntax is !slap <name> <hp> (<reason>)") return end
+		if not hp then ircNotice(user,"syntax is !slap <name> <hp> (<reason>)") return end
 		local reason = table.concat({...}," ") or ""
 		local player = getPlayerFromPartialName(name)
 		if player then
@@ -324,7 +324,7 @@ addIRCCommandHandler("!players",
 addIRCCommandHandler("!run",
 	function (server,channel,user,command,...)
 		local str = table.concat({...}," ")
-		if not str then ircNotice(user,"syntax is !run <string>") return end
+		if str == "" then ircNotice(user,"syntax is !run <string>") return end
 		runString(str,root,ircGetUserNick(user))
 	end
 )
@@ -333,15 +333,23 @@ addIRCCommandHandler("!crun",
 	function (server,channel,user,command,...)
 		local t = {...}
 		local str = table.concat(t," ")
-		if not str then ircNotice(user,"syntax is !crun <string>") return end
-		if #getElementsByType("player") == 0 then
-			ircNotice(user,"No player ingame!")
-		end
-		for i,player in ipairs (getElementsByType("player")) do
-			if i == 1 then
-				triggerClientEvent(player,"doCrun",root,str,false)
-			else
-				triggerClientEvent(player,"doCrun",root,str,false)
+		if str == "" then ircNotice(user,"syntax is !crun (<name>) <string>") return end
+		local player = getPlayerFromPartialName(tostring(t[1]))
+		if player then
+			table.remove(t,1)
+			str = table.concat(t," ")
+			triggerClientEvent(player,"doCrun",root,str,true)
+		else
+			if #getElementsByType("player") == 0 then
+				ircNotice(user,"No player ingame!")
+				return
+			end
+			for i,player in ipairs (getElementsByType("player")) do
+				if i == 1 then
+					triggerClientEvent(player,"doCrun",root,str,true)
+				else
+					triggerClientEvent(player,"doCrun",root,str,false)
+				end
 			end
 		end
 	end
@@ -549,6 +557,75 @@ addIRCCommandHandler("!map",
 addIRCCommandHandler("!modules",
 	function (server,channel,user,command)
 		ircSay(channel,"07Loaded modules: "..table.concat(getLoadedModules(),", "))
+	end
+)
+
+addIRCCommandHandler("!shutdown",
+	function (server,channel,user,command,...)
+		local reason = table.concat({...}," ")
+		if not reason then reason = "Shutdown from irc" end
+		shutdown(reason)
+	end
+)
+
+addIRCCommandHandler("!password",
+	function (server,channel,user,command,...)
+		local newpass = table.concat({...}," ")
+		if newpass ~= "" then
+			if setServerPassword(newpass) then
+				ircNotice(user,"New server pass: "..tostring(getServerPassword()))
+			end
+		else
+			ircNotice(user,"Current server pass: "..tostring(getServerPassword()).." use !password <newpass> to change it")
+		end
+	end
+)
+
+addIRCCommandHandler("!gravity",
+	function (server,channel,user,command,...)
+		local newgravity = table.concat({...}," ")
+		if tonumber(newgravity) then
+			if setGravity(tonumber(newgravity)) then
+				ircNotice(user,"New gravity: "..tostring(getGravity()))
+			end
+		else
+			ircNotice(user,"Current gravity: "..tostring(getWeather()).." use !gravity <new gravity> to change it")
+		end
+	end
+)
+
+addIRCCommandHandler("!weather",
+	function (server,channel,user,command,...)
+		local newweather = table.concat({...}," ")
+		if newweather then
+			if setWeather(tonumber(newweather)) then
+				ircNotice(user,"New weather: "..tostring(getWeather()))
+			end
+		else
+			ircNotice(user,"Current weather: "..tostring(getWeather()).." use !weather <new weather> to change it")
+		end
+	end
+)
+
+addIRCCommandHandler("!server",
+	function (server,channel,user,command,...)
+		ircSay(channel,"Server: "..tostring(getServerName()).." Port: "..tostring(getServerPort()))
+	end
+)
+
+addIRCCommandHandler("!zone",
+	function (server,channel,user,command,name)
+		if not name then ircNotice(user,"syntax is !zone <name>") return end
+		local player = getPlayerFromPartialName(name)
+		if player then
+			local x,y,z = getElementPosition(player)
+			if not x then return end
+			local zone = getZoneName(x,y,z,false)
+			local city = getZoneName(x,y,z,true)
+			ircSay(channel,tostring(getPlayerName(player)).."'s zone: "..tostring(zone).." ("..tostring(city)..")")
+		else
+			ircSay(channel,"'"..name.."' no such player")
+		end
 	end
 )
 

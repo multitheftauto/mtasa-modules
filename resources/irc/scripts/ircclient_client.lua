@@ -47,6 +47,7 @@ addEventHandler("showIrcClient",root,
 			local memo = guiCreateMemo(0.005,0.01,0.74,0.9,"",true,tab)
 			local gridlist = guiCreateGridList(0.75,0.01,0.245,0.99,true,tab)
 			local column = guiGridListAddColumn(gridlist,"Users",0.8)
+			guiGridListSetSortingEnabled(gridlist,true)
 			for i,user in ipairs (inf[2]) do
 				local row = guiGridListAddRow(gridlist)
 				guiGridListSetItemText(gridlist,row,column,getIconFromLevel(user[2])..user[1],false,false)
@@ -57,7 +58,6 @@ addEventHandler("showIrcClient",root,
 			gridlists[chantitle] = gridlist
 			memolines[memo] = {}
 		end
-		guiGridListSetSortingEnabled(gridlist,true)
 		guiBringToFront(exitbutton)
 		guiSetInputEnabled(true)
 		showCursor(true)

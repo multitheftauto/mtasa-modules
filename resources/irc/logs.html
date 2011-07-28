@@ -6,8 +6,14 @@
 		<* 
 		local file = fileOpen(":irc/irc.log",true) 
 		
-		for i,line in pairs (split(tostring(fileRead(file,fileGetSize(file))),10)) do
-			httpWrite(tostring(line)..'<br>')
+		if file then
+		
+			for i,line in pairs (split(tostring(fileRead(file,fileGetSize(file))),10)) do
+				httpWrite(tostring(line)..'<br>')
+			end
+		
+		else
+			httpWrite("File could not be opened!");
 		end
 		
 		fileClose(file) 
