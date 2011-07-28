@@ -4,7 +4,7 @@
 		<setting 
 			name="*irc-client" 
 			value="false"
-			friendlyname="Ungame irc client"
+			friendlyname="Ingame irc client"
 			examples="true,false"
 			desc="Activate ingame irc client?"
 		/>

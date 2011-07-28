@@ -43,12 +43,9 @@ addEventHandler("onSockData",root,
 addEvent("onIRCRaw")
 addEventHandler("onIRCRaw",root,
 	function (data)
-		-- resetTimer(servers[source][12])
-		local t = split(data,32)
+		servers[source][11] = getTickCount()
 		
-		if type(servers[source][12]) == "number" then
-			servers[source][12] = getTickCount()
-		end
+		local t = split(data,32)
 		if t[1] == "PING" then
 			if t[2] then
 				ircRaw(source,"PONG "..string.sub(t[2],2))
@@ -62,9 +59,10 @@ addEventHandler("onIRCRaw",root,
 		end
 		if t[2] == "001" then
 			servers[source][2] = t[7]
+			servers[source][15] = true
 		end
 		if t[2] == "002" then
-			servers[source][3] = t[7]
+			servers[source][3] = string.sub(t[7],1,-2)
 		end
 		if t[2] == "JOIN" then
 			local nick = getNickFromRaw(data)
@@ -73,6 +71,7 @@ addEventHandler("onIRCRaw",root,
 			local vhost = gettok(gettok(data,1,32),2,33)
 			if nick == ircGetServerNick(source) then
 				if not channel then
+					table.insert(servers[source][14],getMessageFromRaw(data))
 					channel = createElement("irc-channel")
 					channels[channel] = {getMessageFromRaw(data),"+nst","Unknown",{},false,true,false}
 					setElementParent(channel,source)
@@ -205,7 +204,16 @@ addEventHandler("onIRCConnect",root,
 			ircRaw(source,raw)
 		end
 		servers[source][16] = {}
-		-- killTimer(servers[source][12])
-		-- servers[source][12] = setTimer(ircReconnect,600000,0,source,"Connection timed out!")
 	end
 )
+
+setTimer(function ()
+	for i,server in ipairs (ircGetServers()) do
+		if (getTickCount() - servers[server][11]) > 180000 then
+			servers[server][11] = getTickCount()
+			ircReconnect(server,"Connection timed out")
+		elseif (getTickCount() - servers[server][11]) > 120000 then
+			ircRaw(server,"PING")
+		end
+	end
+end,30000,0)

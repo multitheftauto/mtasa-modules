@@ -9,10 +9,17 @@
 ------------------------------------
 -- Echo
 ------------------------------------
+local messages = {}
+
 addEventHandler("onResourceStart",root,
 	function (resource)
 		if getResourceInfo(resource,"type") ~= "map" then
 			outputIRC("07* Resource '"..getResourceName(resource).."' started!")
+		end
+		if resource == getThisResource() then
+			for i,player in ipairs (getElementsByType("player")) do
+				messages[player] = 0
+			end
 		end
 	end
 )
@@ -27,12 +34,14 @@ addEventHandler("onResourceStop",root,
 
 addEventHandler("onPlayerJoin",root,
 	function ()
+		messages[source] = 0
 		outputIRC("03*** "..getPlayerName(source).." joined the game.")
 	end
 )
 
 addEventHandler("onPlayerQuit",root,
 	function (quit,reason,element)
+		messages[source] = nil
 		if reason then
 			outputIRC("02*** "..getPlayerName(source).." was "..quit.." from the game by "..getPlayerName(element).." ("..reason..")")
 		else
@@ -43,17 +52,22 @@ addEventHandler("onPlayerQuit",root,
 
 addEventHandler("onPlayerChangeNick",root,
 	function (oldNick,newNick)
-		outputIRC("13* "..oldNick.." is now known as "..newNick)
+		setTimer(function (player,oldNick)
+			local newNick = getPlayerName(player)
+			if newNick ~= oldNick then
+				outputIRC("13* "..oldNick.." is now known as "..newNick)
+			end
+		end,100,1,source,oldNick)
 	end
 )
 
-addEvent("onPlayerMute",root,
+addEventHandler("onPlayerMute",root,
 	function ()
 		outputIRC("12* "..getPlayerName(source).." has been muted")
 	end
 )
 
-addEvent("onPlayerUnmute",root,
+addEventHandler("onPlayerUnmute",root,
 	function ()
 		outputIRC("12* "..getPlayerName(source).." has been unmuted")
 	end
@@ -61,6 +75,7 @@ addEvent("onPlayerUnmute",root,
 
 addEventHandler("onPlayerChat",root,
 	function (message,type)
+		messages[source] = messages[source] + 1
 		if type == 0 then
 			outputIRC("07"..getPlayerName(source)..": "..message)
 		elseif type == 1 then
@@ -68,6 +83,25 @@ addEventHandler("onPlayerChat",root,
 		elseif type == 2 then
 			outputIRC("07(TEAM)"..getPlayerName(source)..": "..message)
 		end
+	end
+)
+
+-- anti-spam
+setTimer(function ()
+	for player,number in pairs (messages) do
+		if number >= 2 then
+			muteSerial(getPlayerSerial(player),"Antispam triggered",180000)
+			setPlayerMuted(player,true)
+			outputChatBox("* "..getPlayerName(player).." was muted by irc (Antispam triggered)",root,0,0,255)
+			ircSay(channel,"12* "..getPlayerName(player).." was muted by irc (Antispam triggered)")
+		end
+		messages[player] = 0
+	end
+end,3000,0)
+
+addEventHandler("onSettingChange",root,
+	function (setting,oldValue,newValue)
+		outputIRC("6Setting '"..tostring(setting).."' changed: "..tostring(oldValue).." -> "..tostring(newValue))
 	end
 )
 

@@ -40,4 +40,10 @@
 	<command name="!modules" level="3" echoChannelOnly="true" />
     <command name="!changemap" level="3" echoChannelOnly="true" />
     <command name="!map" level="0" echoChannelOnly="true" />
+    <command name="!shutdown" level="5" echoChannelOnly="true" />
+    <command name="!password" level="4" echoChannelOnly="true" />
+    <command name="!gravity" level="3" echoChannelOnly="true" />
+    <command name="!weather" level="3" echoChannelOnly="true" />
+    <command name="!server" level="0" echoChannelOnly="false" />
+    <command name="!zone" level="0" echoChannelOnly="false" />
 </acl>

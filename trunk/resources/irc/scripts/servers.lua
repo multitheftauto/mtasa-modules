@@ -77,6 +77,7 @@ end
 
 function func_ircJoin (server,channel,password)
 	if servers[server] then
+		table.insert(servers[server][14],channel)
 		local chan = createElement("irc-channel")
 		setElementParent(chan,server)
 		if #getElementsByType("irc-channel") == 1 then
@@ -162,25 +163,32 @@ end
 function func_ircConnect (host,nick,port,password,secure)
 	local server = createElement("irc-server")
 	local socket,sockError = sockOpen(host,(port or 6667),secure)
-	local timer = setTimer(connectingTimedOut,10000,1,server)
 	if server and socket then
-		servers[server] = {socket,host,host,nick,password,port,secure,false,false,false,getTickCount(),timer,0,{},false,{}}
+		servers[server] = {socket,host,host,nick,password,port,secure,false,false,false,getTickCount(),nil,0,{},false,{}}
 		triggerEvent("onIRCConnecting",server)
 		return server
 	end
 	return false,sockError
 end
 
-function func_ircReconnect (server)
+function func_ircReconnect (server,reason)
+	if type(reason) ~= "string" then
+		reason = "reconnecting..."
+	end
 	if servers[server] then
-		triggerEvent("onIRCDisconnect",server,"Reconnect")
-		if servers[server][15] then
-			servers[server][15] = false
-			ircRaw(server,"QUIT :Reconnect")
-		end
+		triggerEvent("onIRCDisconnect",server,reason)
+		ircRaw(server,"QUIT :"..reason)
 		sockClose(servers[server][1])
 		triggerEvent("onIRCConnecting",server)
-		servers[server][1] = sockOpen(servers[server][2],servers[server][6],servers[server][7])
+		servers[server][15] = false
+		servers[server][1] = sockOpen(ircGetServerHost(server),ircGetServerPort(server),ircIsServerSecure(server))
+		if servers[server][8] then
+			ircRaw(server,"PRIVMSG NickServ :IDENTIFY "..tostring(servers[server][8]))
+		end
+		for i,channel in ipairs (servers[server][14]) do
+			ircRaw(server,"JOIN "..tostring(channel))
+		end
+		
 		return true
 	end
 	return false
@@ -255,10 +263,4 @@ function func_ircGetServerChannels (server)
 		return servers[server][14]
 	end
 	return false
-end
-
-function connectingTimedOut (server)
-	-- triggerEvent("onIRCFailConnect",server,"Connection timed out")
-	-- setTimer(ircReconnect,120000,1,server)
-	return true
 end
