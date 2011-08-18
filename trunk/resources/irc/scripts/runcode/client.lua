@@ -1,4 +1,4 @@
-local function runString (commandstring,echo)
+﻿local function runString (commandstring,echo)
 	if not echo then
 		outputChatBoxR = outputChatBoxE
 	end

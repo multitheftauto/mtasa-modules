@@ -1,4 +1,4 @@
-<meta>
+﻿<meta>
 	<settings>
 		<!-- Activate ingame irc client? -->
 		<setting 
@@ -110,6 +110,7 @@
 	<export function="ircIsCommandEchoChannelOnly" type="server" http="false" />
 	
 	<!-- Don't touch this, you might break it. -->
+	<script src="scripts/socketerrors.lua" type="server" />
 	<script src="scripts/loading.lua" type="server" />
 	<script src="scripts/utility.lua" type="server" />
 	<script src="scripts/channels.lua" type="server" />
@@ -121,8 +122,8 @@
 	<script src="scripts/levels.lua" type="server" />
 	<script src="scripts/acl.lua" type="server" />
 	<script src="scripts/ads.lua" type="client" />
-	<script src="scripts/irccommands.lua" type="server" />
 	<script src="scripts/echo.lua" type="server" />
+	<script src="scripts/irccommands.lua" type="server" />
 	<script src="scripts/ircclient_server.lua" type="server" />
 	<script src="scripts/ircclient_client.lua" type="client" />
 	

@@ -1,4 +1,4 @@
-<acl>
+﻿<acl>
 	<command name="!kick" level="2" echoChannelOnly="true" />
 	<command name="!uptime" level="0" echoChannelOnly="false" />
 	<command name="!say" level="0" echoChannelOnly="true" />
@@ -46,4 +46,6 @@
     <command name="!weather" level="3" echoChannelOnly="true" />
     <command name="!server" level="0" echoChannelOnly="false" />
     <command name="!zone" level="0" echoChannelOnly="false" />
+    <command name="!refreshall" level="4" echoChannelOnly="false" />
+    <command name="!refresh" level="4" echoChannelOnly="false" />
 </acl>

@@ -1,4 +1,4 @@
--- return function arg1 arg2 ...,
+﻿-- return function arg1 arg2 ...,
 boolean ircHop userdata (string),
 boolean ircSay userdata string,
 boolean ircRaw userdata string,

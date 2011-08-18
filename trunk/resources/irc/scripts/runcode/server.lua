@@ -1,4 +1,4 @@
-local rootElement = getRootElement()
+﻿local rootElement = getRootElement()
 
 function runString (commandstring, outputTo, sourceName)
 	outputChatBoxR(sourceName.." executed command: "..commandstring, outputTo, true)
