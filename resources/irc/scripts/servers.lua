@@ -1,4 +1,4 @@
----------------------------------------------------------------------
+﻿---------------------------------------------------------------------
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
@@ -168,7 +168,10 @@ function func_ircConnect (host,nick,port,password,secure)
 		triggerEvent("onIRCConnecting",server)
 		return server
 	end
-	return false,sockError
+	if sockError then
+		outputServerLog("IRC: Failed to connect to "..tostring(host).." reason: "..getSocketErrorString(sockError))
+	end
+	return false
 end
 
 function func_ircReconnect (server,reason)

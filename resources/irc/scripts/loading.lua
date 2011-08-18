@@ -1,4 +1,4 @@
----------------------------------------------------------------------
+﻿---------------------------------------------------------------------
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
@@ -123,7 +123,6 @@ addEventHandler("onResourceStart",resourceRoot,
 			end
 		end
 
-		addIRCCommands()
 		internalConnect()
 	end
 )

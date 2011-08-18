@@ -1,4 +1,4 @@
-local rootElement = getRootElement()
+﻿local rootElement = getRootElement()
 
 function outputConsoleR(message, toElement)
 	return outputIRC("10"..tostring(message))

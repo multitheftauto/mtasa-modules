@@ -1,4 +1,4 @@
----------------------------------------------------------------------
+﻿---------------------------------------------------------------------
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
@@ -27,6 +27,9 @@ addEventHandler("onSockOpened",root,
 
 addEventHandler("onSockData",root,
 	function (socket,data)
+		if string.find(data,"Could not resolve your hostname: Domain name not found; using your IP address",0) then
+			localIP = string.sub(gettok(data,18,32),2,-2)
+		end
 		for server,info in pairs (servers) do
 			if info[1] == socket then
 				for i,line in ipairs (split(data,10)) do

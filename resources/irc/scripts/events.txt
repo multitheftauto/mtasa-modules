@@ -1,4 +1,4 @@
--- eventname source arg1 arg2 ...,
+﻿-- eventname source arg1 arg2 ...,
 onIRCConnecting server,
 onIRCConnect server,
 onIRCFailConnect server reason,

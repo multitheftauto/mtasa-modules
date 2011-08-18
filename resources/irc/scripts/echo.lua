@@ -1,4 +1,4 @@
----------------------------------------------------------------------
+﻿---------------------------------------------------------------------
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
@@ -63,7 +63,17 @@ addEventHandler("onPlayerChangeNick",root,
 
 addEventHandler("onPlayerMute",root,
 	function ()
-		outputIRC("12* "..getPlayerName(source).." has been muted")
+		if mutes[getPlayerSerial(source)] then
+			local admin = mutes[getPlayerSerial(source)].admin or "console"
+			local reason = mutes[getPlayerSerial(source)].reason
+			if reason then
+				outputIRC("12* "..getPlayerName(source).." has been muted by "..admin.." ("..reason..")")
+			else
+				outputIRC("12* "..getPlayerName(source).." has been muted by "..admin.." ("..reason..")")
+			end
+		else
+			outputIRC("12* "..getPlayerName(source).." has been muted")
+		end
 	end
 )
 
@@ -193,17 +203,6 @@ addEventHandler("onPlayerFreeze",root,
 			outputIRC("12* "..getPlayerName(source).." was frozen!")
 		else
 			outputIRC("12* "..getPlayerName(source).." was unfrozen!")
-		end
-	end
-)
-
-addEvent("onPlayerMute")
-addEventHandler("onPlayerMute",root,
-	function (state)
-		if state then
-			outputIRC("12* "..getPlayerName(source).." was muted!")
-		else
-			outputIRC("12* "..getPlayerName(source).." was unmuted!")
 		end
 	end
 )
