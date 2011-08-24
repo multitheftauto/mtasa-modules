@@ -96,19 +96,6 @@ addEventHandler("onPlayerChat",root,
 	end
 )
 
--- anti-spam
-setTimer(function ()
-	for player,number in pairs (messages) do
-		if number >= 2 then
-			muteSerial(getPlayerSerial(player),"Antispam triggered",180000)
-			setPlayerMuted(player,true)
-			outputChatBox("* "..getPlayerName(player).." was muted by irc (Antispam triggered)",root,0,0,255)
-			ircSay(channel,"12* "..getPlayerName(player).." was muted by irc (Antispam triggered)")
-		end
-		messages[player] = 0
-	end
-end,3000,0)
-
 addEventHandler("onSettingChange",root,
 	function (setting,oldValue,newValue)
 		outputIRC("6Setting '"..tostring(setting).."' changed: "..tostring(oldValue).." -> "..tostring(newValue))
