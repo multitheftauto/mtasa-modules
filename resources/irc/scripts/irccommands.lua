@@ -7,7 +7,8 @@
 ------------------------------------
 -- IRC Commands
 ------------------------------------
-addEventHandler("onResourceStart",resourceRoot,
+addEvent("onIRCResourceStart")
+addEventHandler("onIRCResourceStart",root,
 	function ()
 		function say (server,channel,user,command,...)
 			local message = table.concat({...}," ")

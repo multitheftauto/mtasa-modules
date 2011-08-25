@@ -13,14 +13,7 @@ local adTimer
 ------------------------------------
 addEventHandler("onResourceStart",resourceRoot,
 	function ()
-		-- Is the sockets module loaded?
-		if not sockOpen then
-			outputServerLog("IRC: could not start resource, the sockets module isn't loaded!")
-			outputServerLog("IRC: restart the resource to retry")
-			return
-		end
-		
-		-- Parse rights file.
+	-- Parse rights file.
 		local rightsFile = fileOpen("scripts/rights.txt",true)
 		if rightsFile then
 			local missingRights = {}
@@ -98,6 +91,7 @@ addEventHandler("onResourceStart",resourceRoot,
 			return
 		end
 		
+		-- parse acl file
 		local aclFile = xmlLoadFile("acl.xml")
 		if  aclFile then
 			local i = 0
@@ -115,6 +109,13 @@ addEventHandler("onResourceStart",resourceRoot,
 			return
 		end
 		
+		-- Is the sockets module loaded?
+		if not sockOpen then
+			outputServerLog("IRC: could not start resource, the sockets module isn't loaded!")
+			outputServerLog("IRC: restart the resource to retry")
+			return
+		end
+		
 		-- start irc addons
 		for i,resource in ipairs (getResources()) do
 			local info = getResourceInfo(resource,"addon")
@@ -123,6 +124,7 @@ addEventHandler("onResourceStart",resourceRoot,
 			end
 		end
 
+		triggerEvent("onIRCResourceStart",root)
 		internalConnect()
 	end
 )
