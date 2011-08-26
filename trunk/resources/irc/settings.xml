@@ -16,6 +16,6 @@
 		<server
 			host="irc.gtanet.com"
 			nick="SocketsBot"
-			channels="#MCvarial,#mta.dutch"
+			channels="#MCvarial"
 		/>
 </settings>
