@@ -113,11 +113,6 @@ addEventHandler("onPlayerJoin",root,
 		local mute = mutes[(getPlayerSerial(source))]
 		if mute then
 			_setPlayerMuted(source,true)
-			if mute.reason then
-				outputChatBox("* "..getPlayerName(source).." was muted ("..mute.reason..")",root,255,0,0)
-			else
-				outputChatBox("* "..getPlayerName(source).." was muted",root,255,0,0)
-			end
 		end
 	end
 )

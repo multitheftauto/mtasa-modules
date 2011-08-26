@@ -62,14 +62,15 @@ addEventHandler("onPlayerChangeNick",root,
 )
 
 addEventHandler("onPlayerMute",root,
-	function ()
+	function (arg)
+		if type(arg) ~= "nil" then return end
 		if mutes[getPlayerSerial(source)] then
 			local admin = mutes[getPlayerSerial(source)].admin or "console"
 			local reason = mutes[getPlayerSerial(source)].reason
 			if reason then
 				outputIRC("12* "..getPlayerName(source).." has been muted by "..admin.." ("..reason..")")
 			else
-				outputIRC("12* "..getPlayerName(source).." has been muted by "..admin.." ("..reason..")")
+				outputIRC("12* "..getPlayerName(source).." has been muted by "..admin)
 			end
 		else
 			outputIRC("12* "..getPlayerName(source).." has been muted")
