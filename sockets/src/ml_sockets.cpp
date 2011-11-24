@@ -17,6 +17,7 @@
 *********************************************************/
 
 #include "ml_sockets.h"
+#include "luaimports.h"
 
 ILuaModuleManager10 *pModuleManager = NULL;
 
@@ -29,6 +30,8 @@ MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, c
 	strncpy ( szModuleName, MODULE_NAME, MAX_INFO_LENGTH );
 	strncpy ( szAuthor, MODULE_AUTHOR, MAX_INFO_LENGTH );
 	(*fVersion) = MODULE_VERSION;
+
+    ImportLua();
 
 #ifdef WIN32
     WSADATA wsaData;
