@@ -35,7 +35,7 @@
 #include "Common.h"
 #include "CFunctions.h"
 #include "include/ILuaModuleManager.h"
-#include "extra/CLuaArguments.h"
+#include "include/CLuaArguments.h"
 
 // Tie the project together
 #include "CSocket.h"
