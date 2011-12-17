@@ -7,6 +7,7 @@
 ---------------------------------------------------------------------
 
 executeSQLCreateTable("ircmutes","player TEXT, serial TEXT, reason TEXT, admin TEXT, mute TEXT, duration TEXT")
+local mutes = {}
 
 ------------------------------------
 -- Utility
@@ -88,42 +89,66 @@ _setPlayerMuted = setPlayerMuted
 function setPlayerMuted (player,muted,reason,admin,time)
 	if muted then
 		executeSQLInsert("ircmutes","'"..tostring(getPlayerName(player)).."','"..tostring(getPlayerSerial(player)).."','"..tostring(reason).."','"..tostring(admin).."','"..tostring(getRealTime().timestamp*1000).."','"..tostring(time).."'")
+		mutes[player] = setTimer(setPlayerMuted,time,1,player,false)
 	else
 		executeSQLDelete("ircmutes","serial = '"..tostring(getPlayerSerial(player)).."'")
+		if mutes[player] then
+			mutes[player] = nil
+		end
 	end
 	return _setPlayerMuted(player,muted)
 end
 
 addEventHandler("onPlayerUnmute",root,
 	function ()
-		executeSQLDelete("ircmutes","serial = '"..tostring(getPlayerSerial(player)).."'")
+		executeSQLDelete("ircmutes","serial = '"..tostring(getPlayerSerial(source)).."'")
+		if mutes[source] then
+			mutes[source] = nil
+		end
 	end
 )
 
-setTimer(function ()
-	local results = executeSQLSelect("ircmutes","serial,mute,duration")
-	if type(results) == "table" then
-		for i,result in ipairs (results) do
-			local mutetime = tonumber(result["mute"])
-			local duration = tonumber(result["duration"])
-			if mutetime and duration and (mutetime+duration) < (getRealTime().timestamp)*1000 then
-				for i,player in ipairs (getElementsByType("player")) do
-					if getPlayerSerial(player) == result["serial"] then
-						_setPlayerMuted(player,false)
-						outputChatBox("* "..getPlayerName(player).." has been unmuted",root,255,0,0)
-					end
-				end
-				executeSQLDelete("ircmutes","serial = '"..tostring(result["serial"]).."'")
+addEventHandler("onPlayerJoin",root,
+	function ()
+		local result = executeSQLSelect("ircmutes","serial,reason,mute,duration","serial = '"..getPlayerSerial(source).."'")
+		if result and result[1] then
+			local time = (tonumber(result[1]["mute"])+tonumber(result[1]["duration"]))-(getRealTime().timestamp*1000)
+			if time < 50 then
+				executeSQLDelete("ircmutes","serial = '"..tostring(getPlayerSerial(source)).."'")
+			else
+				_setPlayerMuted(source,true)
+				mutes[source] = setTimer(setPlayerMuted,time,1,source,false)
 			end
 		end
 	end
-end,5000,0)
+)
 
-addEventHandler("onPlayerJoin",root,
+addEventHandler("onPlayerQuit",root,
 	function ()
-		local result = executeSQLSelect("ircmutes","serial,reason","serial = '"..getPlayerSerial(source).."'")
-		if result and result[1] then
-			_setPlayerMuted(source,true)
+		if mutes[source] then
+			killTimer(mutes[source])
+			mutes[source] = nil
+		end
+	end
+)
+
+addEventHandler("onResourceStart",resourceRoot,
+	function ()
+		local results = executeSQLSelect("ircmutes","serial,mute,duration")
+		if type(results) == "table" then
+			for i,result in ipairs (results) do
+				local mutetime = tonumber(result["mute"])
+				local duration = tonumber(result["duration"])
+				if mutetime and duration and (mutetime+duration) < (getRealTime().timestamp)*1000 then
+					for i,player in ipairs (getElementsByType("player")) do
+						if getPlayerSerial(player) == result["serial"] then
+							_setPlayerMuted(player,false)
+							outputChatBox("* "..getPlayerName(player).." has been unmuted",root,255,0,0)
+						end
+					end
+					executeSQLDelete("ircmutes","serial = '"..tostring(result["serial"]).."'")
+				end
+			end
 		end
 	end
 )
