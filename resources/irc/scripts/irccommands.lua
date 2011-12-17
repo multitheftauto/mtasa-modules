@@ -94,6 +94,20 @@ addEventHandler("onIRCResourceStart",root,
 				end
 			end
 		)
+		
+		addIRCCommandHandler("!mutes",
+			function (server,channel,user,command)
+				local results = executeSQLSelect("ircmutes","player,admin,reason")
+				if type(results) == "table" then
+					for i,result in ipairs (results) do
+						outputIRC("12* "..tostring(result["player"]).." by "..tostring(result["admin"]).." for: "..tostring(result["reason"]))
+					end
+				else
+					outputIRC("12* No mutes")
+				end
+			end
+		)
+			
 		addIRCCommandHandler("!kill",
 			function (server,channel,user,command,name,...)
 				if not name then ircNotice(user,"syntax is !kill <name> [reason]") return end

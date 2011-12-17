@@ -214,7 +214,7 @@ setTimer(function ()
 	for i,server in ipairs (ircGetServers()) do
 		if (getTickCount() - servers[server][11]) > 180000 then
 			servers[server][11] = getTickCount()
-			ircReconnect(server,"Connection timed out")
+			restartResource(getThisResource())
 		elseif (getTickCount() - servers[server][11]) > 120000 then
 			ircRaw(server,"PING")
 		end
