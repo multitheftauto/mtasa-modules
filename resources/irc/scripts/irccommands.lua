@@ -99,8 +99,12 @@ addEventHandler("onIRCResourceStart",root,
 			function (server,channel,user,command)
 				local results = executeSQLSelect("ircmutes","player,admin,reason")
 				if type(results) == "table" then
-					for i,result in ipairs (results) do
-						outputIRC("12* "..tostring(result["player"]).." by "..tostring(result["admin"]).." for: "..tostring(result["reason"]))
+					if #results == 0 then
+						outputIRC("12* There are no muted players")
+					else
+						for i,result in ipairs (results) do
+							outputIRC("12* "..tostring(result["player"]).." by "..tostring(result["admin"]).." for: "..tostring(result["reason"]))
+						end
 					end
 				else
 					outputIRC("12* No mutes")
