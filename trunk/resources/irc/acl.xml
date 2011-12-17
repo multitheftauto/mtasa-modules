@@ -10,6 +10,7 @@
 	<command name="!getserial" level="2" echoChannelOnly="true" />
 	<command name="!mute" level="2" echoChannelOnly="true" />
 	<command name="!unmute" level="2" echoChannelOnly="true" />
+	<command name="!mutes" level="2" echoChannelOnly="true" />
 	<command name="!freeze" level="2" echoChannelOnly="true" />
 	<command name="!unfreeze" level="2" echoChannelOnly="true" />
 	<command name="!kill" level="2" echoChannelOnly="true" />

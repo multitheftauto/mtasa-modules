@@ -64,11 +64,11 @@ addEventHandler("onPlayerChangeNick",root,
 addEventHandler("onPlayerMute",root,
 	function (arg)
 		if type(arg) ~= "nil" then return end
-		if mutes[getPlayerSerial(source)] then
-			local admin = mutes[getPlayerSerial(source)].admin or "console"
-			local reason = mutes[getPlayerSerial(source)].reason
-			if reason then
-				outputIRC("12* "..getPlayerName(source).." has been muted by "..admin.." ("..reason..")")
+		local result = executeSQLSelect("ircmutes","serial,reason","serial = '"..getPlayerSerial(source).."'")
+		if result and result[1] then
+			local admin = result[1]["admin"] or "console"
+			if result[1]["reason"] then
+				outputIRC("12* "..getPlayerName(source).." has been muted by "..admin.." ("..result[1]["reason"]..")")
 			else
 				outputIRC("12* "..getPlayerName(source).." has been muted by "..admin)
 			end
