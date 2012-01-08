@@ -17,8 +17,10 @@ addEventHandler("onResourceStart",resourceRoot,
 		
 		if fileExists("irc.log") then
 			logfile = fileOpen("irc.log")
-			fileSetPos(logfile,fileGetSize(logfile))
-			writeLog("\n------ new log ------")
+			if logfile then
+				fileSetPos(logfile,fileGetSize(logfile))
+				writeLog("\n------ new log ------")
+			end
 		else
 			logfile = fileCreate("irc.log")
 			writeLog("\n------ new log ------")
@@ -41,6 +43,7 @@ addEventHandler("onResourceStop",resourceRoot,
 )
 
 function writeLog (text)
+	if not logfile then return end
 	fileWrite(logfile,getTimeStamp().." "..text.."\n")
 	
 	local size = fileGetSize(logfile)

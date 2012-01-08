@@ -13,53 +13,6 @@ local adTimer
 ------------------------------------
 addEventHandler("onResourceStart",resourceRoot,
 	function ()
-	-- Parse rights file.
-		local rightsFile = fileOpen("scripts/rights.txt",true)
-		if rightsFile then
-			local missingRights = {}
-			for i,line in ipairs (split(fileRead(rightsFile,fileGetSize(rightsFile)),44)) do
-				line = string.sub(line,2)
-				if not hasObjectPermissionTo(getThisResource(),"function."..line,true) then
-					table.insert(missingRights,"function."..line)
-				end
-			end
-			if #missingRights ~= 0 then
-				outputServerLog("IRC: "..#missingRights.." missing rights: ")
-				for i,missingRight in ipairs (missingRights) do
-					outputServerLog("	- "..missingRight)
-				end
-				outputServerLog("Please give the irc resource these rights or it will not work properly!")
-			end
-		else
-			outputServerLog("IRC: could not start resource, the rights file can't be loaded!")
-			outputServerLog("IRC: restart the resource to retry")
-			return
-		end
-		
-		-- Is the resource up-to-date?
-		function checkVersion (res,version)
-			if res ~= "ERROR" and version then
-				if getNumberFromVersion(version) > getNumberFromVersion(getResourceInfo(getThisResource(),"version")) then
-					outputServerLog("IRC: resource is outdated, newest version: "..version)
-					setTimer(outputIRC,10000,1,"The irc resource is outdated, newest version: "..version)
-				end
-			end
-		end
-		callRemote("http://community.mtasa.com/mta/resources.php",checkVersion,"version","irc")
-		
-		-- Start the ads.
-		addEvent("onIRCPlayerDelayedJoin",true)
-		if get("irc-notice") == "true" then
-			local timeout = tonumber(get("irc-notice-timeout"))
-			if timeout then
-				if timeout == 0 then
-					addEventHandler("onIRCPlayerDelayedJoin",root,showContinuousAd)
-				else
-					adTimer = setTimer(showAd,timeout*1000,0)
-				end
-			end
-		end
-		
 		-- Parse functions file.
 		local functionsFile = fileOpen("scripts/functions.txt",true)
 		if functionsFile then
@@ -91,6 +44,61 @@ addEventHandler("onResourceStart",resourceRoot,
 			return
 		end
 		
+		-- Is the sockets module loaded?
+		if not sockOpen then
+			outputServerLog("IRC: could not start resource, the sockets module isn't loaded!")
+			outputServerLog("IRC: restart the resource to retry")
+			return
+		end
+		
+		-- Parse rights file.
+		local rightsFile = fileOpen("scripts/rights.txt",true)
+		if rightsFile then
+			local missingRights = {}
+			for i,line in ipairs (split(fileRead(rightsFile,fileGetSize(rightsFile)),44)) do
+				line = string.sub(line,2)
+				if not hasObjectPermissionTo(getThisResource(),"function."..line,true) then
+					table.insert(missingRights,"function."..line)
+				end
+			end
+			if #missingRights ~= 0 then
+				outputServerLog("IRC: "..#missingRights.." missing rights: ")
+				for i,missingRight in ipairs (missingRights) do
+					outputServerLog("	- "..missingRight)
+				end
+				outputServerLog("Please give the irc resource these rights or it will not work properly!")
+				return
+			end
+		else
+			outputServerLog("IRC: could not start resource, the rights file can't be loaded!")
+			outputServerLog("IRC: restart the resource to retry")
+			return
+		end
+		
+		-- Is the resource up-to-date?
+		function checkVersion (res,version)
+			if res ~= "ERROR" and version then
+				if getNumberFromVersion(version) > getNumberFromVersion(getResourceInfo(getThisResource(),"version")) then
+					outputServerLog("IRC: resource is outdated, newest version: "..version)
+					setTimer(outputIRC,10000,1,"The irc resource is outdated, newest version: "..version)
+				end
+			end
+		end
+		callRemote("http://community.mtasa.com/mta/resources.php",checkVersion,"version","irc")
+		
+		-- Start the ads.
+		addEvent("onIRCPlayerDelayedJoin",true)
+		if get("irc-notice") == "true" then
+			local timeout = tonumber(get("irc-notice-timeout"))
+			if timeout then
+				if timeout == 0 then
+					addEventHandler("onIRCPlayerDelayedJoin",root,showContinuousAd)
+				else
+					adTimer = setTimer(showAd,timeout*1000,0)
+				end
+			end
+		end
+		
 		-- parse acl file
 		local aclFile = xmlLoadFile("acl.xml")
 		if  aclFile then
@@ -108,21 +116,6 @@ addEventHandler("onResourceStart",resourceRoot,
 			outputServerLog("IRC: restart the resource to retry")
 			return
 		end
-		
-		-- Is the sockets module loaded?
-		if not sockOpen then
-			outputServerLog("IRC: could not start resource, the sockets module isn't loaded!")
-			outputServerLog("IRC: restart the resource to retry")
-			return
-		end
-		
-		-- start irc addons
-		for i,resource in ipairs (getResources()) do
-			local info = getResourceInfo(resource,"addon")
-			if info and info == "irc" then
-				startResource(resource)
-			end
-		end
 
 		triggerEvent("onIRCResourceStart",root)
 		internalConnect()
@@ -131,7 +124,7 @@ addEventHandler("onResourceStart",resourceRoot,
 
 addEventHandler("onResourceStop",resourceRoot,
 	function ()
-		for i,server in ipairs (ircGetServers()) do
+		for i,server in ipairs (ircGetServers() or {}) do
 			ircDisconnect(server,"resource stopped")
 		end
 		servers = {}

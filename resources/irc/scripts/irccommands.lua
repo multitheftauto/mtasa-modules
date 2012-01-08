@@ -152,11 +152,11 @@ addEventHandler("onIRCResourceStart",root,
 				local player = getPlayerFromPartialName(name)
 				if player then
 					if isPedInVehicle(player) then
-						setVehicleFrozen(getPedOccupiedVehicle(player),true)
-						setTimer(setVehicleFrozen,time,1,getPedOccupiedVehicle(player),false)
+						setElementFrozen(getPedOccupiedVehicle(player),true)
+						setTimer(setElementFrozen,time,1,getPedOccupiedVehicle(player),false)
 					end
-					setPedFrozen(player,true)
-					setTimer(setPedFrozen,time,1,player,false)
+					setElementFrozen(player,true)
+					setTimer(setElementFrozen,time,1,player,false)
 					outputChatBox(getPlayerName(player).." was frozen by "..ircGetUserNick(user).." ("..reason..")",root,255,0,0)
 					ircSay(channel,"12* "..getPlayerName(player).." was frozen by "..ircGetUserNick(user).." ("..reason..")")
 				else
@@ -171,9 +171,9 @@ addEventHandler("onIRCResourceStart",root,
 				local player = getPlayerFromPartialName(name)
 				if player then
 					if isPedInVehicle(player) then
-						setVehicleFrozen(getPedOccupiedVehicle(player),false)
+						setElementFrozen(getPedOccupiedVehicle(player),false)
 					end
-					setPedFrozen(player,false)
+					setElementFrozen(player,false)
 					outputChatBox(getPlayerName(player).." was unfrozen by "..ircGetUserNick(user),root,255,0,0)
 					ircSay(channel,"12* "..getPlayerName(player).." was unfrozen by "..ircGetUserNick(user))
 				else
@@ -350,7 +350,7 @@ addEventHandler("onIRCResourceStart",root,
 				if player then
 					table.remove(t,1)
 					str = table.concat(t," ")
-					triggerClientEvent(player,"doCrun",root,str,true)
+					triggerClientEvent(player,"doCrun",resourceRoot,str,true)
 				else
 					if #getElementsByType("player") == 0 then
 						ircNotice(user,"No player ingame!")
@@ -358,9 +358,9 @@ addEventHandler("onIRCResourceStart",root,
 					end
 					for i,player in ipairs (getElementsByType("player")) do
 						if i == 1 then
-							triggerClientEvent(player,"doCrun",root,str,true)
+							triggerClientEvent(player,"doCrun",resourceRoot,str,true)
 						else
-							triggerClientEvent(player,"doCrun",root,str,false)
+							triggerClientEvent(player,"doCrun",resourceRoot,str,false)
 						end
 					end
 				end
