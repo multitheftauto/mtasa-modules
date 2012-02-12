@@ -119,6 +119,14 @@ addEventHandler("onResourceStart",resourceRoot,
 
 		triggerEvent("onIRCResourceStart",root)
 		internalConnect()
+		
+		-- start irc addons
+		for i,resource in ipairs (getResources()) do
+			local info = getResourceInfo(resource,"addon")
+			if info and info == "irc" then
+				startResource(resource)
+			end
+		end
 	end
 )
 
