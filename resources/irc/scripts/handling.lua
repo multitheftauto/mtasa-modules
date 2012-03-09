@@ -55,6 +55,12 @@ addEventHandler("onIRCRaw",root,
 			else
 				ircRaw(source,"PONG :REPLY")
 			end
+			if #servers[source][16] ~= 0 then
+				for i,raw in ipairs (servers[source][16]) do
+					ircRaw(source,raw)
+				end
+				servers[source][16] = {}
+			end
 		end
 		if t[2] == "376" then
 			--users[(createElement("irc-user"))] = {ircGetServerNick(source),"+iwxz","?","?","?",{}}
