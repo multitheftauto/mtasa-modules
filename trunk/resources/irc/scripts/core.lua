@@ -139,13 +139,3 @@ addEventHandler("onSockClosed",root,
 		end
 	end
 )
-
-addEvent("onIRCConnect")
-addEventHandler("onIRCConnect",root,
-	function ()
-		for i,raw in ipairs (servers[source][16]) do
-			ircRaw(source,raw)
-		end
-		servers[source][16] = {}
-	end
-)
