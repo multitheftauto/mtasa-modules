@@ -65,7 +65,7 @@ end
 
 function func_ircGetUserFromNick (nick)
 	for i,user in ipairs (ircGetUsers()) do
-		if ircGetUserNick(user) == nick then
+		if string.lower(ircGetUserNick(user)) == string.lower(nick) then
 			return user
 		end
 	end

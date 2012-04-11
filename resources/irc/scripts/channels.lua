@@ -14,7 +14,7 @@ channels = {} -- syntax: [channel] = {string name,string mode,string topic,table
 ------------------------------------
 function func_ircGetChannelFromName (channel)
 	for i,chan in ipairs (ircGetChannels()) do
-		if ircGetChannelName(chan) == channel then
+		if string.lower(ircGetChannelName(chan)) == string.lower(channel) then
 			return chan
 		end
 	end
