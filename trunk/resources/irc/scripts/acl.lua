@@ -13,10 +13,10 @@ local commands = {}
 -- Acl
 ------------------------------------
 function func_addIRCCommandHandler (cmd,fn,level,echochanonly)
-	if not acl[cmd] then
-		acl[cmd] = {name = cmd,level = level,echoChannelOnly = echochannelonly}
+	if not acl[string.lower(cmd)] then
+		acl[string.lower(cmd)] = {name = string.lower(cmd),level = level,echoChannelOnly = echochannelonly}
 	end
-	commands[cmd] = fn
+	commands[string.lower(cmd)] = fn
 	return true
 end
 
@@ -45,7 +45,7 @@ end
 addEvent("onIRCMessage")
 addEventHandler("onIRCMessage",root,
 	function (channel,message)
-		local cmd = gettok(message,1,32)
+		local cmd = string.lower(gettok(message,1,32))
 		local args = split(message,32)
 		if commands[cmd] and acl[cmd] and acl[cmd].level and (tonumber(acl[cmd].level) or 0) <= (tonumber(ircGetUserLevel(source,channel)) or 0) then
 			if ircIsCommandEchoChannelOnly(cmd) then
