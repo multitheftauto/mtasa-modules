@@ -124,6 +124,7 @@
 	<script src="scripts/ads.lua" type="client" />
 	<script src="scripts/echo.lua" type="server" />
 	<script src="scripts/irccommands.lua" type="server" />
+	<script src="scripts/mutes.lua" type="server" />
 	<script src="scripts/ircclient_server.lua" type="server" />
 	<script src="scripts/ircclient_client.lua" type="client" />
 	

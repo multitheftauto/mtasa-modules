@@ -76,14 +76,9 @@ addEventHandler("onIRCResourceStart",root,
 			function (server,channel,user,command,name,...)
 				if not name then ircNotice(user,"syntax is !mute <name> [reason] [time]") return end
 				local reason = table.concat({...}," ")
-				local t = split(reason,40)
-				local time
-				if #t > 1 then
-					time = "("..t[#t]
-				end
 				local player = getPlayerFromPartialName(name)
 				if player then
-					setPlayerMuted(player,true,reason,ircGetUserNick(user),toMs(time))
+					setPlayerMuted(player,true,reason,ircGetUserNick(user))
 					if reason then
 						outputChatBox(getPlayerName(player).." has been muted by "..ircGetUserNick(user).." ("..reason..")",root,255,0,0)
 					else
@@ -97,13 +92,13 @@ addEventHandler("onIRCResourceStart",root,
 		
 		addIRCCommandHandler("!mutes",
 			function (server,channel,user,command)
-				local results = executeSQLSelect("ircmutes","player,admin,reason")
+				local results = executeSQLSelect("ircmutes","player,admin,reason,duration")
 				if type(results) == "table" then
 					if #results == 0 then
 						outputIRC("12* There are no muted players")
 					else
 						for i,result in ipairs (results) do
-							outputIRC("12* "..tostring(result["player"]).." by "..tostring(result["admin"]).." for: "..tostring(result["reason"]))
+							outputIRC("12* "..tostring(result.player).." by "..tostring(result.admin).." for: "..tostring(result.reason).." during: "..tostring(getTimeString(result.duration)))
 						end
 					end
 				else
