@@ -2,7 +2,7 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.0
+-- Version: 1.0.2
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
@@ -13,14 +13,17 @@ local commands = {}
 -- Acl
 ------------------------------------
 function func_addIRCCommandHandler (cmd,fn,level,echochanonly)
+	if not level then level = 0 end
+	if not echochanonly then echochanonly = true end
 	if not acl[string.lower(cmd)] then
 		acl[string.lower(cmd)] = {name = string.lower(cmd),level = level,echoChannelOnly = echochannelonly}
 	end
 	commands[string.lower(cmd)] = fn
 	return true
 end
+registerFunction("addIRCCommandHandler","func_addIRCCommandHandler","string","function","(number)","(boolean)")
 
-function func_ircGetCommands ()
+function ircGetCommands ()
 	local cmds = {}
 	for cmd,fn in pairs (commands) do
 		table.insert(cmds,cmd)
@@ -34,6 +37,7 @@ function func_ircGetCommandLevel (cmd)
 	end
 	return false
 end
+registerFunction("ircGetCommandLevel","func_ircGetCommandLevel","string")
 
 function func_ircIsCommandEchoChannelOnly (cmd)
 	if acl[cmd] then
@@ -41,6 +45,7 @@ function func_ircIsCommandEchoChannelOnly (cmd)
 	end
 	return false
 end
+registerFunction("ircIsCommandEchoChannelOnly","func_ircIsCommandEchoChannelOnly","string")
 	
 addEvent("onIRCMessage")
 addEventHandler("onIRCMessage",root,

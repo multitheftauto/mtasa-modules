@@ -2,7 +2,7 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.0
+-- Version: 1.0.2
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
@@ -20,24 +20,24 @@ function func_ircGetChannelFromName (channel)
 	end
 	return false
 end
+registerFunction("ircGetChannelFromName","func_ircGetChannelFromName","string")
 
-function func_ircGetEchoChannel ()
+function ircGetEchoChannels ()
+	local channels = {}
 	for i,channel in ipairs (ircGetChannels()) do
 		if ircIsEchoChannel(channel) then
-			return channel
+			table.insert(channels,channel)
 		end
 	end
-	return false
+	return channels
 end
 
 function func_ircGetChannelServer (channel)
-	if channels[channel] then
-		return getElementParent(channel)
-	end
-	return false
+	return getElementParent(channel)
 end
+registerFunction("ircGetChannelServer","func_ircGetChannelServer","irc-channel")
 
-function func_ircGetChannels (server)
+function ircGetChannels (server)
 	if servers[server] then
 		local channels = {}
 		for i,channels in ipairs (ircGetChannels()) do
@@ -45,49 +45,37 @@ function func_ircGetChannels (server)
 				table.insert(channels,channel)
 			end
 		end
-		return channel
+		return channels
 	end
 	return getElementsByType("irc-channel")
 end
 
 function func_ircSetChannelMode (channel,mode)
-	if channels[channel] and type(mode) == "string" then
-		return ircRaw(getElementParent(channel),"MODE "..channels[channel][1].." :"..mode)
-	end
-	return false
+	return ircRaw(getElementParent(channel),"MODE "..channels[channel][1].." :"..mode)
 end
+registerFunction("ircSetChannelMode","func_ircSetChannelMode","irc-channel","string")
 
 function func_ircGetChannelName (channel)
-	if channels[channel] then
-		return channels[channel][1]
-	end
-	return false
+	return channels[channel][1]
 end
+registerFunction("ircGetChannelName","func_ircGetChannelName","irc-channel")
 
 function func_ircGetChannelMode (channel)
-	if channels[channel] then
-		return channels[channel][2]
-	end
-	return false
+	return channels[channel][2]
 end
+registerFunction("ircGetChannelMode","func_ircGetChannelMode","irc-channel")
 
 function func_ircGetChannelUsers (channel)
-	if channels[channel] then
-		return channels[channel][4]
-	end
-	return false
+	return channels[channel][4]
 end
+registerFunction("ircGetChannelUsers","func_ircGetChannelUsers","irc-channel")
 
 function func_ircGetChannelTopic (channel)
-	if channels[channel] then
-		return channels[channel][3]
-	end
-	return false
+	return channels[channel][3]
 end
+registerFunction("ircGetChannelTopic","func_ircGetChannelTopic","irc-channel")
 
 function func_ircIsEchoChannel (channel)
-	if channels[channel] then
-		return channels[channel][7]
-	end
-	return false
+	return channels[channel][7]
 end
+registerFunction("ircIsEchoChannel","func_ircIsEchoChannel","irc-channel")

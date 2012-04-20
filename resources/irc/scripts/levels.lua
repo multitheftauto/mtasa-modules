@@ -2,7 +2,7 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.0
+-- Version: 1.0.2
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
@@ -72,11 +72,9 @@ addEventHandler("onIRCRaw",root,
 )
 
 function func_ircGetUserLevel (user,channel)
-	if userlevels[channel] then
-		return userlevels[channel][user]
-	end
-	return 0
+	return userlevels[channel][user]
 end
+registerFunction("ircGetUserLevel","func_ircGetUserLevel","irc-user","irc-channel")
 
 function isChanMode (mode)
 	for i,usermode in ipairs (userflags) do

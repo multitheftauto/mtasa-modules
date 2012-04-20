@@ -2,18 +2,13 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.0
+-- Version: 1.0.2
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
 ------------------------------------
 -- Utility
 ------------------------------------
-
-function getAdminMessage (time,author)
-	outputServerLog("Time: "..time..", Author: "..author)
-	return "Hello, world!"
-end
 
 function getNickFromRaw (raw)
 	return string.sub(gettok(raw,1,33),2)
@@ -120,15 +115,4 @@ end
 function getNumberFromVersion (version)
 	local p1,p2,p3 = unpack(split(version,46))
 	return tonumber((100*tonumber(p1))+(10*tonumber(p2))+(tonumber(p3)))
-end
-
-_addBan = addBan
-function addBan (...)
-	if getVersion().number < 260 then
-		local t = {...}
-		t[4] = nil
-		return _addBan(unpack(t))
-	else
-		return _addBan(...)
-	end
 end

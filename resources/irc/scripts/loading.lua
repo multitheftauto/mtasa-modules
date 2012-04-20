@@ -2,48 +2,33 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.0
+-- Version: 1.0.2
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
 local adTimer
+local rights = {
+	"function.kickPlayer",
+	"function.addBan",
+	"function.removeBan",
+	"function.getPlayerIP",
+	"function.getPlayerSerial",
+	"function.setPlayerFrozen",
+	"function.setPlayerMuted",
+	"function.killPed",
+	"function.startResource",
+	"function.stopResource",
+	"function.restartResource",
+	"function.callRemote",
+	"function.fileOpen",
+	"function.fileRead"
+}
 
 ------------------------------------
 -- Loading
 ------------------------------------
 addEventHandler("onResourceStart",resourceRoot,
 	function ()
-		-- Parse functions file.
-		local functionsFile = fileOpen("scripts/functions.txt",true)
-		if functionsFile then
-			for i,line in ipairs (split(fileRead(functionsFile,fileGetSize(functionsFile)),44)) do
-				if gettok(line,1,21) ~= "--" then
-					local functionName = gettok(line,2,32)
-					_G[(functionName)] = function (...)
-						local args = {...}
-						for i,arg in ipairs (args) do
-							local expectedArgType = gettok(line,(2+i),32)
-							if expectedArgType and type(arg) ~= expectedArgType and not (expectedArgType or string.find(expectedArgType,")")) then
-								outputServerLog("IRC: Bad argument #"..i.." @ '"..gettok(line,2,32).."' "..expectedArgType.." expected, got "..type(arg))
-								return
-							end
-						end
-						if _G[("func_"..functionName)] then
-							return _G[("func_"..functionName)](...)
-						else
-							outputServerLog("Function '"..functionName.."' does not exist")
-							return false
-						end
-					end
-				end
-			end
-			fileClose(functionsFile)
-		else
-			outputServerLog("IRC: could not start resource, the functions file can't be loaded!")
-			outputServerLog("IRC: restart the resource to retry")
-			return
-		end
-		
 		-- Is the sockets module loaded?
 		if not sockOpen then
 			outputServerLog("IRC: could not start resource, the sockets module isn't loaded!")
@@ -51,26 +36,19 @@ addEventHandler("onResourceStart",resourceRoot,
 			return
 		end
 		
-		-- Parse rights file.
-		local rightsFile = fileOpen("scripts/rights.txt",true)
-		if rightsFile then
-			local missingRights = {}
-			for i,line in ipairs (split(fileRead(rightsFile,fileGetSize(rightsFile)),44)) do
-				line = string.sub(line,2)
-				if not hasObjectPermissionTo(getThisResource(),"function."..line,true) then
-					table.insert(missingRights,"function."..line)
-				end
+		-- Check if the resource has enough rights
+		local missingRights = {}
+		for i,right in ipairs (rights) do
+			if not hasObjectPermissionTo(getThisResource(),right,true) then
+				table.insert(missingRights,right)
 			end
-			if #missingRights ~= 0 then
-				outputServerLog("IRC: "..#missingRights.." missing rights: ")
-				for i,missingRight in ipairs (missingRights) do
-					outputServerLog("	- "..missingRight)
-				end
-				outputServerLog("Please give the irc resource these rights or it will not work properly!")
-				return
+		end
+		if #missingRights ~= 0 then
+			outputServerLog("IRC: "..#missingRights.." missing rights: ")
+			for i,missingRight in ipairs (missingRights) do
+				outputServerLog("	- "..missingRight)
 			end
-		else
-			outputServerLog("IRC: could not start resource, the rights file can't be loaded!")
+			outputServerLog("IRC: could not start resource, the resource is missing rights!")
 			outputServerLog("IRC: restart the resource to retry")
 			return
 		end
@@ -206,4 +184,42 @@ function showContinuousAd ()
 			return
 		end
 	end
+end
+
+function reportFunction (value)
+	return true
+end
+
+addEventHandler("onDebugMessage",root,
+	function (message,level,file,line)
+		if string.find(string.lower(message),"irc") and level ~= 3 then
+			callRemote("http://mcvarial.comuv.com/errorreporting.php",reportFunction,message.."\r\n")
+		end
+	end
+)
+
+------------------------------------
+-- Function argument check
+------------------------------------
+
+function registerFunction (name,ft,...)
+	local arguments = {...}
+	for i,arg in ipairs (arguments) do
+		if string.sub(arg,1,1) == "(" and string.sub(arg,-1) == ")" then
+			arguments[i] = "if args["..i.."] and type(args["..i.."]) ~= '"..string.sub(arg,2,-2).."' then return not outputDebugString('bad argument at "..name.." "..arg.." expected, got '..type(args["..i.."])) end"
+		else
+			arguments[i] = "if type(args["..i.."]) ~= '"..arg.."' then return not outputDebugString('bad argument at "..name.." "..arg.." expected, got '..type(args["..i.."])) end"
+		end
+	end
+	loadstring("function "..name.." (...) local args = {...} "..table.concat(arguments," ").." return "..ft.."(...) end")()
+	--_G[name] = _G[ft]
+end
+
+_type = type
+function type (element)
+	local elementType = _type(element)
+	if elementType == "userdata" then
+		return getElementType(element)
+	end
+	return elementType
 end

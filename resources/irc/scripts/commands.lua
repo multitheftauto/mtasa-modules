@@ -3,7 +3,7 @@
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
 -- Version: 1.0.0
--- Date: 31.10.2010
+-- Date: 31.10.2012
 ---------------------------------------------------------------------
 
 ------------------------------------
@@ -51,17 +51,6 @@ addCommandHandler("ircsay",
 		else
 			outputServerLog("IRC: syntax is /ircsay <message>")
 		end
-	end
-)
-
-addCommandHandler("levels",
-	function (source)
-		if source ~= getElementsByType("console")[1] then return end
-		local users = ircGetUsers()
-		for i,user in ipairs (users) do
-			users[i] = ircGetUserNick(user).." ("..(ircGetUserLevel(user,ircGetEchoChannel()) or "?")..")"
-		end
-		outputServerLog("IRC: users: "..table.concat(users,", "))
 	end
 )
 
