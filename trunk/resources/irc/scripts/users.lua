@@ -2,7 +2,7 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.0
+-- Version: 1.0.2
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
@@ -13,46 +13,29 @@ users = {} -- syntax: [user] = {string name,string mode,string vhost,string emai
 -- Users
 ------------------------------------
 function func_ircSetUserMode (user,channel,mode)
-	if users[user] and channels[channel] and type(mode) == "string" then
-		return ircRaw(getElementParent(user),"MODE "..channels[channel][1].." "..mode.." :"..users[user][1])
-	end
-	return  false
+	return ircRaw(getElementParent(user),"MODE "..channels[channel][1].." "..mode.." :"..users[user][1])
 end
-
-function func_ircIsUserBot (user)
-	if users[user] then
-		if string.find(users[user][2],"B") then
-			return true
-		end
-	end
-	return false
-end
+registerFunction("ircSetUserMode","func_ircSetUserMode","irc-user","irc-channel","string")
 
 function func_ircGetUserMode (user)
-	if users[user] then
-		return users[user][2]
-	end
-	return false
+	return users[user][2]
 end
+registerFunction("ircGetUserMode","func_ircGetUserMode","irc-user")
 
 function func_ircGetUserNick (user)
-	if users[user] then
-		return users[user][1]
-	end
-	return false
+	return users[user][1]
 end
+registerFunction("ircGetUserNick","func_ircGetUserNick","irc-user")
 
 function func_ircGetUserServer (user)
-	if users[user] then
-		return getElementParent(user)
-	end
-	return false
+	return getElementParent(user)
 end
+registerFunction("ircGetUserServer","func_ircGetUserServer","irc-user")
 
 function func_ircGetUsers (server)
-	if servers[server] then
+	if server then
 		local users = {}
-		for i,user in ipairs (ircGetUsers()) do
+		for i,user in ipairs (getElementsByType("irc-user")) do
 			if ircGetUserServer(user) == server then
 				table.insert(users,user)
 			end
@@ -62,6 +45,7 @@ function func_ircGetUsers (server)
 		return getElementsByType("irc-user")
 	end
 end
+registerFunction("ircGetUsers","func_ircGetUsers","(irc-server)")
 
 function func_ircGetUserFromNick (nick)
 	for i,user in ipairs (ircGetUsers()) do
@@ -71,29 +55,9 @@ function func_ircGetUserFromNick (nick)
 	end
 	return false
 end
+registerFunction("ircGetUserFromNick","func_ircGetUserFromNick","string")
 
 function func_ircGetUserVhost (user)
-	if users[user] then
-		return users[user][3]
-	end
-	return false
+	return users[user][3]
 end
-
--- TODO
-function func_ircIsUserSecure (user)
-	return false
-end
-
-function func_ircGetUserRealName (user)
-	if users[user] then
-		return users[user][5]
-	end
-	return false
-end
-
-function func_ircGetUserChannels (user)
-	if users[user] then
-		return users[user][6]
-	end
-	return false
-end
+registerFunction("ircGetUserVhost","func_ircGetUserVhost","irc-user")

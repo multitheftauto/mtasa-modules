@@ -1,4 +1,12 @@
-﻿function getSocketErrorString (i)
+﻿---------------------------------------------------------------------
+-- Project: irc
+-- Author: MCvarial
+-- Contact: mcvarial@gmail.com
+-- Version: 1.0.2
+-- Date: 31.10.2010
+---------------------------------------------------------------------
+
+function getSocketErrorString (i)
 	if type(i) == "number" and sockets[i] then
 		return sockets[i]
 	else
