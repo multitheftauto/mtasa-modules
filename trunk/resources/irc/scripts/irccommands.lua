@@ -188,8 +188,8 @@ addEventHandler("onIRCResourceStart",root,
 				if player then
 					setElementVelocity((getPedOccupiedVehicle(player) or player),0,0,hp*0.01)
 					setElementHealth((getPedOccupiedVehicle(player) or player),(getElementHealth((getPedOccupiedVehicle(player) or player)) - hp))
-					outputChatBox(getPlayerName(player).." was slaped by "..ircGetUserNick(user).." ("..reason..")("..hp.."HP)",root,255,0,0)
-					ircSay(channel,"12* "..getPlayerName(player).." was slaped by "..ircGetUserNick(user).." ("..reason..")("..hp.."HP)")
+					outputChatBox(getPlayerName(player).." was slapped by "..ircGetUserNick(user).." ("..reason..")("..hp.."HP)",root,255,0,0)
+					ircSay(channel,"12* "..getPlayerName(player).." was slapped by "..ircGetUserNick(user).." ("..reason..")("..hp.."HP)")
 				else
 					ircNotice(user,"'"..name.."' no such player")
 				end
