@@ -1,4 +1,4 @@
-﻿---------------------------------------------------------------------
+---------------------------------------------------------------------
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
@@ -6,16 +6,8 @@
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
-function getSocketErrorString (i)
-	if type(i) == "number" and sockets[i] then
-		return sockets[i]
-	else
-		return "Unknown error"
-	end
-end
-
 -- linux error codes	
-local socketErrors = {}	
+socketErrors = {}	
 socketErrors[001] = "Operation not permitted"
 socketErrors[002] = "No such file or directory"
 socketErrors[003] = "No such process"

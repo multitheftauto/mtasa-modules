@@ -20,13 +20,14 @@ function func_addIRCCommandHandler (cmd,fn,level,echoChannelOnly)
 end
 registerFunction("addIRCCommandHandler","func_addIRCCommandHandler","string","function/string","(number)","(boolean)")
 
-function ircGetCommands ()
+function func_ircGetCommands ()
 	local cmds = {}
 	for cmd,_ in pairs (commands) do
 		table.insert(cmds,cmd)
 	end
 	return cmds
 end
+registerFunction("ircGetCommands","func_ircGetCommands")
 
 function func_ircGetCommandLevel (cmd)
 	if commands[cmd] then

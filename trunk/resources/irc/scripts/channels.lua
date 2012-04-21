@@ -22,7 +22,7 @@ function func_ircGetChannelFromName (channel)
 end
 registerFunction("ircGetChannelFromName","func_ircGetChannelFromName","string")
 
-function ircGetEchoChannels ()
+function func_ircGetEchoChannels ()
 	local channels = {}
 	for i,channel in ipairs (ircGetChannels()) do
 		if ircIsEchoChannel(channel) then
@@ -31,13 +31,14 @@ function ircGetEchoChannels ()
 	end
 	return channels
 end
+registerFunction("ircGetEchoChannels","func_ircGetEchoChannels")
 
 function func_ircGetChannelServer (channel)
 	return getElementParent(channel)
 end
 registerFunction("ircGetChannelServer","func_ircGetChannelServer","irc-channel")
 
-function ircGetChannels (server)
+function func_ircGetChannels (server)
 	if servers[server] then
 		local channels = {}
 		for i,channels in ipairs (ircGetChannels()) do
@@ -49,6 +50,7 @@ function ircGetChannels (server)
 	end
 	return getElementsByType("irc-channel")
 end
+registerFunction("ircGetChannels","func_ircGetChannels","(irc-server)")
 
 function func_ircSetChannelMode (channel,mode)
 	return ircRaw(getElementParent(channel),"MODE "..channels[channel][1].." :"..mode)
