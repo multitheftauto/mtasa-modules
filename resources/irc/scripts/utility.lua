@@ -132,5 +132,6 @@ function getSocketErrorString (i)
 			fileClose(file)
 		end
 	end
+	socketErrors = nil
 	return error or "Unknown error"
 end
