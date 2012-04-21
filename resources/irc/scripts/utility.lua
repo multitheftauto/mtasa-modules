@@ -116,3 +116,21 @@ function getNumberFromVersion (version)
 	local p1,p2,p3 = unpack(split(version,46))
 	return tonumber((100*tonumber(p1))+(10*tonumber(p2))+(tonumber(p3)))
 end
+
+function getSocketErrorString (i)
+	local error
+	if type(i) == "number" then
+		local file = fileOpen("scripts/socketerrors.lua")
+		if file then
+			local content = fileRead(file,fileGetSize(file))
+			if content then
+				loadstring(content)()
+				if socketErrors[i] then
+					error = socketErrors[i]
+				end
+			end
+			fileClose(file)
+		end
+	end
+	return error or "Unknown error"
+end

@@ -32,8 +32,7 @@ function func_ircHop (channel,reason)
 end
 registerFunction("ircHop","func_ircHop","irc-channel","(string)")
 
-function ircSay (target,message)
-	if type(message) ~= "string" then return false end
+function func_ircSay (target,message)
 	if #message > 400 then
 		for i=1,math.ceil(#message/400) do
 			ircSay(target,string.sub(message,(i-1)*400,i*400))
@@ -53,6 +52,7 @@ function ircSay (target,message)
 	end
 	return false
 end
+registerFunction("ircSay","func_ircSay","irc-channel/irc-user","string")
 
 function func_ircPart (channel,reason)
 	local channelName = ircGetChannelName(channel)
@@ -102,8 +102,7 @@ function func_ircAction (channel,message)
 end
 registerFunction("ircAction","func_ircAction","irc-channel","string")
 
-function ircNotice (target,message)
-	if type(message) ~= "string" then return false end
+function func_ircNotice (target,message)
 	if #message > 400 then
 		for i=1,math.ceil(#message/400) do
 			ircNotice(target,string.sub(message,(i-1)*400,i*400))
@@ -119,6 +118,7 @@ function ircNotice (target,message)
 	end
 	return false
 end
+registerFunction("ircNotice","func_ircNotice","irc-channel/irc-user","string")
 
 function func_outputIRC (message)
 	if #message > 400 then
