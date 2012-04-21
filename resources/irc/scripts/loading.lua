@@ -85,7 +85,12 @@ addEventHandler("onResourceStart",resourceRoot,
 			while(xmlFindChild(aclFile,"command",i)) do
 				local child = xmlFindChild(aclFile,"command",i)
 				local attrs = xmlNodeGetAttributes(child)
-				acl[attrs.name] = attrs
+				if commands[string.lower(attrs.name)] then
+					commands[string.lower(attrs.name)].level = tonumber(attrs.level)
+					commands[string.lower(attrs.name)].echoChannelOnly = attrs.echoChannelOnly
+				else
+					commands[string.lower(attrs.name)] = {level = tonumber(attrs.level),echoChannelOnly = attrs.echoChannelOnly}
+				end
 				i = i + 1
 			end
 			xmlUnloadFile(aclFile)
@@ -206,9 +211,17 @@ function registerFunction (name,ft,...)
 	local arguments = {...}
 	for i,arg in ipairs (arguments) do
 		if string.sub(arg,1,1) == "(" and string.sub(arg,-1) == ")" then
-			arguments[i] = "if args["..i.."] and type(args["..i.."]) ~= '"..string.sub(arg,2,-2).."' then return not outputDebugString('bad argument at "..name.." "..arg.." expected, got '..type(args["..i.."])) end"
+			arguments[i] = "if args["..i.."] and type(args["..i.."]) ~= '"..string.sub(arg,2,-2).."' then return not outputDebugString('bad argument #"..i.." at "..name.." "..arg.." expected, got '..type(args["..i.."])) end"
+		elseif string.find(arg,"/") then
+			local args = split(arg,"/")
+			local str = ""
+			for k,arg in ipairs (args) do
+				str = str.."type(args["..i.."]) ~= '"..arg.."' and "
+			end
+			str = string.sub(str,1,-5)
+			arguments[i] = "if "..str.." then return not outputDebugString('bad argument #"..i.." at "..name.." "..arg.." expected, got '..type(args["..i.."])) end"
 		else
-			arguments[i] = "if type(args["..i.."]) ~= '"..arg.."' then return not outputDebugString('bad argument at "..name.." "..arg.." expected, got '..type(args["..i.."])) end"
+			arguments[i] = "if type(args["..i.."]) ~= '"..arg.."' then return not outputDebugString('bad argument #"..i.." at "..name.." "..arg.." expected, got '..type(args["..i.."])) end"
 		end
 	end
 	loadstring("function "..name.." (...) local args = {...} "..table.concat(arguments," ").." return "..ft.."(...) end")()

@@ -89,7 +89,7 @@
 	<export function="ircGetChannelUsers"          type="server" http="false" />
 	<export function="ircGetChannelTopic"          type="server" http="false" />
 	<export function="ircGetChannelFromName"       type="server" http="false" />
-	<export function="ircIsEchoChannels"           type="server" http="false" />
+	<export function="ircIsEchoChannel"           type="server" http="false" />
 	
 	<export function="ircSetUserMode"              type="server" http="false" />
 	<export function="ircGetUserMode"              type="server" http="false" />
