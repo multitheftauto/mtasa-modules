@@ -118,15 +118,13 @@ times["month"] = 2592000000
 times["months"] = 2592000000
 function getTimeFromString (string)
 	if type(string) ~= "string" then return false end
+	string = string.gsub(string,"[%(%)]"," ") -- support for old syntax
+
 	local time = 0
-	for i,v in pairs (times) do
-		local start,stop = string.find(string,i)
-		if start then
-			local number = string.sub(string,start-2,start-1)
-			if number and tonumber(number) then
-				number = tonumber(number)
-				time = time + number*v
-			end
+	local words = split(string,32)
+	for i,word in ipairs (words) do
+		if times[word] and words[i-1] then
+			time = time + tonumber(words[i-1])*times[word]
 		end
 	end
 	return time

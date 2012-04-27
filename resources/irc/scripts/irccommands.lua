@@ -56,18 +56,9 @@ addEventHandler("onIRCResourceStart",root,
 			function (server,channel,user,command,name,...)
 				if not name then ircNotice(user,"syntax is !ban <name> [reason] (time)") return end
 				local reason = table.concat({...}," ") or ""
-				local t = split(reason,40)
-				local time
-				if #t > 1 then
-					time = "("..t[#t]
-				end
 				local player = getPlayerFromPartialName(name)
 				if player then
-					if time then
-						addBan(getPlayerIP(player),nil,getPlayerSerial(player),ircGetUserNick(user),reason,toMs(time)/1000)
-					else
-						addBan(getPlayerIP(player),nil,getPlayerSerial(player),ircGetUserNick(user),reason)
-					end
+					addBan(getPlayerIP(player),nil,getPlayerSerial(player),ircGetUserNick(user),reason,getTimeFromString(reason)/1000)
 				else
 					ircNotice(user,"'"..name.."' no such player")
 				end
@@ -257,16 +248,7 @@ addEventHandler("onIRCResourceStart",root,
 			function (server,channel,user,command,name,...)
 				if not name then ircNotice(user,"syntax is !banname <name> (<reason>)") return end
 				local reason = table.concat({...}," ") or ""
-				local t = split(reason,40)
-				local time
-				if #t > 1 then
-					time = "("..t[#t]
-				end
-				if time then
-					addBan(nil,name,nil,ircGetUserNick(user),reason,toMs(time)/1000)
-				else
-					addBan(nil,name,nil,ircGetUserNick(user),reason)
-				end
+				addBan(nil,name,nil,ircGetUserNick(user),reason,getTimeFromString(reason)/1000)
 			end
 		)
 
@@ -274,16 +256,7 @@ addEventHandler("onIRCResourceStart",root,
 			function (server,channel,user,command,serial,...)
 				if not serial then ircNotice(user,"syntax is !banserial <name> (<reason>)") return end
 				local reason = table.concat({...}," ") or ""
-				local t = split(reason,40)
-				local time
-				if #t > 1 then
-					time = "("..t[#t]
-				end
-				if time then
-					addBan(nil,nil,serial,ircGetUserNick(user),reason,toMs(time)/1000)
-				else
-					addBan(nil,nil,serial,ircGetUserNick(user),reason)
-				end
+				addBan(nil,nil,serial,ircGetUserNick(user),reason,getTimeFromString(reason)/1000)
 			end
 		)
 
@@ -291,16 +264,7 @@ addEventHandler("onIRCResourceStart",root,
 			function (server,channel,user,command,ip,...)
 				if not ip then ircNotice(user,"syntax is !banname <name> (<reason>)") return end
 				local reason = table.concat({...}," ") or ""
-				local t = split(reason,40)
-				local time
-				if #t > 1 then
-					time = "("..t[#t]
-				end
-				if time then
-					addBan(ip,nil,nil,ircGetUserNick(user),reason,toMs(time)/1000)
-				else
-					addBan(ip,nil,nil,ircGetUserNick(user),reason)
-				end
+				addBan(ip,nil,nil,ircGetUserNick(user),reason,getTimeFromString(reason)/1000)
 			end
 		)
 
