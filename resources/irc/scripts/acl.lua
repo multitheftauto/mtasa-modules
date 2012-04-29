@@ -15,7 +15,11 @@ function func_addIRCCommandHandler (cmd,fn,level,echoChannelOnly)
 	if not level then level = 0 end
 	if not echoChannelOnly then echoChannelOnly = true end
 	if commands[string.lower(cmd)] and commands[string.lower(cmd)].fn then return false end
-	commands[string.lower(cmd)] = {fn=fn,level=level,echoChannelOnly=echoChannelOnly,sourceResource=sourceResource}
+	if commands[string.lower(cmd)] then
+		commands[string.lower(cmd)].fn = fn
+	else
+		commands[string.lower(cmd)] = {fn=fn,level=level,echoChannelOnly=echoChannelOnly,sourceResource=sourceResource}
+	end
 	return true
 end
 registerFunction("addIRCCommandHandler","func_addIRCCommandHandler","string","function/string","(number)","(boolean)")
