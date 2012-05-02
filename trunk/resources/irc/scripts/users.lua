@@ -22,6 +22,11 @@ function func_ircGetUserMode (user)
 end
 registerFunction("ircGetUserMode","func_ircGetUserMode","irc-user")
 
+function func_ircGetUserChannels (user)
+	return users[user][6]
+end
+registerFunction("ircGetUserChannels","func_ircGetUserChannels","irc-user")
+
 function func_ircGetUserNick (user)
 	return users[user][1]
 end

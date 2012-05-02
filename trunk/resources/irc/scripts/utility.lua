@@ -56,6 +56,22 @@ function getPlayerFromPartialName (name)
 	return false
 end
 
+function getTeamFromPartialName (name)
+	local matches = {}
+	for i,team in ipairs (getElementsByType("team")) do
+		if getTeamName(team) == name then
+			return team
+		end
+		if string.find(string.lower(getTeamName(team)),string.lower(name),0,false) then
+			table.insert(matches,team)
+		end
+	end
+	if #matches == 1 then
+		return matches[1]
+	end
+	return false
+end
+
 function getResourceFromPartialName (name)
 	local matches = {}
 	for i,resource in ipairs (getResources()) do

@@ -6,6 +6,7 @@
 	<command name="!m" level="0" echoChannelOnly="true" />
 	<command name="!players" level="0" echoChannelOnly="true" />
 	<command name="!pm" level="0" echoChannelOnly="true" />
+	<command name="!ts" level="0" echoChannelOnly="true" />
 	<command name="!getip" level="2" echoChannelOnly="true" />
 	<command name="!getserial" level="2" echoChannelOnly="true" />
 	<command name="!mute" level="2" echoChannelOnly="true" />
