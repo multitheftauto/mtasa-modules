@@ -90,6 +90,7 @@
 	<export function="ircGetServerChannels"        type="server" http="false" />
 	<export function="ircSetUserMode"              type="server" http="false" />
 	<export function="ircGetUserMode"              type="server" http="false" />
+	<export function="ircGetUserChannels"          type="server" http="false" />
 	<export function="ircGetUserNick"              type="server" http="false" />
 	<export function="ircGetUserServer"            type="server" http="false" />
 	<export function="ircGetUsers"                 type="server" http="false" />

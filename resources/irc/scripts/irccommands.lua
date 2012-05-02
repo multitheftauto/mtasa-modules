@@ -36,6 +36,23 @@ addEventHandler("onIRCResourceStart",root,
 				end
 			end
 		)
+		
+		addIRCCommandHandler("!ts",
+			function (server,channel,user,command,name,...)
+				local message = table.concat({...}," ")
+				if not name then ircNotice(user,"syntax is !ts <name> <message>") return end
+				if message == "" then ircNotice(user,"syntax is !ts <name> <message>") return end
+				local team = getTeamFromPartialName(name)
+				if team then
+					for i,player in ipairs (getPlayersInTeam(team)) do
+						outputChatBox("* Team message from "..ircGetUserNick(user).." on irc: "..message,player,255,168,0)
+					end
+					ircNotice(user,"Your team message has been send to "..getTeamName(team))
+				else
+					ircNotice(user,"'"..name.."' no such team")
+				end
+			end
+		)
 
 		addIRCCommandHandler("!kick",
 			function (server,channel,user,command,name,...)

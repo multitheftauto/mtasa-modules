@@ -146,6 +146,7 @@ addEventHandler("onIRCRaw",root,
 					user = createElement("irc-user")
 					users[user] = {nick,"+iwxz","?","?","?",{channel}}
 					setElementParent(user,source)
+					table.insert(channels[channel][4],user)
 				end
 				if not userlevels[channel] then
 					userlevels[channel] = {}
