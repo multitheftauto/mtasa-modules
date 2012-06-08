@@ -118,3 +118,12 @@ MTAEXPORT bool ShutdownModule(void)
     return true;
 }
 
+MTAEXPORT bool ResourceStopping ( lua_State * luaVM )
+{
+    return true;
+}
+
+MTAEXPORT bool ResourceStopped ( lua_State * luaVM )
+{
+    return true;
+}
