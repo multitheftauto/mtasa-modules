@@ -56,7 +56,7 @@
 	</settings>
 	
 	<!-- Don't touch anything below! -->
-	<info author="MCvarial" version="1.0.2" type="misc" name="irc" description="Echobot to be used on irc" />
+	<info author="MCvarial" version="1.0.3" type="misc" name="irc" description="Echobot to be used on irc" />
 	
 	<export function="ircGetChannelFromName"       type="server" http="false" />
 	<export function="ircGetEchoChannels"          type="server" http="false" />

@@ -26,7 +26,7 @@ function setPlayerMuted (player,muted,reason,admin)
 	if muted then
 		local time = getTimeFromString(reason) or 0
 		executeSQLInsert("ircmutes","'"..tostring(getPlayerName(player)).."','"..tostring(getPlayerSerial(player)).."','"..tostring(reason).."','"..tostring(admin).."','"..tostring(getRealTime().timestamp*1000).."','"..time.."'")
-		if time > 50 then
+		if time > 50 and time < 10000000000 then
 			mutes[player] = setTimer(setPlayerMuted,time,1,player,false)
 		end
 	else
@@ -56,7 +56,9 @@ addEventHandler("onPlayerJoin",root,
 				executeSQLDelete("ircmutes","serial = '"..tostring(getPlayerSerial(source)).."'")
 			else
 				_setPlayerMuted(source,true)
-				mutes[source] = setTimer(setPlayerMuted,time,1,source,false)
+				if time < 10000000000 then
+					mutes[source] = setTimer(setPlayerMuted,time,1,source,false)
+				end
 			end
 		end
 	end
