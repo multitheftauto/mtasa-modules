@@ -10,14 +10,17 @@
 
 // Vector for holding all sockets
 vector <CSocket*> vecSockets;
+deque <CSocket*> processQueue;
+deque <CSocket*> deleteList;
 
 void CSocketManager::DoPulse()
 {
     // Loop through all sockets
-    for (unsigned int i = 0; i < vecSockets.size(); ++i)
+    processQueue = deque <CSocket*>(vecSockets.begin(), vecSockets.end());
+    while (!processQueue.empty())
     {
-        // Get the socket by the ID
-        CSocket* pSocket = vecSockets[i];
+        CSocket* pSocket = processQueue.front();
+        processQueue.pop_front();
 
         // Do a pulse at the socket
         if (!pSocket->DoPulse())
@@ -25,6 +28,14 @@ void CSocketManager::DoPulse()
             // If the pulse indicates failure, remove the socket
             SocketRemove(pSocket);
         }
+    }
+
+    // Finally cleanup sockets that were removed
+    while (!deleteList.empty())
+    {
+        CSocket* pSocket = deleteList.front();
+        deleteList.pop_front();
+        SAFE_DELETE(pSocket);
     }
 }
 
@@ -34,26 +45,13 @@ void CSocketManager::SocketAdd(CSocket*& pSocket)
     vecSockets.push_back(pSocket);
 }
 
-bool CSocketManager::SocketRemove(CSocket*& pSocket)
+void CSocketManager::SocketRemove(CSocket*& pSocket)
 {
-    // Check if an socket was actually specified
-    if (pSocket == NULL)
-        return false;
-
-    // Loop through all sockets
-    for (unsigned int i = 0; i < vecSockets.size(); ++i)
-    {
-        // If the current is the one we're looking for...
-        if (vecSockets[i] == pSocket)
-        {
-            // Remove it from the vector and delete it, then return true
-            vecSockets.erase(vecSockets.begin() + i);
-            SAFE_DELETE(pSocket);
-            return true;
-        }
-    }
-
-    return false;
+    ListRemove(vecSockets, pSocket);
+    ListRemove(processQueue, pSocket);
+    pSocket->CloseSocketWithEvent();
+    ListRemove(deleteList, pSocket);
+    deleteList.push_back(pSocket);
 }
 
 bool CSocketManager::GetSocket(CSocket*& pSocket, void* pUserdata)
@@ -82,4 +80,11 @@ void CSocketManager::HandleStop()
     // Triggered at module stop. Simply destroys all sockets
     for (unsigned int i = 0; i < vecSockets.size(); ++i)
         SAFE_DELETE(vecSockets[i]);
+
+    for (unsigned int i = 0; i < deleteList.size(); ++i)
+        SAFE_DELETE(deleteList[i]);
+
+    vecSockets.clear();
+    processQueue.clear();
+    deleteList.clear();
 }

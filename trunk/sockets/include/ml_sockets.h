@@ -47,4 +47,17 @@ using namespace std;
 // Function for making sure a pointer has a value before deleting it; possibly prevents crashes
 #define SAFE_DELETE(p) { if (p) { delete (p); (p) = NULL; } }
 
+// List item removal
+template < class TL, class T >
+void ListRemove ( TL& itemList, const T& item )
+{
+    typename TL ::iterator it = itemList.begin ();
+    for ( ; it != itemList.end () ; ++it )
+        if ( item == *it )
+        {
+            itemList.erase ( it );
+            break;
+        }
+}
+
 #endif

@@ -16,6 +16,7 @@ CSocket::CSocket(lua_State *luaVM, const string& strHost, const unsigned short& 
     m_usPort     = usPort;
     m_pLuaVM     = luaVM;
     m_pUserdata  = NULL;
+    m_pSocket    = ERR_INVALID_SOCKET;
     
     // Prepare data for connection (cancel on failure)
     if (!ProcessTargetLocation(strHost, usPort))
@@ -52,8 +53,17 @@ CSocket::CSocket(lua_State *luaVM, const string& strHost, const unsigned short& 
 
 CSocket::~CSocket()
 {
+    // Close the socket, if it exists
+    if (m_pSocket != ERR_INVALID_SOCKET)
+    {
+        CloseSocket();
+    }
+}
+
+void CSocket::CloseSocketWithEvent()
+{
     // Close the socket, if it exists, and trigger the closed event
-    if (m_pSocket)
+    if (m_pSocket != ERR_INVALID_SOCKET)
     {
         CloseSocket();
         TriggerEvent("onSockClosed");
@@ -63,8 +73,12 @@ CSocket::~CSocket()
 bool CSocket::Send(const string& data)
 {
     // Make sure the socket exists
-    if (!m_pSocket)
+    if (m_pSocket == ERR_INVALID_SOCKET)
         return false;
+
+    // Pretend zero length send was ok
+    if (data.length() == 0)
+        return true;
 
     // Send the data and return whether it was successful
     return (send(m_pSocket, data.c_str(), data.length(), 0) != ERR_SEND_FAILURE);
@@ -73,7 +87,7 @@ bool CSocket::Send(const string& data)
 bool CSocket::DoPulse()
 {
     // Make sure the socket exists before taking action
-    if (m_pSocket)
+    if (m_pSocket != ERR_INVALID_SOCKET)
     {
         // Wait for connect to complete before proceeding
         if (!m_bConnected)
@@ -134,7 +148,7 @@ bool CSocket::DoPulse()
 bool CSocket::IsConnected()
 {
     // If there's no socket, then we don't have a connection
-    if (!m_pSocket)
+    if (m_pSocket == ERR_INVALID_SOCKET)
         return false;
 
     // If there is, show whether there is a connection
@@ -210,7 +224,7 @@ void CSocket::CloseSocket()
 #endif
     
     // Unset the socket variable, so there's no mistaking there
-    m_pSocket = NULL;
+    m_pSocket = ERR_INVALID_SOCKET;
 }
 
 int CSocket::HandleConnection(const int& iError)
