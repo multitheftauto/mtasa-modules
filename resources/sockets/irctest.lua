@@ -170,7 +170,7 @@ addEventHandler("onIRCNick", root,
 addEventHandler("onIRCNotice", root,
 	function(socket, user, target, notice)
 		if socket == sock then
-			user = ircGetUserNick(user)
+			user = ircGetUserNick(user) or user
 			outputServerLog("IRC: NOTICE ("..user.." -> "..target.."): "..notice)
 		end
 	end

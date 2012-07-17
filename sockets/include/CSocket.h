@@ -36,8 +36,9 @@ class CSocket
 {
 public:
     CSocket           (lua_State *luaVM, const string& strHost, const unsigned short& usPort);
-    ~CSocket          ();
+    ~CSocket          ();                           // Delete only - Does not trigger any events
 
+    void CloseSocketWithEvent ();                   // Close socket and trigger event
     bool Send         (const string& data);
     bool DoPulse      ();
     bool IsConnected  ();
