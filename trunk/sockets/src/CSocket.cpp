@@ -76,10 +76,6 @@ bool CSocket::Send(const string& data)
     if (m_pSocket == ERR_INVALID_SOCKET)
         return false;
 
-    // Pretend zero length send was ok
-    if (data.length() == 0)
-        return true;
-
     // Send the data and return whether it was successful
     return (send(m_pSocket, data.c_str(), data.length(), 0) != ERR_SEND_FAILURE);
 }
