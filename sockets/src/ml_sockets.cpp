@@ -18,6 +18,7 @@
 
 #include "ml_sockets.h"
 #include "luaimports.h"
+#include <signal.h>
 
 ILuaModuleManager10 *pModuleManager = NULL;
 
@@ -40,6 +41,9 @@ MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, c
         pModuleManager->ErrorPrintf("[Sockets] Can't start Winsock, aborting...");
         return false;
     }
+#else
+    // Avoid process termination on broken pipe
+    signal(SIGPIPE, SIG_IGN);
 #endif
 
 	return true;
