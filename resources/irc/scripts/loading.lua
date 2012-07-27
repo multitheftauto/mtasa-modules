@@ -231,7 +231,7 @@ end
 _type = type
 function type (element)
 	local elementType = _type(element)
-	if elementType == "userdata" then
+	if elementType == "userdata" and isElement(element) then
 		return getElementType(element)
 	end
 	return elementType
