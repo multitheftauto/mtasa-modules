@@ -44,6 +44,7 @@ public:
     bool IsConnected  ();
 
     void* GetUserdata ();
+    static int GetTotalOpenSocketCount ();
 
 private:
     bool ProcessTargetLocation (const string& strHost, const unsigned short& usPort);
@@ -61,6 +62,7 @@ private:
     struct sockaddr_in m_sSockAddr;
     
     SOCKET             m_pSocket;
+    static int         ms_iTotalOpenSocketCount;
 };
 
 #endif
