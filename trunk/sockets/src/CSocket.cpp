@@ -7,6 +7,7 @@
 ******************************************************/
 
 #include "CSocket.h"
+int CSocket::ms_iTotalOpenSocketCount = 0;
 
 CSocket::CSocket(lua_State *luaVM, const string& strHost, const unsigned short& usPort)
 {
@@ -28,6 +29,8 @@ CSocket::CSocket(lua_State *luaVM, const string& strHost, const unsigned short& 
     // Exit if the socket failed to create
     if (m_pSocket == ERR_INVALID_SOCKET)
         return;
+
+    ms_iTotalOpenSocketCount++;
 
     // Set the socket to non-blocking mode
     SetNonBlocking();
@@ -214,9 +217,11 @@ void CSocket::CloseSocket()
     shutdown(m_pSocket, 1);
 
 #ifdef WIN32
-    closesocket(m_pSocket);
+    if ( closesocket(m_pSocket) == 0 )
+        ms_iTotalOpenSocketCount--;
 #else
-    close(m_pSocket);
+    if ( close(m_pSocket) == 0 )
+        ms_iTotalOpenSocketCount--;
 #endif
     
     // Unset the socket variable, so there's no mistaking there
@@ -257,4 +262,9 @@ void CSocket::TriggerEvent(const string eventName, const string arg1)
         args.PushString(arg1.c_str());
 
     args.Call(m_pLuaVM, "triggerEvent");
+}
+
+int CSocket::GetTotalOpenSocketCount()
+{
+    return ms_iTotalOpenSocketCount;
 }
