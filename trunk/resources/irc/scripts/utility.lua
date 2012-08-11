@@ -46,7 +46,7 @@ function getPlayerFromPartialName (name)
 		if getPlayerName(player) == name then
 			return player
 		end
-		if string.find(string.lower(getPlayerName(player)),string.lower(name),0,false) then
+		if string.find(string.lower(getPlayerName(player)),string.lower(name),0,true) then
 			table.insert(matches,player)
 		end
 	end
@@ -62,7 +62,7 @@ function getTeamFromPartialName (name)
 		if getTeamName(team) == name then
 			return team
 		end
-		if string.find(string.lower(getTeamName(team)),string.lower(name),0,false) then
+		if string.find(string.lower(getTeamName(team)),string.lower(name),0,true) then
 			table.insert(matches,team)
 		end
 	end
@@ -78,7 +78,7 @@ function getResourceFromPartialName (name)
 		if getResourceName(resource) == name then
 			return resource
 		end
-		if string.find(string.lower(getResourceName(resource)),string.lower(name),0,false) then
+		if string.find(string.lower(getResourceName(resource)),string.lower(name),0,true) then
 			table.insert(matches,resource)
 		end
 	end
