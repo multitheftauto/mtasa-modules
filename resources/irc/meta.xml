@@ -101,6 +101,7 @@
 	<export function="ircGetCommands"              type="server" http="false" />
 	<export function="ircGetCommandLevel"          type="server" http="false" />
 	<export function="ircIsCommandEchoChannelOnly" type="server" http="false" />
+	<export function="setPlayerMuted"              type="server" http="false" />
 	
 	<!-- Don't touch this, you might break it. -->
 	<script src="scripts/loading.lua"              type="server" />
