@@ -510,6 +510,31 @@ addEventHandler("onIRCResourceStart",root,
 				end
 			end
 		)
+		
+		addIRCCommandHandler("!checkmap",
+			function (server,channel,user,command,...)
+				local map = table.concat({...}," ")
+				if not map then ircNotice(user,"syntax is !changemap <name>") return end
+				local maps = {}
+				for i,resource in ipairs (getResources()) do
+					if getResourceInfo(resource,"type") == "map" then
+						if string.find(string.lower(getResourceName(resource)),string.lower(map),0,false) then
+							table.insert(maps,resource)
+						elseif string.find(string.lower(getResourceInfo(resource,"name")),string.lower(map),0,false) then
+							table.insert(maps,resource)
+						end
+					end
+				end
+				if #maps == 0 then
+					ircNotice(user,"No maps found!")
+				else
+					for i,resource in ipairs (maps) do
+						maps[i] = getResourceName(resource)
+					end
+					ircNotice(user,"Found "..#maps.." matches: "..table.concat(maps,", "))
+				end
+			end
+		)
 
 		addIRCCommandHandler("!changemap",
 			function (server,channel,user,command,...)
@@ -518,9 +543,9 @@ addEventHandler("onIRCResourceStart",root,
 				local maps = {}
 				for i,resource in ipairs (getResources()) do
 					if getResourceInfo(resource,"type") == "map" then
-						if string.find(string.lower(getResourceName(resource)),string.lower(map)) then
+						if string.find(string.lower(getResourceName(resource)),string.lower(map),0,false) then
 							table.insert(maps,resource)
-						elseif string.find(string.lower(getResourceInfo(resource,"name")),string.lower(map)) then
+						elseif string.find(string.lower(getResourceInfo(resource,"name")),string.lower(map),0,false) then
 							table.insert(maps,resource)
 						end
 					end
@@ -643,6 +668,28 @@ addEventHandler("onIRCResourceStart",root,
 					end
 				else
 					ircSay(channel,"!refresh only available from 1.1 onwards")
+				end
+			end
+		)
+		
+		addIRCCommandHandler("!country",
+			function (server,channel,user,command,name)
+				if not name then ircNotice(user,"syntax is !country <name>") return end
+				local admin = getResourceFromName("admin")
+				if admin and getResourceState(admin) == "running" then
+					local player = getPlayerFromPartialName(name)
+					if player then
+						local country = exports.admin:getPlayerCountry(player)
+						if country then
+							ircSay(channel,tostring(getPlayerName(player)).."'s country: "..tostring(country))
+						else
+							ircSay(channel,"Could not find "..tostring(getPlayerName(player)).."'s country.")
+						end
+					else
+						ircSay(channel,"'"..name.."' no such player")
+					end
+				else
+					ircNotice(user,"the admin resource is not running")
 				end
 			end
 		)
