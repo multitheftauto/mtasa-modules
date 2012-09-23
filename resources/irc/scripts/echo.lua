@@ -2,7 +2,7 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.2
+-- Version: 1.0.3
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
@@ -92,6 +92,7 @@ addEventHandler("onPlayerChat",root,
 		elseif type == 1 then
 			outputIRC("06* "..getPlayerName(source).." "..message)
 		elseif type == 2 then
+			if get("*irc-logteammessages") == "false" then return end
 			outputIRC("07(TEAM)"..getPlayerName(source)..": "..message)
 		end
 	end

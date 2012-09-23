@@ -53,6 +53,15 @@
 			examples="true,false"
 			desc="Should irc stuff be outputted to the console (server log)?"
 		/>
+		
+		<!-- Should team messages be sent to the echo channel? -->
+		<setting 
+			name="*irc-logteammessages" 
+			value="true"
+			friendlyname="Log team messages"
+			examples="true,false"
+			desc="Should team messages be sent to the echo channel?"
+		/>
 	</settings>
 	
 	<!-- Don't touch anything below! -->

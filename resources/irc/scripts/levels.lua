@@ -2,7 +2,7 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.2
+-- Version: 1.0.3
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ addEventHandler("onIRCRaw",root,
 				if mode == "b" then
 					triggerEvent("onIRCBan",channel,positive,nick,setter)
 				else
-					triggerEvent("onIRCUserMode",ircGetUserFromNick(nick),channel,positive,mode,setter)
+					triggerEvent("onIRCUserMode",ircGetUserFromNick(nick) or root,channel,positive,mode,setter)
 				end
 			end
 			if #t == 0 and channel then

@@ -2,8 +2,8 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.2
--- Date: 31.10.2012
+-- Version: 1.0.3
+-- Date: 31.10.2010
 ---------------------------------------------------------------------
 
 ------------------------------------
@@ -514,13 +514,13 @@ addEventHandler("onIRCResourceStart",root,
 		addIRCCommandHandler("!checkmap",
 			function (server,channel,user,command,...)
 				local map = table.concat({...}," ")
-				if not map then ircNotice(user,"syntax is !changemap <name>") return end
+				if not map or map == "" then ircNotice(user,"syntax is !changemap <name>") return end
 				local maps = {}
 				for i,resource in ipairs (getResources()) do
 					if getResourceInfo(resource,"type") == "map" then
-						if string.find(string.lower(getResourceName(resource)),string.lower(map),0,false) then
+						if string.find(string.lower(getResourceName(resource)),string.lower(map),0,true) then
 							table.insert(maps,resource)
-						elseif string.find(string.lower(getResourceInfo(resource,"name")),string.lower(map),0,false) then
+						elseif string.find(string.lower(getResourceInfo(resource,"name")),string.lower(map),0,true) then
 							table.insert(maps,resource)
 						end
 					end
@@ -543,9 +543,9 @@ addEventHandler("onIRCResourceStart",root,
 				local maps = {}
 				for i,resource in ipairs (getResources()) do
 					if getResourceInfo(resource,"type") == "map" then
-						if string.find(string.lower(getResourceName(resource)),string.lower(map),0,false) then
+						if string.find(string.lower(getResourceName(resource)),string.lower(map),0,true) then
 							table.insert(maps,resource)
-						elseif string.find(string.lower(getResourceInfo(resource,"name")),string.lower(map),0,false) then
+						elseif string.find(string.lower(getResourceInfo(resource,"name")),string.lower(map),0,true) then
 							table.insert(maps,resource)
 						end
 					end
