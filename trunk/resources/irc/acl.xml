@@ -50,5 +50,6 @@
     <command name="!zone" level="0" echoChannelOnly="false" />
     <command name="!refreshall" level="4" echoChannelOnly="false" />
     <command name="!refresh" level="4" echoChannelOnly="false" />
+    <command name="!checkmap" level="2" echoChannelOnly="false" />
     <command name="!country" level="2" echoChannelOnly="false" />
 </acl>

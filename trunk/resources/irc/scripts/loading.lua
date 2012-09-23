@@ -2,7 +2,7 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.2
+-- Version: 1.0.3
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
@@ -212,7 +212,7 @@ function registerFunction (name,ft,...)
 	for i,arg in ipairs (arguments) do
 		if string.sub(arg,1,1) == "(" and string.sub(arg,-1) == ")" then
 			arguments[i] = "if args["..i.."] and type(args["..i.."]) ~= '"..string.sub(arg,2,-2).."' then return not outputDebugString('bad argument #"..i.." at "..name.." "..arg.." expected, got '..type(args["..i.."])) end"
-		elseif string.find(arg,"/") then
+		elseif string.find(arg,"/",0,true) then
 			local args = split(arg,"/")
 			local str = ""
 			for k,arg in ipairs (args) do
