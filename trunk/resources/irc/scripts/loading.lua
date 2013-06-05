@@ -142,8 +142,8 @@ function internalConnect ()
 			local channels = xmlNodeGetAttribute(server,"channels")
 			local port = tonumber(xmlNodeGetAttribute(server,"port")) or 6667
 			local password = xmlNodeGetAttribute(server,"password") or false
-			local secure = xmlNodeGetAttribute(server,"secure") or false
-			local nspass = xmlNodeGetAttribute(server,"nickservpass") or false
+			local secure = xmlNodeGetAttribute(server,"secure") == "true" or false
+			local nspass = xmlNodeGetAttribute(server,"nickservpass") or xmlNodeGetAttribute(server,"nickserverpass") or false
 			if not host then
 				outputServerLog("IRC: problem with server #"..i..", no host given!")
 			elseif not nick then
@@ -190,18 +190,6 @@ function showContinuousAd ()
 		end
 	end
 end
-
-function reportFunction (value)
-	return true
-end
-
-addEventHandler("onDebugMessage",root,
-	function (message,level,file,line)
-		if string.find(string.lower(message),"irc") and level ~= 3 then
-			callRemote("http://mcvarial.comuv.com/errorreporting.php",reportFunction,message.."\r\n")
-		end
-	end
-)
 
 ------------------------------------
 -- Function argument check

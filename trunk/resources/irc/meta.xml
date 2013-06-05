@@ -57,15 +57,24 @@
 		<!-- Should team messages be sent to the echo channel? -->
 		<setting 
 			name="*irc-logteammessages" 
-			value="true"
+			value="*"
 			friendlyname="Log team messages"
+			examples="*,+,%,@,&,/"
+			desc="Who should see the teammessages?"
+		/>
+		
+		<!-- Should all messages be sent ingame? -->
+		<setting 
+			name="*irc-sendallmessages" 
+			value="false"
+			friendlyname="Send all messages"
 			examples="true,false"
-			desc="Should team messages be sent to the echo channel?"
+			desc="Should all irc messages be sent to the server?"
 		/>
 	</settings>
 	
 	<!-- Don't touch anything below! -->
-	<info author="MCvarial" version="1.0.3" type="misc" name="irc" description="Echobot to be used on irc" />
+	<info author="MCvarial" version="1.0.4" type="misc" name="irc" description="Echobot to be used on irc" />
 	
 	<export function="ircGetChannelFromName"       type="server" http="false" />
 	<export function="ircGetEchoChannels"          type="server" http="false" />

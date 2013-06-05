@@ -310,6 +310,14 @@ addEventHandler("onIRCResourceStart",root,
 				end
 			end
 		)
+		
+		addIRCCommandHandler("!lua",
+			function (server,channel,user,command,...)
+				local str = table.concat({...}," ")
+				if str == "" then ircNotice(user,"syntax is !lua <string>") return end
+				runString(str,root,ircGetUserNick(user))
+			end
+		)
 
 		addIRCCommandHandler("!run",
 			function (server,channel,user,command,...)
