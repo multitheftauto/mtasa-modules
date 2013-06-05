@@ -59,7 +59,7 @@
 			name="*irc-logteammessages" 
 			value="*"
 			friendlyname="Log team messages"
-			examples="*,+,%,@,&,/"
+			examples="*,+,%,@,&amp;,/"
 			desc="Who should see the teammessages?"
 		/>
 		
