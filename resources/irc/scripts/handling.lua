@@ -63,7 +63,6 @@ addEventHandler("onIRCRaw",root,
 			end
 		end
 		if t[2] == "376" then
-			--users[(createElement("irc-user"))] = {ircGetServerNick(source),"+iwxz","?","?","?",{}}
 			triggerEvent("onIRCConnect",source)
 		end
 		if t[2] == "001" then

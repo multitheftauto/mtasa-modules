@@ -43,7 +43,11 @@ addEventHandler("onPlayerQuit",root,
 	function (quit,reason,element)
 		messages[source] = nil
 		if reason then
-			outputIRC("02*** "..getPlayerName(source).." was "..quit.." from the game by "..getPlayerName(element).." ("..reason..")")
+			if element then
+				outputIRC("02*** "..getPlayerName(source).." was "..quit.." from the game by "..getPlayerName(element).." ("..reason..")")
+			else
+				outputIRC("02*** "..getPlayerName(source).." was "..quit.." from the game by Console ("..reason..")")
+			end
 		else
 			outputIRC("02*** "..getPlayerName(source).." left the game ("..quit..")")
 		end
@@ -92,8 +96,19 @@ addEventHandler("onPlayerChat",root,
 		elseif type == 1 then
 			outputIRC("06* "..getPlayerName(source).." "..message)
 		elseif type == 2 then
-			if get("*irc-logteammessages") == "false" then return end
-			outputIRC("07(TEAM)"..getPlayerName(source)..": "..message)
+			local team = getPlayerTeam(source)
+			if not team then return end
+			if get("*irc-logteammessages") == "/" then return end
+			if get("*irc-logteammessages") == "*" then
+				outputIRC("07("..getTeamName(team)..")"..getPlayerName(source)..": "..message)
+			else
+				for i,channel in pairs (ircGetChannels()) do
+					if ircIsEchoChannel(channel) then
+						local server = getElementParent(channel)
+						ircRaw(server,"PRIVMSG "..tostring(get("*irc-logteammessages"))..ircGetChannelName(channel).." :07("..getTeamName(team)..")"..getPlayerName(source)..": "..message)
+					end
+				end
+			end
 		end
 	end
 )

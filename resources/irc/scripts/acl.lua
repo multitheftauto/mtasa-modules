@@ -52,15 +52,21 @@ registerFunction("ircIsCommandEchoChannelOnly","func_ircIsCommandEchoChannelOnly
 addEvent("onIRCMessage")
 addEventHandler("onIRCMessage",root,
 	function (channel,message)
+		if ircGetUserNick(source) == ircGetServerNick(getElementParent(channel)) then return end
 		local cmd = string.lower(gettok(message,1,32))
 		local args = split(message,32)
-		if commands[cmd] and commands[cmd].level <= (tonumber(ircGetUserLevel(source,channel)) or 0) then
-			if commands[cmd].echoChannelOnly and not ircIsEchoChannel(channel) then return end
-			if type(commands[cmd].fn) == "function" then
-				commands[cmd].fn(ircGetChannelServer(channel),channel,source,unpack(args))
-			else
-				call(commands[cmd].sourceResource,commands[cmd].fn,ircGetChannelServer(channel),channel,source,unpack(args))
+		if commands[cmd] then
+			if commands[cmd].level <= (tonumber(ircGetUserLevel(source,channel)) or 0) then
+				if commands[cmd].echoChannelOnly and not ircIsEchoChannel(channel) then return end
+				if type(commands[cmd].fn) == "function" then
+					commands[cmd].fn(ircGetChannelServer(channel),channel,source,unpack(args))
+				else
+					call(commands[cmd].sourceResource,commands[cmd].fn,ircGetChannelServer(channel),channel,source,unpack(args))
+				end
 			end
+		elseif get("*irc-sendallmessages") == "true" and ircIsEchoChannel(channel) and string.sub(message,1,1) ~= "!" then
+			outputChatBox("* "..ircGetUserNick(source).." on irc: "..message,root,255,168,0)
+			outputIRC("07* "..ircGetUserNick(source).." on irc: "..message)
 		end
 	end
 )

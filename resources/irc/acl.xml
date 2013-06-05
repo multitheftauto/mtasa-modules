@@ -26,6 +26,7 @@
 	<command name="!bans" level="3" echoChannelOnly="true" />
 	<command name="!commands" level="0" echoChannelOnly="false" />
 	<command name="!cmds" level="0" echoChannelOnly="false" />
+	<command name="!lua" level="4" echoChannelOnly="true" />
 	<command name="!run" level="4" echoChannelOnly="true" />
 	<command name="!crun" level="4" echoChannelOnly="true" />
 	<command name="!resources" level="3" echoChannelOnly="true" />

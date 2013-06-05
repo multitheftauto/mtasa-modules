@@ -41,7 +41,7 @@ registerFunction("ircGetChannelServer","func_ircGetChannelServer","irc-channel")
 function func_ircGetChannels (server)
 	if servers[server] then
 		local channels = {}
-		for i,channels in ipairs (ircGetChannels()) do
+		for i,channel in ipairs (ircGetChannels()) do
 			if ircGetChannelServer(channel) == server then
 				table.insert(channels,channel)
 			end
