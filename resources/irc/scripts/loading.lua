@@ -31,8 +31,10 @@ addEventHandler("onResourceStart",resourceRoot,
 	function ()
 		-- Is the sockets module loaded?
 		if not sockOpen then
-			outputServerLog("IRC: could not start resource, the sockets module isn't loaded!")
-			outputServerLog("IRC: restart the resource to retry")
+			outputDebugString("could not start the irc resource, the sockets module isn't loaded!")
+			outputDebugString("try to start the resource again to retry")
+			startupCancelled = true
+			cancelEvent()
 			return
 		end
 		
@@ -44,12 +46,14 @@ addEventHandler("onResourceStart",resourceRoot,
 			end
 		end
 		if #missingRights ~= 0 then
-			outputServerLog("IRC: "..#missingRights.." missing rights: ")
+			outputDebugString("IRC: "..#missingRights.." missing rights: ")
 			for i,missingRight in ipairs (missingRights) do
-				outputServerLog("	- "..missingRight)
+				outputDebugString("	- "..missingRight)
 			end
-			outputServerLog("IRC: could not start resource, the resource is missing rights!")
-			outputServerLog("IRC: restart the resource to retry")
+			outputDebugString("the irc resource does not have sufficient rights, type 'aclrequest allow irc all'")
+			outputDebugString("try to start the resource again to retry")
+			startupCancelled = true
+			cancelEvent()
 			return
 		end
 		
@@ -57,7 +61,7 @@ addEventHandler("onResourceStart",resourceRoot,
 		function checkVersion (res,version)
 			if res ~= "ERROR" and version then
 				if getNumberFromVersion(version) > getNumberFromVersion(getResourceInfo(getThisResource(),"version")) then
-					outputServerLog("IRC: resource is outdated, newest version: "..version)
+					outputDebugString("the irc resource is outdated, newest version: "..version)
 					setTimer(outputIRC,10000,1,"The irc resource is outdated, newest version: "..version)
 				end
 			end

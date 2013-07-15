@@ -13,7 +13,7 @@ local logfile
 ------------------------------------
 addEventHandler("onResourceStart",resourceRoot,
 	function ()
-		if getMaximumLogSize() == 0 then return end
+		if getMaximumLogSize() == 0 or startupCancelled then return end
 		
 		if fileExists("irc.log") then
 			logfile = fileOpen("irc.log")
@@ -37,6 +37,7 @@ addEventHandler("onIRCRaw",root,
 
 addEventHandler("onResourceStop",resourceRoot,
 	function ()
+		if startupCancelled then return end
 		fileFlush(logfile)
 		fileClose(logfile)
 	end
