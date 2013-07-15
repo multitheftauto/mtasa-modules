@@ -71,10 +71,30 @@
 			examples="true,false"
 			desc="Should all irc messages be sent to the server?"
 		/>
+		
+		<!-- Event logging -->
+		<setting name="*irc-onResourceStart"            value="true" friendlyname="output onResourceStart event"            examples="true,false" />
+		<setting name="*irc-onResourceStop"             value="true" friendlyname="output onResourceStop event"             examples="true,false" />
+		<setting name="*irc-onPlayerJoin"               value="true" friendlyname="output onPlayerJoin event"               examples="true,false" />
+		<setting name="*irc-onPlayerQuit"               value="true" friendlyname="output onPlayerQuit event"               examples="true,false" />
+		<setting name="*irc-onPlayerChangeNick"         value="true" friendlyname="output onPlayerChangeNick event"         examples="true,false" />
+		<setting name="*irc-onPlayerMute"               value="true" friendlyname="output onPlayerMute event"               examples="true,false" />
+		<setting name="*irc-onPlayerUnmute"             value="true" friendlyname="output onPlayerUnmute event"             examples="true,false" />
+		<setting name="*irc-onPlayerChat"               value="true" friendlyname="output onPlayerChat event"               examples="true,false" />
+		<setting name="*irc-onSettingChange"            value="true" friendlyname="output onSettingChange event"            examples="true,false" />
+		<setting name="*irc-onPlayerWasted"             value="true" friendlyname="output onPlayerWasted event"             examples="true,false" />
+		<setting name="*irc-onPlayerFinish"             value="true" friendlyname="output onPlayerFinish event"             examples="true,false" />
+		<setting name="*irc-onGamemodeMapStart"         value="true" friendlyname="output onGamemodeMapStart event"         examples="true,false" />
+		<setting name="*irc-onPlayerToptimeImprovement" value="true" friendlyname="output onPlayerToptimeImprovement event" examples="true,false" />
+		<setting name="*irc-onBan"                      value="true" friendlyname="output onBan event"                      examples="true,false" />
+		<setting name="*irc-onUnban"                    value="true" friendlyname="output onUnban event"                    examples="true,false" />
+		<setting name="*irc-onPlayerFreeze"             value="true" friendlyname="output onPlayerFreeze event"             examples="true,false" />
+		<setting name="*irc-adminMessage"               value="true" friendlyname="output adminMessage event"               examples="true,false" />
+		<setting name="*irc-onPollStuff"                value="true" friendlyname="output onPollStuff events"               examples="true,false" />
 	</settings>
 	
 	<!-- Don't touch anything below! -->
-	<info author="MCvarial" version="1.0.4" type="misc" name="irc" description="Echobot to be used on irc" />
+	<info author="MCvarial" version="1.0.5" type="misc" name="irc" description="Echobot to be used on irc" />
 	
 	<export function="ircGetChannelFromName"       type="server" http="false" />
 	<export function="ircGetEchoChannels"          type="server" http="false" />

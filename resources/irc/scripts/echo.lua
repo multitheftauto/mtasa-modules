@@ -13,6 +13,7 @@ local messages = {}
 
 addEventHandler("onResourceStart",root,
 	function (resource)
+		if get("*irc-onResourceStart") ~= "true" then return end
 		if getResourceInfo(resource,"type") ~= "map" then
 			outputIRC("07* Resource '"..getResourceName(resource).."' started!")
 		end
@@ -26,6 +27,7 @@ addEventHandler("onResourceStart",root,
 
 addEventHandler("onResourceStop",root,
 	function (resource)
+		if get("*irc-onResourceStop") ~= "true" then return end
 		if getResourceInfo(resource,"type") ~= "map" then
 			outputIRC("07* Resource '"..(getResourceName(resource) or "?").."' stopped!")
 		end
@@ -34,6 +36,7 @@ addEventHandler("onResourceStop",root,
 
 addEventHandler("onPlayerJoin",root,
 	function ()
+		if get("*irc-onPlayerJoin") ~= "true" then return end
 		messages[source] = 0
 		outputIRC("03*** "..getPlayerName(source).." joined the game.")
 	end
@@ -41,6 +44,7 @@ addEventHandler("onPlayerJoin",root,
 
 addEventHandler("onPlayerQuit",root,
 	function (quit,reason,element)
+		if get("*irc-onPlayerQuit") ~= "true" then return end
 		messages[source] = nil
 		if reason then
 			if element then
@@ -56,6 +60,7 @@ addEventHandler("onPlayerQuit",root,
 
 addEventHandler("onPlayerChangeNick",root,
 	function (oldNick,newNick)
+		if get("*irc-onPlayerChangeNick") ~= "true" then return end
 		setTimer(function (player,oldNick)
 			local newNick = getPlayerName(player)
 			if newNick ~= oldNick then
@@ -67,6 +72,7 @@ addEventHandler("onPlayerChangeNick",root,
 
 addEventHandler("onPlayerMute",root,
 	function (arg)
+		if get("*irc-onPlayerMute") ~= "true" then return end
 		if type(arg) ~= "nil" then return end
 		local result = executeSQLSelect("ircmutes","serial,reason","serial = '"..getPlayerSerial(source).."'")
 		if result and result[1] then
@@ -84,12 +90,14 @@ addEventHandler("onPlayerMute",root,
 
 addEventHandler("onPlayerUnmute",root,
 	function ()
+		if get("*irc-onPlayerUnmute") ~= "true" then return end
 		outputIRC("12* "..getPlayerName(source).." has been unmuted")
 	end
 )
 
 addEventHandler("onPlayerChat",root,
 	function (message,type)
+		if get("*irc-onPlayerChat") ~= "true" then return end
 		messages[source] = messages[source] + 1
 		if type == 0 then
 			outputIRC("07"..getPlayerName(source)..": "..message)
@@ -115,6 +123,7 @@ addEventHandler("onPlayerChat",root,
 
 addEventHandler("onSettingChange",root,
 	function (setting,oldValue,newValue)
+		if get("*irc-onSettingChange") ~= "true" then return end
 		outputIRC("6Setting '"..tostring(setting).."' changed: "..tostring(oldValue).." -> "..tostring(newValue))
 	end
 )
@@ -125,6 +134,7 @@ weapons[19] = "Rockets"
 weapons[88] = "Fire"
 addEventHandler("onPlayerWasted",root,
 	function (ammo,killer,weapon,bodypart)
+		if get("*irc-onPlayerWasted") ~= "true" then return end
 		if killer then
 			if getElementType(killer) == "vehicle" then
 				local driver = getVehicleController(killer)
@@ -148,10 +158,21 @@ addEventHandler("onPlayerWasted",root,
 		end
 	end
 )
+
+addEvent("onPlayerRaceWasted")
+addEventHandler("onPlayerRaceWasted",root,
+	function (vehicle)
+		if get("*irc-onPlayerRaceWasted") ~= "true" then return end
+		if #getAlivePlayers() == 1 and currentmode ~= "Sprint" then
+			outputIRC("12* "..getPlayerName(getAlivePlayers()[1]).." won the deathmatch!")
+		end
+	end
+)
 		
 addEvent("onPlayerFinish",true)
 addEventHandler("onPlayerFinish",root,
 	function (rank,time)
+		if get("*irc-onPlayerFinish") ~= "true" then return end
 		outputIRC("12* "..getPlayerName(source).." finished (rank: "..rank.." time: "..msToTimeStr(time)..")")
 	end
 )
@@ -159,6 +180,7 @@ addEventHandler("onPlayerFinish",root,
 addEvent("onGamemodeMapStart",true)
 addEventHandler("onGamemodeMapStart",root,
 	function (res)
+		if get("*irc-onGamemodeMapStart") ~= "true" then return end
 		outputIRC("12* Map started: "..(getResourceInfo(res, "name") or getResourceName(res)))
 		local resource = getResourceFromName("mapratings")
 		if resource and getResourceState(resource) == "running" and exports.mapratings:getMapRating(getResourceName(res)) and exports.mapratings:getMapRating(getResourceName(res)).average then
@@ -170,6 +192,7 @@ addEventHandler("onGamemodeMapStart",root,
 addEvent("onPlayerToptimeImprovement",true)
 addEventHandler("onPlayerToptimeImprovement",root,
 	function (newPos,newTime,oldPos,oldTime)
+		if get("*irc-onPlayerToptimeImprovement") ~= "true" then return end
 		if newPos == 1 then
 			outputIRC("07* New record: "..msToTimeStr(newTime).." by "..getPlayerName(source).."!")
 		end
@@ -178,22 +201,15 @@ addEventHandler("onPlayerToptimeImprovement",root,
 
 addEventHandler("onBan",root,
 	function (ban)
+		if get("*irc-onBan") ~= "true" then return end
 		outputIRC("12* Ban added by "..(getPlayerName(source) or "Console")..": name: "..(getBanNick(ban) or "/")..", ip: "..(getBanIP(ban) or "/")..", serial: "..(getBanSerial(ban) or "/")..", banned by: "..(getBanAdmin(ban) or "/").." banned for: "..(getBanReason(ban) or "/"))
 	end
 )
 
 addEventHandler("onUnban",root,
 	function (ban)
+		if get("*irc-onUnban") ~= "true" then return end
 		outputIRC("12* Ban removed by "..(getPlayerName(source) or "Console")..": name: "..(getBanNick(ban) or "/")..", ip: "..(getBanIP(ban) or "/")..", serial: "..(getBanSerial(ban) or "/")..", banned by: "..(getBanAdmin(ban) or "/").." banned for: "..(getBanReason(ban) or "/"))
-	end
-)
-
-addEvent("onPlayerRaceWasted")
-addEventHandler("onPlayerRaceWasted",root,
-	function (vehicle)
-		if #getAlivePlayers() == 1 and currentmode ~= "Sprint" then
-			outputIRC("12* "..getPlayerName(getAlivePlayers()[1]).." won the deathmatch!")
-		end
 	end
 )
 
@@ -203,6 +219,7 @@ addEventHandler("onPlayerRaceWasted",root,
 addEvent("onPlayerFreeze")
 addEventHandler("onPlayerFreeze",root,
 	function (state)
+		if get("*irc-onPlayerFreeze") ~= "true" then return end
 		if state then
 			outputIRC("12* "..getPlayerName(source).." was frozen!")
 		else
@@ -214,6 +231,7 @@ addEventHandler("onPlayerFreeze",root,
 addEvent("aMessage",true)
 addEventHandler("aMessage",root,
 	function (Type,t)
+		if get("*irc-adminMessage") ~= "true" then return end
 		if Type ~= "new" then return end
 		
 		for i,channel in ipairs (ircGetEchoChannels()) do
@@ -251,6 +269,7 @@ addEventHandler("onPollModified",root,
 addEvent("onPollStart")
 addEventHandler("onPollStart",root,
 	function ()
+		if get("*irc-onPollStuff") ~= "true" then return end
 		if pollTitle then
 			outputIRC("14* A vote was started ["..tostring(pollTitle).."]")
 		end
@@ -260,6 +279,7 @@ addEventHandler("onPollStart",root,
 addEvent("onPollStop")
 addEventHandler("onPollStop",root,
 	function ()
+		if get("*irc-onPollStuff") ~= "true" then return end
 		if pollTitle then
 			pollTitle = nil
 			outputIRC("14* Vote stopped!")
@@ -270,6 +290,7 @@ addEventHandler("onPollStop",root,
 addEvent("onPollEnd")
 addEventHandler("onPollEnd",root,
 	function ()
+		if get("*irc-onPollStuff") ~= "true" then return end
 		if pollTitle then
 			pollTitle = nil
 			outputIRC("14* Vote ended!")
@@ -280,6 +301,7 @@ addEventHandler("onPollEnd",root,
 addEvent("onPollDraw")
 addEventHandler("onPollDraw",root,
 	function ()
+		if get("*irc-onPollStuff") ~= "true" then return end
 		if pollTitle then
 			pollTitle = nil
 			outputIRC("14* A draw was reached!")

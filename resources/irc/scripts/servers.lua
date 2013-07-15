@@ -158,7 +158,7 @@ function func_ircConnect (host,nick,port,password,secure)
 		return server
 	end
 	if sockError then
-		outputServerLog("IRC: Failed to connect to "..tostring(host).." reason: "..getSocketErrorString(sockError))
+		outputDebugString("irc failed to connect to "..tostring(host).." reason: "..getSocketErrorString(sockError))
 	end
 	return false
 end
