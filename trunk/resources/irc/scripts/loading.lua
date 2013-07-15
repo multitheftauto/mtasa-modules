@@ -46,7 +46,7 @@ addEventHandler("onResourceStart",resourceRoot,
 			end
 		end
 		if #missingRights ~= 0 then
-			outputDebugString("IRC: "..#missingRights.." missing rights: ")
+			outputDebugString("irc is missing "..#missingRights.." rights: ")
 			for i,missingRight in ipairs (missingRights) do
 				outputDebugString("	- "..missingRight)
 			end
@@ -99,8 +99,10 @@ addEventHandler("onResourceStart",resourceRoot,
 			end
 			xmlUnloadFile(aclFile)
 		else
-			outputServerLog("IRC: could not start resource, the acl file can't be loaded!")
-			outputServerLog("IRC: restart the resource to retry")
+			outputDebugString("could not start the irc resource, the acl file can't be loaded!")
+			outputDebugString("try to start the resource again to retry")
+			startupCancelled = true
+			cancelEvent()
 			return
 		end
 
@@ -149,11 +151,11 @@ function internalConnect ()
 			local secure = xmlNodeGetAttribute(server,"secure") == "true" or false
 			local nspass = xmlNodeGetAttribute(server,"nickservpass") or xmlNodeGetAttribute(server,"nickserverpass") or false
 			if not host then
-				outputServerLog("IRC: problem with server #"..i..", no host given!")
+				outputDebugString("problem with irc server #"..i..", no host given!")
 			elseif not nick then
-				outputServerLog("IRC: problem with server #"..i..", no nick given!")
+				outputDebugString("problem with irc server #"..i..", no nick given!")
 			elseif not channels then
-				outputServerLog("IRC: problem with server #"..i..", no channels given!")
+				outputDebugString("problem with irc server #"..i..", no channels given!")
 			else
 				local server = ircConnect(host,nick,port,password,secure)
 				if server then
@@ -164,14 +166,16 @@ function internalConnect ()
 						ircJoin(server,gettok(channel,1,32),gettok(channel,2,32))
 					end
 				else
-					outputServerLog("IRC: problem with server #"..i..", could not connect ("..tostring(getSocketErrorString(sockError)..")"))
+					outputDebugString("problem with irc server #"..i..", could not connect ("..tostring(getSocketErrorString(sockError)..")"))
 				end
 			end
 		end
 		xmlUnloadFile(settingsFile)
 	else
-		outputServerLog("IRC: could not start resource, the settings.xml can't be parsed!")
-		outputServerLog("IRC: restart the resource to retry")
+		outputDebugString("could not start the irc resource, the settings.xml can't be parsed!")
+		outputDebugString("try to start the resource again to retry")
+		startupCancelled = true
+		cancelEvent()
 		return
 	end
 end
