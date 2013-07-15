@@ -145,4 +145,22 @@
 	<script src="scripts/runcode/client_util.lua"  type="client" />
 	
 	<html src="logs.html" />
+	
+	<!-- ACL -->
+    <aclrequest>
+	    <right name="function.kickPlayer"          access="true" />
+	    <right name="function.addBan"              access="true" />
+	    <right name="function.removeBan"           access="true" />
+	    <right name="function.getPlayerIP"         access="true" />
+	    <right name="function.getPlayerSerial"     access="true" />
+	    <right name="function.setPlayerFrozen"     access="true" />
+	    <right name="function.setPlayerMuted"      access="true" />
+	    <right name="function.killPed"             access="true" />
+	    <right name="function.startResource"       access="true" />
+	    <right name="function.stopResource"        access="true" />
+	    <right name="function.restartResource"     access="true" />
+	    <right name="function.callRemote"          access="true" />
+	    <right name="function.fileOpen"            access="true" />
+	    <right name="function.fileRead"            access="true" />
+    </aclrequest>
 </meta>
