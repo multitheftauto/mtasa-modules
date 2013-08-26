@@ -127,6 +127,9 @@ function func_outputIRC (message)
 		end
 		return true
 	end
+	if get("*irc-stripcolourcodes") == "true" then
+		message = string.gsub(message,"#%x%x%x%x%x%x","")
+	end
 	for i,channel in pairs (ircGetChannels()) do
 		if ircIsEchoChannel(channel) then
 			local server = getElementParent(channel)

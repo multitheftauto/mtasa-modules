@@ -72,6 +72,15 @@
 			desc="Should all irc messages be sent to the server?"
 		/>
 		
+		<!-- Should ingame messages be stripped from their colour codes for display on irc? -->
+		<setting 
+			name="*irc-stripcolourcodes" 
+			value="false"
+			friendlyname="Strip colour codes"
+			examples="true,false"
+			desc="Should ingame messages be stripped from their colour codes for display on irc?"
+		/>
+		
 		<!-- Event logging -->
 		<setting name="*irc-onResourceStart"            value="true" friendlyname="output onResourceStart event"            examples="true,false" />
 		<setting name="*irc-onResourceStop"             value="true" friendlyname="output onResourceStop event"             examples="true,false" />
