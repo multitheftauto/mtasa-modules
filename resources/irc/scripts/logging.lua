@@ -2,7 +2,7 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.3
+-- Version: 1.0.6
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
@@ -164,26 +164,34 @@ addEventHandler("onIRCNotice",root,
 addEvent("onIRCUserMode")
 addEventHandler("onIRCUserMode",root,
 	function (channel,positive,mode,setter)
+		if channel then
+			channel = ircGetChannelName(channel)
+		else
+			channel = "Global"
+		end
 		if setter then
 			setter = ircGetUserNick(setter)
 		else
 			setter = "Server"
 		end
 		if positive then
-			logConsole(tostring(ircGetServerName(ircGetUserServer(source)))..": ["..tostring(ircGetChannelName(channel)).."] "..tostring(setter).." sets mode: +"..tostring(mode).." "..tostring(ircGetUserNick(source)))
+			logConsole(tostring(ircGetServerName(ircGetUserServer(source)))..": ["..tostring(channel).."] "..tostring(setter).." sets mode: +"..tostring(mode).." "..tostring(ircGetUserNick(source)))
 		else	
-			logConsole(tostring(ircGetServerName(ircGetUserServer(source)))..": ["..tostring(ircGetChannelName(channel)).."] "..tostring(setter).." sets mode: -"..tostring(mode).." "..tostring(ircGetUserNick(source)))
+			logConsole(tostring(ircGetServerName(ircGetUserServer(source)))..": ["..tostring(channel).."] "..tostring(setter).." sets mode: -"..tostring(mode).." "..tostring(ircGetUserNick(source)))
 		end
 	end
 )
 
 addEvent("onIRCChannelMode")
 addEventHandler("onIRCChannelMode",root,
-	function (positive,mode,setter)
-		if positive then
-			logConsole(tostring(ircGetServerName(ircGetChannelServer(source)))..": ["..tostring(ircGetChannelName(source)).."] "..(ircGetUserNick(setter) or "Server").." sets mode: +"..tostring(mode))
-		else	
-			logConsole(tostring(ircGetServerName(ircGetChannelServer(source)))..": ["..tostring(ircGetChannelName(source)).."] "..(ircGetUserNick(setter) or "Server").." sets mode: -"..tostring(mode))
+	function (positive,mode,setter,arg)
+		if not arg then arg = "" end
+		if arg then
+			if positive then
+				logConsole(tostring(ircGetServerName(ircGetChannelServer(source)))..": ["..tostring(ircGetChannelName(source)).."] "..(ircGetUserNick(setter) or "Server").." sets mode: +"..tostring(mode).." "..arg)
+			else	
+				logConsole(tostring(ircGetServerName(ircGetChannelServer(source)))..": ["..tostring(ircGetChannelName(source)).."] "..(ircGetUserNick(setter) or "Server").." sets mode: -"..tostring(mode).." "..arg)
+			end
 		end
 	end
 )

@@ -2,33 +2,34 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.3
+-- Version: 1.0.6
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
 -- everything is saved here
-users = {} -- syntax: [user] = {string name,string mode,string vhost,string email,string realname,table channels} (2nd,3rd,4th,5th argument not used)
+users = {} -- syntax: [user] = {name=string, vhost=string, email=string, realname=string}
 	
 ------------------------------------
 -- Users
 ------------------------------------
 function func_ircSetUserMode (user,channel,mode)
-	return ircRaw(getElementParent(user),"MODE "..channels[channel][1].." "..mode.." :"..users[user][1])
+	return ircRaw(getElementParent(user),"MODE "..channels[channel].name.." "..mode.." :"..users[user].name)
 end
 registerFunction("ircSetUserMode","func_ircSetUserMode","irc-user","irc-channel","string")
 
-function func_ircGetUserMode (user)
-	return users[user][2]
-end
-registerFunction("ircGetUserMode","func_ircGetUserMode","irc-user")
-
 function func_ircGetUserChannels (user)
-	return users[user][6]
+	local t = {}
+	for i,channel in pairs (getElementsByType("irc-channel")) do
+		if channels[channel]["users"][user] then
+			table.insert(t,channel)
+		end
+	end
+	return t
 end
 registerFunction("ircGetUserChannels","func_ircGetUserChannels","irc-user")
 
 function func_ircGetUserNick (user)
-	return users[user][1]
+	return users[user].name
 end
 registerFunction("ircGetUserNick","func_ircGetUserNick","irc-user")
 
@@ -41,7 +42,7 @@ function func_ircGetUsers (server)
 	if server then
 		local users = {}
 		for i,user in ipairs (getElementsByType("irc-user")) do
-			if ircGetUserServer(user) == server then
+			if getElementParent(user) == server then
 				table.insert(users,user)
 			end
 		end
@@ -52,17 +53,22 @@ function func_ircGetUsers (server)
 end
 registerFunction("ircGetUsers","func_ircGetUsers","(irc-server)")
 
-function func_ircGetUserFromNick (nick)
+function func_ircGetUserFromNick (nick,server)
 	for i,user in ipairs (ircGetUsers()) do
-		if string.lower(ircGetUserNick(user)) == string.lower(nick) then
+		if string.lower(ircGetUserNick(user)) == string.lower(nick) and (getElementParent(user) == server or not server) then
 			return user
 		end
 	end
 	return false
 end
-registerFunction("ircGetUserFromNick","func_ircGetUserFromNick","string")
+registerFunction("ircGetUserFromNick","func_ircGetUserFromNick","string","(irc-server)")
 
 function func_ircGetUserVhost (user)
-	return users[user][3]
+	return users[user].vhost
 end
 registerFunction("ircGetUserVhost","func_ircGetUserVhost","irc-user")
+
+function func_ircGetUserLevel (user,channel)
+	return channels[channel]["users"][user] or 0
+end
+registerFunction("ircGetUserLevel","func_ircGetUserLevel","irc-user","irc-channel")

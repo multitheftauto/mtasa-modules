@@ -2,7 +2,7 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.3
+-- Version: 1.0.6
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
@@ -11,13 +11,16 @@
 ------------------------------------
 
 function getNickFromRaw (raw)
-	return string.sub(gettok(raw,1,33),2)
+	return string.sub(gettok(raw,1,"!"),2)
 end
 
 function getMessageFromRaw (raw)
-	local t = split(string.sub(raw,2,-2),58)
+	local t = split(raw," ")
 	table.remove(t,1)
-	return table.concat(t,":")
+	local raw = table.concat(t," ")
+	local start,stop = string.find(raw,":",0,true)
+	if not start then return false end
+	return string.sub(raw,start+1)
 end
 
 local chars = {"+","%","@","&","~"}

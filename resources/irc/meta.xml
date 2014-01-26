@@ -103,7 +103,7 @@
 	</settings>
 	
 	<!-- Don't touch anything below! -->
-	<info author="MCvarial" version="1.0.5" type="misc" name="irc" description="Echobot to be used on irc" />
+	<info author="MCvarial" version="1.0.6" type="misc" name="irc" description="Echobot to be used on irc" />
 	
 	<export function="ircGetChannelFromName"       type="server" http="false" />
 	<export function="ircGetEchoChannels"          type="server" http="false" />
@@ -111,9 +111,9 @@
 	<export function="ircGetChannels"              type="server" http="false" />
 	<export function="ircSetChannelMode"           type="server" http="false" />
 	<export function="ircGetChannelName"           type="server" http="false" />
-	<export function="ircGetChannelMode"           type="server" http="false" />
 	<export function="ircGetChannelUsers"          type="server" http="false" />
 	<export function="ircGetChannelTopic"          type="server" http="false" />
+	<export function="ircGetChannelPassword"       type="server" http="false" />
 	<export function="ircIsEchoChannel"            type="server" http="false" />
 	<export function="ircRaw"                      type="server" http="false" />
 	<export function="ircHop"                      type="server" http="false" />
@@ -136,7 +136,6 @@
 	<export function="ircIsServerSecure"           type="server" http="false" />
 	<export function="ircGetServerChannels"        type="server" http="false" />
 	<export function="ircSetUserMode"              type="server" http="false" />
-	<export function="ircGetUserMode"              type="server" http="false" />
 	<export function="ircGetUserChannels"          type="server" http="false" />
 	<export function="ircGetUserNick"              type="server" http="false" />
 	<export function="ircGetUserServer"            type="server" http="false" />
@@ -159,7 +158,6 @@
 	<script src="scripts/users.lua"                type="server" />
 	<script src="scripts/handling.lua"             type="server" />
 	<script src="scripts/commands.lua"             type="server" />
-	<script src="scripts/levels.lua"               type="server" />
 	<script src="scripts/acl.lua"                  type="server" />
 	<script src="scripts/ads.lua"                  type="client" />
 	<script src="scripts/echo.lua"                 type="server" />
