@@ -7,7 +7,7 @@
 ---------------------------------------------------------------------
 
 -- everything is saved here
-servers = {} -- syntax: [server] = {socket=element, name=string, host=string, nick=string, password=string, port=number,secure=bool,nickservpass=string, lastping=number, connected=bool, outputbuffer=table, inputbuffer=string}
+servers = {} -- syntax: [server] = {socket=element, name=string, host=string, nick=string, password=string, port=number,secure=bool, lastping=number, connected=bool, outputbuffer=table, inputbuffer=string, nickservname=string, nickservpass=string}
 
 ------------------------------------
 -- Servers
@@ -147,10 +147,20 @@ function func_outputIRC (message)
 end
 registerFunction("outputIRC","func_outputIRC","string")
 
-function func_ircIdentify (server,password)
-	return ircRaw(server,"PRIVMSG NickServ :IDENTIFY "..password)
+function func_ircIdentify (server,password,name)
+	servers[server]["nickservname"] = name
+	servers[server]["nickservpass"] = password
+	if servers[server].connected then
+		if name then
+			return ircRaw(server,"PRIVMSG NickServ :IDENTIFY "..name.." "..password)
+		else
+			return ircRaw(server,"PRIVMSG NickServ :IDENTIFY "..password)
+		end
+	else
+		return true
+	end
 end
-registerFunction("ircIdentify","func_ircIdentify","irc-server","string")
+registerFunction("ircIdentify","func_ircIdentify","irc-server","string","(string)")
 
 function func_ircConnect (host,nick,port,password,secure)
 	local server = createElement("irc-server")
@@ -178,7 +188,6 @@ function func_ircReconnect (server,reason)
 	ircRaw(server,"QUIT :"..reason)
 	sockClose(servers[server].socket)
 	triggerEvent("onIRCConnecting",server)
-	servers[server].connected = false
 	servers[server].connected = false
 	servers[server].socket = sockOpen(ircGetServerHost(server),ircGetServerPort(server),ircIsServerSecure(server))
 	for i,channel in ipairs (ircGetServerChannels(server)) do

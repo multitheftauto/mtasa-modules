@@ -149,6 +149,7 @@ function internalConnect ()
 			local port = tonumber(xmlNodeGetAttribute(server,"port")) or 6667
 			local password = xmlNodeGetAttribute(server,"password") or false
 			local secure = xmlNodeGetAttribute(server,"secure") == "true" or false
+			local nsname = xmlNodeGetAttribute(server,"nickservname") or xmlNodeGetAttribute(server,"nickservername") or false
 			local nspass = xmlNodeGetAttribute(server,"nickservpass") or xmlNodeGetAttribute(server,"nickserverpass") or false
 			if not host then
 				outputDebugString("problem with irc server #"..i..", no host given!")
@@ -160,7 +161,7 @@ function internalConnect ()
 				local server = ircConnect(host,nick,port,password,secure)
 				if server then
 					if nspass then
-						ircIdentify(server,nspass)
+						ircIdentify(server,nspass,nsname)
 					end
 					for i,channel in ipairs (split(channels,44)) do
 						ircJoin(server,gettok(channel,1,32),gettok(channel,2,32))
