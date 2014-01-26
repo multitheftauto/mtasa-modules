@@ -2,25 +2,25 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.3
+-- Version: 1.0.6
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
 -- everything is saved here
-channels = {} -- syntax: [channel] = {string name,string mode,string topic,table users,string password,bool joined,bool echo}
+channels = {} -- syntax: [channel] = {name=string, topic=string, users=table, password=string, echochannel=bool}
 
 ------------------------------------
 -- Channels
 ------------------------------------
-function func_ircGetChannelFromName (channel)
+function func_ircGetChannelFromName (channel,server)
 	for i,chan in ipairs (ircGetChannels()) do
-		if string.lower(ircGetChannelName(chan)) == string.lower(channel) then
+		if string.lower(ircGetChannelName(chan)) == string.lower(channel) and (getElementParent(chan) == server or not server) then
 			return chan
 		end
 	end
 	return false
 end
-registerFunction("ircGetChannelFromName","func_ircGetChannelFromName","string")
+registerFunction("ircGetChannelFromName","func_ircGetChannelFromName","string","(irc-server)")
 
 function func_ircGetEchoChannels ()
 	local channels = {}
@@ -58,26 +58,30 @@ end
 registerFunction("ircSetChannelMode","func_ircSetChannelMode","irc-channel","string")
 
 function func_ircGetChannelName (channel)
-	return channels[channel][1]
+	return channels[channel].name
 end
 registerFunction("ircGetChannelName","func_ircGetChannelName","irc-channel")
 
-function func_ircGetChannelMode (channel)
-	return channels[channel][2]
-end
-registerFunction("ircGetChannelMode","func_ircGetChannelMode","irc-channel")
-
 function func_ircGetChannelUsers (channel)
-	return channels[channel][4]
+	local t = {}
+	for user,level in pairs (channels[channel].users) do
+		table.insert(t,user)
+	end
+	return t
 end
 registerFunction("ircGetChannelUsers","func_ircGetChannelUsers","irc-channel")
 
 function func_ircGetChannelTopic (channel)
-	return channels[channel][3]
+	return channels[channel].topic
 end
 registerFunction("ircGetChannelTopic","func_ircGetChannelTopic","irc-channel")
 
+function func_ircGetChannelPassword (channel)
+	return channels[channel].password
+end
+registerFunction("ircGetChannelPassword","func_ircGetChannelPassword","irc-channel")
+
 function func_ircIsEchoChannel (channel)
-	return channels[channel][7]
+	return channels[channel].echochannel
 end
 registerFunction("ircIsEchoChannel","func_ircIsEchoChannel","irc-channel")

@@ -2,29 +2,32 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.3
+-- Version: 1.0.6
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
 -- everything is saved here
-servers = {} -- syntax: [server] = {element socket,string name,string host,string nick,string password,number port,bool secure,string nickservpass,string authident, string authpass,number lastping,timer timeoutguard,number reconnectattempts, table channels,bool connected,table buffer}
+servers = {} -- syntax: [server] = {socket=element, name=string, host=string, nick=string, password=string, port=number,secure=bool,nickservpass=string, lastping=number, connected=bool, outputbuffer=table, inputbuffer=string}
 
 ------------------------------------
 -- Servers
 ------------------------------------
 function func_ircRaw (server,data)
-	if servers[server][15] then
+	if servers[server].connected then
 		writeLog("-> "..data)
-		return sockWrite(servers[server][1],data.."\r\n")
+		return sockWrite(servers[server].socket,data.."\r\n")
 	end
-	table.insert(servers[server][16],data)
+	table.insert(servers[server].outputbuffer,data)
+	if #servers[server].outputbuffer > 50 then
+		table.remove(servers[server].outputbuffer,1)
+	end
 	return true
 end
 registerFunction("ircRaw","func_ircRaw","irc-server","string")
 
 function func_ircHop (channel,reason)
-	local name = channels[channel][1]
-	local password = channels[channel][6]
+	local name = channels[channel].name
+	local password = channels[channel].password
 	if ircPart(channel,reason) then
 		return ircJoin(ircGetChannelServer(channel),name,password)
 	end
@@ -68,20 +71,18 @@ end
 registerFunction("ircPart","func_ircPart","irc-channel","string")
 
 function func_ircJoin (server,channel,password)
-	table.insert(servers[server][14],channel)
 	local chan = createElement("irc-channel")
 	setElementParent(chan,server)
 	if #getElementsByType("irc-channel") == 1 then
-		channels[chan] = {channel,"+nst","Unknown",{},password,false,true}
+		channels[chan] = {name=channel,topic="Unknown",users={},password=password,echochannel=true}
 	else
-		channels[chan] = {channel,"+nst","Unknown",{},password,false,false}
+		channels[chan] = {name=channel,topic="Unknown",users={},password=password,echochannel=false}
 	end
 	if password then
 		ircRaw(server,"JOIN "..channel.." :"..password)
 	else
 		ircRaw(server,"JOIN "..channel)
 	end
-	ircRaw(server,"NAMES "..channel)
 	return chan
 end
 registerFunction("ircJoin","func_ircJoin","irc-server","string","(string)")
@@ -147,8 +148,7 @@ end
 registerFunction("outputIRC","func_outputIRC","string")
 
 function func_ircIdentify (server,password)
-	servers[server][8] = password
-	return ircRaw(server,"PRIVMSG NickServ :IDENTIFY "..(password or ""))
+	return ircRaw(server,"PRIVMSG NickServ :IDENTIFY "..password)
 end
 registerFunction("ircIdentify","func_ircIdentify","irc-server","string")
 
@@ -156,7 +156,10 @@ function func_ircConnect (host,nick,port,password,secure)
 	local server = createElement("irc-server")
 	local socket,sockError = sockOpen(host,(port or 6667),secure)
 	if server and socket then
-		servers[server] = {socket,host,host,nick,password,port,secure,false,false,false,getTickCount(),nil,0,{},false,{}}
+		servers[server] = {socket=socket,name=host,host=host,nick=nick,password=password,port=port,secure=secure,nickservpass=false,authident=false,authpass=false,lastping=0,lastcontact=getTickCount(),connected=false,pinginterval=300000,outputbuffer={},inputbuffer=""}
+		local user = createElement("irc-user")
+		users[user] = {name=nick,vhost="",email=false,realname=false}
+		setElementParent(user,server)
 		triggerEvent("onIRCConnecting",server)
 		return server
 	end
@@ -173,15 +176,13 @@ function func_ircReconnect (server,reason)
 	end
 	triggerEvent("onIRCDisconnect",server,reason)
 	ircRaw(server,"QUIT :"..reason)
-	sockClose(servers[server][1])
+	sockClose(servers[server].socket)
 	triggerEvent("onIRCConnecting",server)
-	servers[server][15] = false
-	servers[server][1] = sockOpen(ircGetServerHost(server),ircGetServerPort(server),ircIsServerSecure(server))
-	if servers[server][8] then
-		ircRaw(server,"PRIVMSG NickServ :IDENTIFY "..tostring(servers[server][8]))
-	end
-	for i,channel in ipairs (servers[server][14]) do
-		ircRaw(server,"JOIN "..tostring(channel))
+	servers[server].connected = false
+	servers[server].connected = false
+	servers[server].socket = sockOpen(ircGetServerHost(server),ircGetServerPort(server),ircIsServerSecure(server))
+	for i,channel in ipairs (ircGetServerChannels(server)) do
+		ircRaw(server,"JOIN "..tostring(ircGetChannelName(channel)))
 	end
 	return true
 end
@@ -189,14 +190,13 @@ registerFunction("ircReconnect","func_ircReconnect","irc-server","(string)")
 
 function func_ircDisconnect (server,reason)
 	ircRaw(server,"QUIT :"..(reason or "Disconnect"))
-	sockClose(servers[server][1])
+	sockClose(servers[server].socket)
 	servers[server] = nil
 	return destroyElement(server)
 end
 registerFunction("ircDisconnect","func_ircDisconnect","irc-server","(string)")
 
 function func_ircChangeNick (server,newnick)
-	servers[server][4] = newnick
 	return ircRaw(server,"NICK :"..newnick)
 end
 registerFunction("ircChangeNick","func_ircChangeNick","irc-server","string")
@@ -206,36 +206,53 @@ function ircGetServers ()
 end
 	
 function func_ircGetServerName (server)
-	return servers[server][2]
+	return servers[server].name
 end
 registerFunction("ircGetServerName","func_ircGetServerName","irc-server")
 
 function func_ircGetServerHost (server)
-	return servers[server][3]
+	return servers[server].host
 end
 registerFunction("ircGetServerHost","func_ircGetServerHost","irc-server")
 
 function func_ircGetServerPort (server)
-	return servers[server][6]
+	return servers[server].port
 end
 registerFunction("ircGetServerPort","func_ircGetServerPort","irc-server")
 
 function func_ircGetServerPass (server)
-	return servers[server][5]
+	return servers[server].pass
 end
 registerFunction("ircGetServerPass","func_ircGetServerPass","irc-server")
 
 function func_ircGetServerNick (server)
-	return servers[server][4]
+	return servers[server].nick
 end
 registerFunction("ircGetServerNick","func_ircGetServerNick","irc-server")
 
 function func_ircIsServerSecure (server)
-	return servers[server][7]
+	return servers[server].secure
 end
 registerFunction("ircIsServerSecure","func_ircIsServerSecure","irc-server")
 
 function func_ircGetServerChannels (server)
-	return servers[server][14]
+	local t = {}
+	for i,child in ipairs (getElementChildren(server)) do
+		if getElementType(child) == "irc-channel" then
+			table.insert(t,child)
+		end
+	end
+	return t
 end
 registerFunction("ircGetServerChannels","func_ircGetServerChannels","irc-server")
+
+function func_ircGetServerUsers (server)
+	local t = {}
+	for i,child in ipairs (getElementChildren(server)) do
+		if getElementType(child) == "irc-user" then
+			table.insert(t,child)
+		end
+	end
+	return t
+end
+registerFunction("ircGetServerUsers","func_ircGetServerUsers","irc-server")

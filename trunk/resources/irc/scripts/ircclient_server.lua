@@ -2,7 +2,7 @@
 -- Project: irc
 -- Author: MCvarial
 -- Contact: mcvarial@gmail.com
--- Version: 1.0.3
+-- Version: 1.0.6
 -- Date: 31.10.2010
 ---------------------------------------------------------------------
 
@@ -10,12 +10,12 @@ local numberOfPlayers = 0
 local players = {}
 local eventsAdded = false
 local events = {
-"onIRCMessage",
-"onIRCUserJoin",
-"onIRCUserPart",
-"onIRCUserQuit",
-"onIRCLevelChange",
-"onIRCUserChangeNick"
+	"onIRCMessage",
+	"onIRCUserJoin",
+	"onIRCUserPart",
+	"onIRCUserQuit",
+	"onIRCLevelChange",
+	"onIRCUserChangeNick"
 }
 
 ------------------------------------
@@ -28,11 +28,14 @@ addCommandHandler("irc",
 			if not eventsAdded then addEvents() end
 			local channels = {}
 			for i,channel in ipairs (ircGetChannels()) do
-				local users = {}
-				for i,user in ipairs (ircGetChannelUsers(channel)) do
-					table.insert(users,{name=ircGetUserNick(user),level=ircGetUserLevel(user,channel)})
+				if not ircGetChannelPassword(channel) then
+					local users = {}
+					for i,user in ipairs (ircGetChannelUsers(channel)) do
+						table.insert(users,{name=ircGetUserNick(user),level=ircGetUserLevel(user,channel)})
+					end
+					table.insert(channels,{name=ircGetChannelName(channel),users=users,topic=ircGetChannelTopic(channel)})
+					ircSay(channel,"* "..getPlayerName(player).." joined irc")
 				end
-				table.insert(channels,{name=ircGetChannelName(channel),users=users,topic=ircGetChannelTopic(channel)})
 			end
 			players[player] = true
 			numberOfPlayers = numberOfPlayers+1
@@ -47,6 +50,11 @@ addEventHandler("ircStopClient",root,
 		if players[player] then
 			numberOfPlayers = numberOfPlayers-1
 			players[player] = nil
+			for i,channel in ipairs (ircGetChannels()) do
+				if not ircGetChannelPassword(channel) then
+					ircSay(channel,"* "..getPlayerName(player).." left irc")
+				end
+			end
 		end
 	end
 )
@@ -64,6 +72,7 @@ addEventHandler("ircSendMessage",root,
 addEventHandler("onPlayerQuit",root,
 	function ()
 		if players[source] then
+			numberOfPlayers = numberOfPlayers-1
 			players[source] = nil
 		end
 	end
