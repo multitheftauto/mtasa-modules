@@ -72,6 +72,7 @@ addEventHandler("onIRCRaw",root,
 				end
 				servers[source].outputbuffer = {}
 			end
+			ircIdentify(source,servers[source].nickservpass,servers[source].nickservname)
 		end
 		if t[2] == "002" then
 			servers[source].host = string.sub(t[7],1,-2)

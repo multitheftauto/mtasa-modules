@@ -8,6 +8,7 @@
 			password="server password" (optional)
 			secure="false" (optional default: false)
 			
+			nickservname="name" if your nick is registered on the nickserver put it here (optional)
 			nickservpass="password" if your nick is registered on the nickserver put it here (optional)
 		/>
 		add as many servers as you want
@@ -15,6 +16,7 @@
 	
 		<server
 			host="irc.gtanet.com"
+			port="6667"
 			nick="SocketsBot"
 			channels="#MCvarial"
 		/>
