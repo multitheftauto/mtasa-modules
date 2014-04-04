@@ -14,8 +14,8 @@ addEventHandler("onSockOpened",root,
 		for i,server in ipairs (getElementsByType("irc-server")) do
 			if servers[server].socket == socket then
 				servers[server].connected = true
-				if servers[server].nickservpass then
-					ircRaw(server,"PASS "..servers[server].nickservpass)
+				if servers[server].password then
+					ircRaw(server,"PASS "..servers[server].password)
 				end
 				ircRaw(server,"USER echobot MCvarial MCv :Echobot by MCvarial")
 				ircRaw(server,"NICK "..servers[server].nick)
