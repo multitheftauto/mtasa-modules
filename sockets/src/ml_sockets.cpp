@@ -21,6 +21,7 @@
 #include <signal.h>
 
 ILuaModuleManager10 *pModuleManager = NULL;
+bool ms_bInitWorked = false;
 
 // Initialisation function (module entrypoint)
 MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, char *szAuthor, float *fVersion )
@@ -32,7 +33,10 @@ MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, c
 	strncpy ( szAuthor, MODULE_AUTHOR, MAX_INFO_LENGTH );
 	(*fVersion) = MODULE_VERSION;
 
-    ImportLua();
+    if ( !ImportLua() )
+    {
+        return false;
+    }
 
 #ifdef WIN32
     WSADATA wsaData;
@@ -46,12 +50,16 @@ MTAEXPORT bool InitModule ( ILuaModuleManager10 *pManager, char *szModuleName, c
     signal(SIGPIPE, SIG_IGN);
 #endif
 
+    ms_bInitWorked = true;
 	return true;
 }
 
 
 MTAEXPORT void RegisterFunctions ( lua_State * luaVM )
 {
+    if ( !ms_bInitWorked )
+        return;
+
 	if ( pModuleManager && luaVM )
 	{
         // Register functions

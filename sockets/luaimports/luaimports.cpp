@@ -208,20 +208,24 @@ static void* pluaL_pushresult = 0;
   p ## x = dlsym(dl, #x); \
   if (p ## x == 0) \
   { \
-    pModuleManager->Printf("Unable to import " #x ": %s\n", dlerror()); \
-    return; \
+    pModuleManager->Printf("[Sockets] Unable to import " #x ": %s\n", dlerror()); \
+    return false; \
   }
 
 #ifdef __cplusplus
 extern "C"
 #endif
-void ImportLua()
+bool ImportLua()
 {
+#ifdef ANY_x64
+  void* dl = dlopen("x64/deathmatch.so", RTLD_NOW | RTLD_NOLOAD);
+#else
   void* dl = dlopen("mods/deathmatch/deathmatch.so", RTLD_NOW | RTLD_NOLOAD);
+#endif
   if (!dl)
   {
-    pModuleManager->Printf("Unable to open deathmatch.so: %s\n", dlerror());
-    return;
+    pModuleManager->ErrorPrintf("[Sockets] Unable to open deathmatch.so: %s\n", dlerror());
+    return false;
   }
 
   /*
@@ -386,6 +390,7 @@ void ImportLua()
   SAFE_IMPORT(luaL_addstring);
   SAFE_IMPORT(luaL_addvalue);
   SAFE_IMPORT(luaL_pushresult);
+    return true;
 }
 #undef SAFE_IMPORT
 

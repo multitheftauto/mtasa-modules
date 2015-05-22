@@ -1,8 +1,8 @@
 #########################
 # Remove old binary
 #########################
-if [ -e "ml_sockets.so" ]; then
-    rm ml_sockets.so
+if [ -e "mta_mysql.so" ]; then
+    rm mta_mysql.so
 fi
 
 #########################
@@ -30,6 +30,6 @@ fi
 #########################
 # Copy binary file
 #########################
-cp src/.libs/libml_sockets.so ./ml_sockets.so
-echo "Build completed "`pwd`"/ml_sockets.so"
+cp src/.libs/libmta_mysql.so ./mta_mysql.so
+echo "Build completed "`pwd`"/mta_mysql.so"
 exit 0

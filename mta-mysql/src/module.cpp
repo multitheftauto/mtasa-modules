@@ -39,6 +39,7 @@
 #include "result.h"
 
 ILuaModuleManager* pModuleManager = 0;
+bool ms_bInitWorked = false;
 
 
 MTAEXPORT bool InitModule (ILuaModuleManager *pManager, char *szModuleName, char *szAuthor, float *fVersion)
@@ -50,13 +51,20 @@ MTAEXPORT bool InitModule (ILuaModuleManager *pManager, char *szModuleName, char
     strncpy ( szAuthor, MODULE_AUTHOR, MAX_INFO_LENGTH );
     (*fVersion) = MODULE_VERSION;
 
-    ImportLua();
+    if ( !ImportLua() )
+    {
+        return false;
+    }
 
+    ms_bInitWorked = true;
     return true;
 }
 
 MTAEXPORT void RegisterFunctions(lua_State * L)
 {
+    if ( !ms_bInitWorked )
+        return;
+
     MySQL::Startup(L);
 
     /* Register MySQL handler functions */

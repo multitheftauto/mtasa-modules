@@ -29,10 +29,10 @@
  */
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(WIN32)
-#define ImportLua() while(0)
+#define ImportLua() true
 #else
 #ifdef __cplusplus
 extern "C"
 #endif
-void ImportLua();
+bool ImportLua();
 #endif
