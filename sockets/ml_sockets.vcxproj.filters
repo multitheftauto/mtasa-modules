@@ -93,9 +93,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="build.sh">
-      <Filter>Other Files</Filter>
-    </None>
     <None Include="configure.ac">
       <Filter>Other Files</Filter>
     </None>
@@ -107,6 +104,12 @@
     </None>
     <None Include="src\Makefile.am">
       <Filter>Other Files\src</Filter>
+    </None>
+    <None Include="build-32.sh">
+      <Filter>Other Files</Filter>
+    </None>
+    <None Include="build-64.sh">
+      <Filter>Other Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

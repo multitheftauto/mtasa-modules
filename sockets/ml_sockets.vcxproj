@@ -265,7 +265,8 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="build.sh" />
+    <None Include="build-32.sh" />
+    <None Include="build-64.sh" />
     <None Include="configure.ac" />
     <None Include="Makefile.am" />
     <None Include="luaimports\Makefile.am" />
