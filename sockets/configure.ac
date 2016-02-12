@@ -4,6 +4,8 @@
 AC_PREREQ(2.60)
 AC_INIT(ml_sockets.so, 0.1)
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+LT_INIT
 AC_CONFIG_SRCDIR([include/lua.h])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_FILES([Makefile luaimports/Makefile src/Makefile])
