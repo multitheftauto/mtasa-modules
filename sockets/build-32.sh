@@ -1,22 +1,22 @@
 #########################
 # Remove old binary
 #########################
-if [ -e "ml_sockets.so" ]; then
-    rm ml_sockets.so
+if [ -e "./x32/ml_sockets.so" ]; then
+    rm ./x32/ml_sockets.so
 fi
 
 #########################
 # Prepare build
 #########################
 autoreconf -ifv
-./configure CXXFLAGS='-g -O2 -fPIC'
+./configure CXXFLAGS='-m32 -g -O2 -fPIC' CFLAGS='-m32' LDFLAGS='-m32'
 make clean
 
 #########################
 # Do build
 #########################
 echo Building...
-make >_make.log
+make >_make-32.log
 
 #########################
 # Check for error
@@ -30,6 +30,7 @@ fi
 #########################
 # Copy binary file
 #########################
-cp src/.libs/libml_sockets.so ./ml_sockets.so
-echo "Build completed "`pwd`"/ml_sockets.so"
+mkdir x32
+cp src/.libs/libml_sockets.so ./x32/ml_sockets.so
+echo "Build completed "`pwd`"/x32/ml_sockets.so"
 exit 0

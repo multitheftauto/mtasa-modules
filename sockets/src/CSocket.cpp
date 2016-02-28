@@ -134,6 +134,16 @@ bool CSocket::DoPulse()
                 m_bConnected = false;
                 return false;
             }
+#ifdef WIN32
+            else if (!iError) // => Windows
+#else
+            else if (!iLength) // => Linux
+#endif
+            {
+                // Connection has been reset by host
+                m_bConnected = false;
+                return false;
+            }
         }
     }
     else
