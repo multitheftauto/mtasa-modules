@@ -81,6 +81,13 @@ MTAEXPORT bool DoPulse ( void )
 	return true;
 }
 
+
+MTAEXPORT void ResourceStopped ( lua_State * luaVM )
+{
+    CSocketManager::ResourceStopped( luaVM );
+}
+
+
 MTAEXPORT bool ShutdownModule ( void )
 {
     // Stop all sockets before shutting down the module

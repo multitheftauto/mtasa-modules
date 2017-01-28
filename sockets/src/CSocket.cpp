@@ -63,13 +63,14 @@ CSocket::~CSocket()
     }
 }
 
-void CSocket::CloseSocketWithEvent()
+void CSocket::CloseSocketWithEvent(bool bTriggerCloseEvent)
 {
     // Close the socket, if it exists, and trigger the closed event
     if (m_pSocket != ERR_INVALID_SOCKET)
     {
         CloseSocket();
-        TriggerEvent("onSockClosed");
+        if ( bTriggerCloseEvent )
+            TriggerEvent("onSockClosed");
     }
 }
 

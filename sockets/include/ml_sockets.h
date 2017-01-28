@@ -29,7 +29,7 @@
 /** MODULE SPECIFIC INFORMATION **/
 #define MODULE_NAME			"Sockets Module"
 #define	MODULE_AUTHOR		"Gamesnert, MCvarial & x86"
-#define MODULE_VERSION		1.3f
+#define MODULE_VERSION		1.4f
 
 // Include default MTA module SDK includes
 #include "Common.h"

@@ -38,12 +38,13 @@ public:
     CSocket           (lua_State *luaVM, const string& strHost, const unsigned short& usPort);
     ~CSocket          ();                           // Delete only - Does not trigger any events
 
-    void CloseSocketWithEvent ();                   // Close socket and trigger event
+    void CloseSocketWithEvent (bool bTriggerCloseEvent);    // Close socket and optionally trigger event
     bool Send         (const string& data);
     bool DoPulse      ();
     bool IsConnected  ();
 
     void* GetUserdata ();
+    lua_State* GetLuaVM()                   { return m_pLuaVM; }
     static int GetTotalOpenSocketCount ();
 
 private:

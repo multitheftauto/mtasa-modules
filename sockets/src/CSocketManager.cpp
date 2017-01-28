@@ -39,17 +39,29 @@ void CSocketManager::DoPulse()
     }
 }
 
+
+void CSocketManager::ResourceStopped( lua_State * luaVM )
+{
+    // Enusure all sockets using luaVM are closed
+    CSocket* pSocket;
+    while( GetSocketByLuaVM( pSocket, luaVM ) )
+    {
+        SocketRemove( pSocket, false );
+    }
+}
+
+
 void CSocketManager::SocketAdd(CSocket*& pSocket)
 {
     // Add the socket to the loop stuff
     vecSockets.push_back(pSocket);
 }
 
-void CSocketManager::SocketRemove(CSocket*& pSocket)
+void CSocketManager::SocketRemove(CSocket*& pSocket, bool bTriggerCloseEvent)
 {
     ListRemove(vecSockets, pSocket);
     ListRemove(processQueue, pSocket);
-    pSocket->CloseSocketWithEvent();
+    pSocket->CloseSocketWithEvent(bTriggerCloseEvent);
     ListRemove(deleteList, pSocket);
     deleteList.push_back(pSocket);
 }
@@ -65,6 +77,24 @@ bool CSocketManager::GetSocket(CSocket*& pSocket, void* pUserdata)
     {
         // Compare the current socket's userdata with the one we're looking for
         if (vecSockets[i]->GetUserdata() == pUserdata)
+        {
+            // If it's the one we want, assign pSocket to it and return true
+            pSocket = vecSockets[i];
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+bool CSocketManager::GetSocketByLuaVM(CSocket*& pSocket, lua_State * luaVM)
+{
+    // Loop through all sockets
+    for (unsigned int i = 0; i < vecSockets.size(); ++i)
+    {
+        // Compare the current socket's luaVM with the one we're looking for
+        if (vecSockets[i]->GetLuaVM() == luaVM)
         {
             // If it's the one we want, assign pSocket to it and return true
             pSocket = vecSockets[i];
