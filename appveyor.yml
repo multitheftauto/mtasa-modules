@@ -1,0 +1,25 @@
+version: ci-{build}
+
+configuration:
+- Debug
+- Release
+
+platform:
+- Win32
+- x64
+
+clone_depth: 1
+
+before_build:
+- cmd: utils\premake5.exe vs2015
+
+build:
+  project: build/MTA Modules.sln
+  parallel: true
+  verbosity: minimal
+
+test: off
+
+artifacts:
+- path: bin/**/*.dll
+  name: modules

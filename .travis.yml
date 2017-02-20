@@ -1,0 +1,50 @@
+language: generic
+
+before_install:
+  - sudo apt-get install -y lib32z1-dev build-essential automake libtool gcc-multilib g++-multilib
+  - wget http://launchpadlibrarian.net/121445924/libc6_2.16-0ubuntu3_amd64.deb
+  - sudo dpkg -i libc6_2.16-0ubuntu3_amd64.deb
+
+before_script:
+  - chmod +x ./utils/premake5
+  - ./utils/premake5 gmake
+  - cd build
+
+matrix:
+  include:
+    - env: CXX=g++-5 CC=gcc-5 config=release_x32
+      addons:
+        apt:
+          packages:
+            - g++-5
+            - g++-5-multilib
+            - gcc-5-multilib
+          sources: &sources
+            - ubuntu-toolchain-r-test
+    - env: CXX=g++-5 CC=gcc-5 config=release_x64
+      addons:
+        apt:
+          packages:
+            - g++-5
+            - g++-5-multilib
+            - gcc-5-multilib
+          sources: &sources
+            - ubuntu-toolchain-r-test
+    - env: CXX=clang++-3.8 CC=clang-3.8 config=release_x32
+      addons:
+        apt:
+          packages:
+            - clang-3.8
+          sources: &sources
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+    - env: CXX=clang++-3.8 CC=clang-3.8 config=release_x64
+      addons:
+        apt:
+          packages:
+            - clang-3.8
+          sources: &sources
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+
+script: make all -j 4 --environment-overrides
