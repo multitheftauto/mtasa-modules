@@ -1,0 +1,3 @@
+[submodule "ml_pathfind"]
+	path = ml_pathfind
+	url = https://github.com/eXo-OpenSource/ml_pathfind
