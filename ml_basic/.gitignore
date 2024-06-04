@@ -1,0 +1,11 @@
+/*
+/*/
+
+
+!/.gitignore
+!/premake5.lua
+
+!/hpp
+!/include
+!/lib
+!/src
