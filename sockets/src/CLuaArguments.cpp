@@ -100,9 +100,10 @@ bool CLuaArguments::Call ( lua_State* luaVM, const char* szFunction ) const
     PushArguments ( luaVM );
 
     int iret = lua_pcall ( luaVM, m_Arguments.size (), 0, 0 ) ;
-    if ( iret == LUA_ERRRUN || iret == LUA_ERRMEM )
+    if ( iret != 0 )
     {
-        //const char* szRes = lua_tostring( luaVM, -1 );
+        // Remove the error message lua_pcall left on the stack
+        lua_pop ( luaVM, 1 );
         return false; // the function call failed
     }
         
