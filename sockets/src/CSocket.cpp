@@ -265,6 +265,7 @@ void CSocket::TriggerEvent(const string eventName, const string arg1)
 
     lua_getglobal(m_pLuaVM, "root");
     CLuaArgument RootElement(m_pLuaVM, -1);
+    lua_pop(m_pLuaVM, 1);
 
     args.PushUserData(RootElement.GetLightUserData());
     args.PushUserData(m_pUserdata);
